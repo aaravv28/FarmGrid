@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="detail-page">
+
+    <div class="container">
+
+        <div class="row g-5 align-items-center">
+
+            <div class="col-lg-6">
+
+                <div class="large-product-image">
+
+                    <i class="fa-solid fa-seedling"></i>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <span class="farm-badge">
+                    Vegetables
+                </span>
+
+                <h1>
+                    Fresh Farm Tomatoes
+                </h1>
+
+                <p class="farmer-origin">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    Ramesh Farms • Anand Gujarat
+
+                </p>
+
+                <p class="product-description">
+
+                    Fresh red tomatoes harvested this morning.
+                    Naturally grown and directly supplied by the farmer.
+
+                </p>
+
+                <div class="detail-price">
+
+                    ₹40
+
+                    <span>/ kg</span>
+
+                </div>
+
+                <p>
+
+                    <strong>Available Stock:</strong>
+                    120 kg
+
+                </p>
+
+                <div class="quantity-row">
+
+                    <label>
+                        Quantity
+                    </label>
+
+                    <input type="number"
+                           value="1"
+                           min="1"
+                           class="form-control quantity-input" />
+
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+
+                    <button class="btn farm-btn-primary btn-lg">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Add to Cart
+
+                    </button>
+
+                    <a asp-action="ProductCatalog"
+                       class="btn farm-btn-outline btn-lg">
+
+                        Back
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

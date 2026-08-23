@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Create Quick Sell";
+}
+
+<div class="form-page">
+
+    <div class="container">
+
+        <div class="form-card">
+
+            <span class="urgent-badge">
+                Urgent Harvest
+            </span>
+
+            <h2 class="mt-3">
+                Create Quick Sell Listing
+            </h2>
+
+            <p>
+
+                Sell surplus or highly perishable harvest
+                using automatic price reduction.
+
+            </p>
+
+            <form>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Product
+                    </label>
+
+                    <select class="form-select">
+
+                        <option>Fresh Tomatoes</option>
+                        <option>Potatoes</option>
+                        <option>Carrots</option>
+
+                    </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Bulk Quantity
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           placeholder="Quantity in kg" />
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Starting Price
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               placeholder="₹ per kg" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Minimum Floor Price
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               placeholder="₹ per kg" />
+
+                    </div>
+
+                </div>
+
+                <div class="decay-info">
+
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+
+                    <div>
+
+                        <strong>
+                            48-Hour Dynamic Pricing
+                        </strong>
+
+                        <p>
+                            The selling price will gradually reduce
+                            from your starting price until it reaches
+                            the minimum floor price.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button class="btn farm-btn-primary mt-4">
+
+                    Create Quick Sell
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

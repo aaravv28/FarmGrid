@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Add Product";
+}
+
+<div class="form-page">
+
+    <div class="container">
+
+        <div class="form-card">
+
+            <div class="form-heading">
+
+                <h2>
+                    Add New Product
+                </h2>
+
+                <p>
+                    List fresh produce on FarmGrid marketplace.
+                </p>
+
+            </div>
+
+            <form>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Product Title
+                    </label>
+
+                    <input class="form-control"
+                           placeholder="Example Fresh Tomatoes" />
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>Select Category</option>
+                            <option>Fruits</option>
+                            <option>Vegetables</option>
+                            <option>Groceries</option>
+                            <option>Dairy Products</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Unit
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>kg</option>
+                            <option>litre</option>
+                            <option>dozen</option>
+                            <option>unit</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Price
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               placeholder="₹" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Available Stock
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               placeholder="Quantity" />
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea class="form-control"
+                              rows="4"
+                              placeholder="Describe your produce"></textarea>
+
+                </div>
+
+                <button class="btn farm-btn-primary">
+
+                    Save Product
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

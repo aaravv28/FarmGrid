@@ -1,0 +1,289 @@
+﻿@{
+    ViewData["Title"] = "Marketplace";
+}
+
+<div class="market-page">
+
+    <div class="container">
+
+        <div class="page-heading">
+
+            <div>
+
+                <span class="farm-badge">
+                    Farm Fresh
+                </span>
+
+                <h2>
+                    Fresh Produce Marketplace
+                </h2>
+
+                <p>
+                    Buy directly from verified local farmers.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="market-toolbar">
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input type="text"
+                       id="productSearch"
+                       placeholder="Search fruits vegetables dairy..." />
+
+            </div>
+
+            <select class="form-select category-filter">
+
+                <option>All Categories</option>
+                <option>Fruits</option>
+                <option>Vegetables</option>
+                <option>Groceries</option>
+                <option>Dairy Products</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="row g-4"
+             id="productGrid">
+
+            <div class="col-lg-3 col-md-6 product-item">
+
+                <div class="product-card">
+
+                    <div class="product-image tomato-bg">
+
+                        <span class="product-category">
+                            Vegetables
+                        </span>
+
+                        <i class="fa-solid fa-seedling"></i>
+
+                    </div>
+
+                    <div class="product-body">
+
+                        <small>
+                            Ramesh Farms • Anand
+                        </small>
+
+                        <h5>
+                            Fresh Tomatoes
+                        </h5>
+
+                        <p>
+                            Freshly harvested premium tomatoes.
+                        </p>
+
+                        <div class="product-price">
+
+                            <strong>₹40</strong>
+                            <span>/ kg</span>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a asp-action="ProductDetails"
+                               class="btn farm-btn-outline">
+
+                                View
+
+                            </a>
+
+                            <button class="btn farm-btn-primary add-cart-btn">
+                                Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6 product-item">
+
+                <div class="product-card">
+
+                    <div class="product-image fruit-bg">
+
+                        <span class="product-category">
+                            Fruits
+                        </span>
+
+                        <i class="fa-solid fa-apple-whole"></i>
+
+                    </div>
+
+                    <div class="product-body">
+
+                        <small>
+                            Patel Farms • Vadodara
+                        </small>
+
+                        <h5>
+                            Fresh Apples
+                        </h5>
+
+                        <p>
+                            Crisp naturally grown premium apples.
+                        </p>
+
+                        <div class="product-price">
+
+                            <strong>₹160</strong>
+                            <span>/ kg</span>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a asp-action="ProductDetails"
+                               class="btn farm-btn-outline">
+
+                                View
+
+                            </a>
+
+                            <button class="btn farm-btn-primary add-cart-btn">
+                                Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6 product-item">
+
+                <div class="product-card">
+
+                    <div class="product-image dairy-bg">
+
+                        <span class="product-category">
+                            Dairy
+                        </span>
+
+                        <i class="fa-solid fa-bottle-water"></i>
+
+                    </div>
+
+                    <div class="product-body">
+
+                        <small>
+                            Green Dairy • Nadiad
+                        </small>
+
+                        <h5>
+                            Organic Milk
+                        </h5>
+
+                        <p>
+                            Fresh farm milk delivered every morning.
+                        </p>
+
+                        <div class="product-price">
+
+                            <strong>₹65</strong>
+                            <span>/ litre</span>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a asp-action="ProductDetails"
+                               class="btn farm-btn-outline">
+
+                                View
+
+                            </a>
+
+                            <button class="btn farm-btn-primary add-cart-btn">
+                                Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6 product-item">
+
+                <div class="product-card">
+
+                    <div class="product-image grocery-bg">
+
+                        <span class="product-category">
+                            Groceries
+                        </span>
+
+                        <i class="fa-solid fa-wheat-awn"></i>
+
+                    </div>
+
+                    <div class="product-body">
+
+                        <small>
+                            Shakti Farms • Bharuch
+                        </small>
+
+                        <h5>
+                            Organic Wheat
+                        </h5>
+
+                        <p>
+                            Naturally cultivated high-quality wheat.
+                        </p>
+
+                        <div class="product-price">
+
+                            <strong>₹48</strong>
+                            <span>/ kg</span>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a asp-action="ProductDetails"
+                               class="btn farm-btn-outline">
+
+                                View
+
+                            </a>
+
+                            <button class="btn farm-btn-primary add-cart-btn">
+                                Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

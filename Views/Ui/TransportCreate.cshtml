@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Create Transport Trip";
+}
+
+<div class="form-page">
+
+    <div class="container">
+
+        <div class="form-card">
+
+            <h2>
+                Create Transport Trip
+            </h2>
+
+            <p>
+                Register spare vehicle capacity for
+                other farmers.
+            </p>
+
+            <form>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Destination Market
+                    </label>
+
+                    <select class="form-select">
+
+                        <option>Central Mandi</option>
+                        <option>City Hub</option>
+                        <option>Wholesale Market</option>
+
+                    </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Dispatch Date
+                    </label>
+
+                    <input type="date"
+                           class="form-control" />
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Vehicle Type
+                        </label>
+
+                        <input class="form-control"
+                               placeholder="Example Tata Ace" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Total Vehicle Cost
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               placeholder="₹" />
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Available Spare Capacity
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           placeholder="kg" />
+
+                </div>
+
+                <button class="btn farm-btn-primary">
+
+                    Find Matching Trips
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

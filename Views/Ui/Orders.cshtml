@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="dashboard-page">
+
+    <div class="container">
+
+        <div class="page-heading">
+
+            <h2>
+                My Orders
+            </h2>
+
+            <p>
+                Track current and previous FarmGrid orders.
+            </p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <div class="table-responsive">
+
+                <table class="table farm-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>#FG1024</td>
+                            <td>23 Aug 2026</td>
+                            <td>₹760</td>
+
+                            <td>
+                                <span class="status active">
+                                    Delivered
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-sm farm-btn-outline">
+
+                                    Details
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>#FG1023</td>
+                            <td>22 Aug 2026</td>
+                            <td>₹420</td>
+
+                            <td>
+                                <span class="status shipping">
+                                    Shipped
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-sm farm-btn-outline">
+
+                                    Track
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

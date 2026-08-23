@@ -1,0 +1,294 @@
+﻿@{
+    ViewData["Title"] = "Farmer Dashboard";
+}
+
+<div class="dashboard-page">
+
+    <div class="container">
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <p class="small-label">
+                    Farmer Portal
+                </p>
+
+                <h2>
+                    Welcome back Ramesh 👋
+                </h2>
+
+                <p>
+                    Manage your produce sales quick sell
+                    listings and transport.
+                </p>
+
+            </div>
+
+            <a asp-action="ProductForm"
+               class="btn farm-btn-primary">
+
+                <i class="fa-solid fa-plus"></i>
+                Add Product
+
+            </a>
+
+        </div>
+
+
+        <div class="row g-4 mb-5">
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-box"></i>
+
+                    <div>
+
+                        <h3>12</h3>
+
+                        <p>Active Products</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    <div>
+
+                        <h3>4</h3>
+
+                        <p>Quick Sell</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                    <div>
+
+                        <h3>₹18,450</h3>
+
+                        <p>Total Earnings</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-truck"></i>
+
+                    <div>
+
+                        <h3>3</h3>
+
+                        <p>Transport Trips</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card mb-4">
+
+            <div class="card-title-row">
+
+                <h4>
+                    My Products
+                </h4>
+
+                <a asp-action="ProductCatalog">
+                    View All
+                </a>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table farm-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>Fresh Tomatoes</td>
+                            <td>Vegetables</td>
+                            <td>₹40/kg</td>
+                            <td>120 kg</td>
+
+                            <td>
+                                <span class="status active">
+                                    Active
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Organic Milk</td>
+                            <td>Dairy</td>
+                            <td>₹65/L</td>
+                            <td>60 L</td>
+
+                            <td>
+                                <span class="status active">
+                                    Active
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Potatoes</td>
+                            <td>Vegetables</td>
+                            <td>₹30/kg</td>
+                            <td>240 kg</td>
+
+                            <td>
+                                <span class="status low">
+                                    Low Stock
+                                </span>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-lg-6">
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-row">
+
+                        <h4>
+                            Quick Sell
+                        </h4>
+
+                        <a asp-action="QuickSell">
+                            View All
+                        </a>
+
+                    </div>
+
+                    <div class="quick-dashboard-item">
+
+                        <div>
+
+                            <strong>Tomatoes</strong>
+
+                            <p>350 kg remaining</p>
+
+                        </div>
+
+                        <div>
+
+                            <strong class="green-text">
+                                ₹22.50/kg
+                            </strong>
+
+                            <p>24h remaining</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <div class="dashboard-card">
+
+                    <div class="card-title-row">
+
+                        <h4>
+                            Upcoming Transport
+                        </h4>
+
+                        <a asp-action="Transport">
+                            View All
+                        </a>
+
+                    </div>
+
+                    <div class="transport-dashboard-item">
+
+                        <i class="fa-solid fa-truck"></i>
+
+                        <div>
+
+                            <strong>
+                                Central Mandi
+                            </strong>
+
+                            <p>
+                                26 Aug • 500 kg capacity available
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

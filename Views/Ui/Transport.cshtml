@@ -1,0 +1,189 @@
+﻿@{
+    ViewData["Title"] = "Shared Transport";
+}
+
+<div class="transport-page">
+
+    <div class="container">
+
+        <div class="page-heading">
+
+            <div>
+
+                <span class="farm-badge">
+                    Smart Logistics
+                </span>
+
+                <h2>
+                    Shared Farmer Transport
+                </h2>
+
+                <p>
+                    Share unused vehicle capacity and reduce
+                    transportation expenses.
+                </p>
+
+            </div>
+
+            <a asp-action="TransportCreate"
+               class="btn farm-btn-primary">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create Transport Trip
+
+            </a>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-lg-6">
+
+                <div class="transport-card">
+
+                    <div class="transport-card-header">
+
+                        <div class="transport-icon-large">
+
+                            <i class="fa-solid fa-truck"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Central Mandi
+                            </h4>
+
+                            <p>
+                                26 Aug 2026
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="transport-grid">
+
+                        <div>
+
+                            <small>Vehicle</small>
+
+                            <strong>
+                                Tata Ace
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <small>Total Cost</small>
+
+                            <strong>
+                                ₹3,000
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <small>Available Capacity</small>
+
+                            <strong class="green-text">
+                                400 kg
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <a asp-action="TransportSuggestions"
+                       class="btn farm-btn-outline w-100">
+
+                        View / Join Trip
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <div class="transport-card">
+
+                    <div class="transport-card-header">
+
+                        <div class="transport-icon-large">
+
+                            <i class="fa-solid fa-truck"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                City Hub
+                            </h4>
+
+                            <p>
+                                27 Aug 2026
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="transport-grid">
+
+                        <div>
+
+                            <small>Vehicle</small>
+
+                            <strong>
+                                Pickup Van
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <small>Total Cost</small>
+
+                            <strong>
+                                ₹2,200
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <small>Available Capacity</small>
+
+                            <strong class="green-text">
+                                250 kg
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <a asp-action="TransportSuggestions"
+                       class="btn farm-btn-outline w-100">
+
+                        View / Join Trip
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

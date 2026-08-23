@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - FarmGrid</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+<header>
+
+<nav class="navbar navbar-expand-lg farm-navbar">
+
+<div class="container">
+
+<a class="navbar-brand farm-brand"
+   asp-controller="Home"
+   asp-action="Index">
+
+<i class="fa-solid fa-leaf"></i>
+FarmGrid
+
+</a>
+
+<button class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#farmNav">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse"
+     id="farmNav">
+
+<ul class="navbar-nav me-auto">
+
+<li class="nav-item">
+
+<a class="nav-link"
+   asp-controller="Home"
+   asp-action="Index">
+
+Home
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a class="nav-link"
+   asp-controller="Ui"
+   asp-action="ProductCatalog">
+
+Marketplace
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a class="nav-link"
+   asp-controller="Ui"
+   asp-action="QuickSell">
+
+Quick Sell
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a class="nav-link"
+   asp-controller="Ui"
+   asp-action="Transport">
+
+Transport
+
+</a>
+
+</li>
+
+</ul>
+
+<ul class="navbar-nav">
+
+<li class="nav-item">
+
+<a class="nav-link"
+   asp-controller="Ui"
+   asp-action="Cart">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+Cart
+
+</a>
+
+</li>
+
+<li class="nav-item dropdown">
+
+<a class="nav-link dropdown-toggle"
+   href="#"
+   role="button"
+   data-bs-toggle="dropdown">
+
+<i class="fa-solid fa-user"></i>
+Account
+
+</a>
+
+<ul class="dropdown-menu dropdown-menu-end">
+
+<li>
+
+<a class="dropdown-item"
+   asp-controller="Ui"
+   asp-action="FarmerDashboard">
+
+Farmer Dashboard
+
+</a>
+
+</li>
+
+<li>
+
+<a class="dropdown-item"
+   asp-controller="Ui"
+   asp-action="CustomerDashboard">
+
+Customer Dashboard
+
+</a>
+
+</li>
+
+<li>
+
+<a class="dropdown-item"
+   asp-controller="Ui"
+   asp-action="Profile">
+
+Profile
+
+</a>
+
+</li>
+
+<li><hr class="dropdown-divider" /></li>
+
+<li>
+
+<a class="dropdown-item"
+   asp-area="Identity"
+   asp-page="/Account/Login">
+
+Login
+
+</a>
+
+</li>
+
+<li>
+
+<a class="dropdown-item"
+   asp-area="Identity"
+   asp-page="/Account/Register">
+
+Register
+
+</a>
+
+</li>
+
+</ul>
+
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+</header>
+
+<main>
+
+@RenderBody()
+
+</main>
+
+<footer class="farm-footer">
+
+<div class="container">
+
+<div class="row">
+
+<div class="col-md-6">
+
+<h5>
+<i class="fa-solid fa-leaf"></i>
+FarmGrid
+</h5>
+
+<p>
+Connecting farmers directly with consumers
+and businesses.
+</p>
+
+</div>
+
+<div class="col-md-3">
+
+<h6>Marketplace</h6>
+
+<p>Fresh Produce</p>
+<p>Quick Sell</p>
+<p>Bulk Purchase</p>
+
+</div>
+
+<div class="col-md-3">
+
+<h6>FarmGrid</h6>
+
+<p>Transport Sharing</p>
+<p>Farmer Dashboard</p>
+<p>Order Tracking</p>
+
+</div>
+
+</div>
+
+<hr />
+
+<p class="text-center mb-0">
+
+© 2026 FarmGrid
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="~/js/site.js"
+        asp-append-version="true"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

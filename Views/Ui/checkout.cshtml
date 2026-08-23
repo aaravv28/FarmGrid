@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="form-page">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-lg-8">
+
+                <div class="form-card">
+
+                    <h3>
+                        Delivery Details
+                    </h3>
+
+                    <form>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Full Name
+                                </label>
+
+                                <input class="form-control"
+                                       value="Aarav" />
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Phone Number
+                                </label>
+
+                                <input class="form-control"
+                                       placeholder="+91" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Address
+                            </label>
+
+                            <textarea class="form-control"
+                                      rows="3"></textarea>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    City
+                                </label>
+
+                                <input class="form-control"
+                                       value="Vadodara" />
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Delivery Slot
+                                </label>
+
+                                <select class="form-select">
+
+                                    <option>6 AM - 9 AM</option>
+                                    <option>9 AM - 12 PM</option>
+                                    <option>4 PM - 7 PM</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <h5 class="mt-4">
+                            Payment
+                        </h5>
+
+                        <div class="payment-option">
+
+                            <input type="radio"
+                                   checked />
+
+                            <span>
+                                Cash on Delivery
+                            </span>
+
+                        </div>
+
+                        <div class="payment-option">
+
+                            <input type="radio" />
+
+                            <span>
+                                Online Payment
+                            </span>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4">
+
+                <div class="order-summary">
+
+                    <h4>
+                        Order Summary
+                    </h4>
+
+                    <div>
+
+                        <span>Products</span>
+                        <strong>₹240</strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>Delivery</span>
+                        <strong>₹30</strong>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="summary-total">
+
+                        <span>Total</span>
+                        <strong>₹270</strong>
+
+                    </div>
+
+                    <button class="btn farm-btn-primary w-100 mt-4">
+
+                        Place Order
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
