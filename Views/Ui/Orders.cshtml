@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<FarmGrid.Models.Order>
+
+@{
     ViewData["Title"] = "Orders";
 }
 
@@ -8,91 +10,103 @@
 
         <div class="page-heading">
 
-            <h2>
-                My Orders
-            </h2>
+            <div>
 
-            <p>
-                Track current and previous FarmGrid orders.
-            </p>
+                <h2>
+                    My Orders
+                </h2>
+
+                <p>
+                    Track current and previous FarmGrid orders.
+                </p>
+
+            </div>
+
+            <a asp-controller="Products"
+               asp-action="Index"
+               class="btn farm-btn-primary">
+
+                Continue Shopping
+
+            </a>
 
         </div>
 
         <div class="dashboard-card">
 
-            <div class="table-responsive">
+            @if (!Model.Any())
+            {
+                <div class="text-center">
 
-                <table class="table farm-table">
+                    <h4>
+                        No orders yet
+                    </h4>
 
-                    <thead>
+                    <p>
+                        Your FarmGrid orders will appear here.
+                    </p>
 
-                        <tr>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
 
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th></th>
+                    <table class="table farm-table">
 
-                        </tr>
+                        <thead>
 
-                    </thead>
+                            <tr>
 
-                    <tbody>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
 
-                        <tr>
+                            </tr>
 
-                            <td>#FG1024</td>
-                            <td>23 Aug 2026</td>
-                            <td>₹760</td>
+                        </thead>
 
-                            <td>
-                                <span class="status active">
-                                    Delivered
-                                </span>
-                            </td>
+                        <tbody>
 
-                            <td>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
 
-                                <button class="btn btn-sm farm-btn-outline">
+                                    <td>
+                                        #FG@order.Id.ToString("D4")
+                                    </td>
 
-                                    Details
+                                    <td>
+                                        @order.CreatedAt.ToString("dd MMM yyyy")
+                                    </td>
 
-                                </button>
+                                    <td>
+                                        @order.OrderItems.Count
+                                    </td>
 
-                            </td>
+                                    <td>
+                                        ₹@order.TotalAmount.ToString("0.00")
+                                    </td>
 
-                        </tr>
+                                    <td>
 
-                        <tr>
+                                        <span class="status active">
+                                            @order.Status
+                                        </span>
 
-                            <td>#FG1023</td>
-                            <td>22 Aug 2026</td>
-                            <td>₹420</td>
+                                    </td>
 
-                            <td>
-                                <span class="status shipping">
-                                    Shipped
-                                </span>
-                            </td>
+                                </tr>
+                            }
 
-                            <td>
+                        </tbody>
 
-                                <button class="btn btn-sm farm-btn-outline">
+                    </table>
 
-                                    Track
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
+                </div>
+            }
 
         </div>
 

@@ -19,168 +19,146 @@
                 </h2>
 
                 <p>
-                    Share unused vehicle capacity and reduce
-                    transportation expenses.
+                    Find matching farmer transport trips
+                    and reduce delivery costs.
                 </p>
 
             </div>
 
-            <a asp-action="TransportCreate"
-               class="btn farm-btn-primary">
+            <div class="d-flex gap-2">
 
-                <i class="fa-solid fa-plus"></i>
+                <a asp-controller="Transport"
+                   asp-action="MyTrips"
+                   class="btn farm-btn-outline">
 
-                Create Transport Trip
+                    My Trips
 
-            </a>
+                </a>
+
+                <a asp-controller="Transport"
+                   asp-action="Create"
+                   class="btn farm-btn-primary">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Create Transport Trip
+
+                </a>
+
+            </div>
 
         </div>
 
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
 
-        <div class="row g-4">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
 
-            <div class="col-lg-6">
+        <div class="dashboard-card">
 
-                <div class="transport-card">
+            <h4 class="mb-2">
+                Find Matching Transport
+            </h4>
 
-                    <div class="transport-card-header">
+            <p class="text-muted mb-4">
+                Enter your destination date and required
+                cargo weight to find suitable trips.
+            </p>
 
-                        <div class="transport-icon-large">
+            <form asp-controller="Transport"
+                  asp-action="Suggestions"
+                  method="get">
 
-                            <i class="fa-solid fa-truck"></i>
+                <div class="row">
 
-                        </div>
+                    <div class="col-md-4 mb-3">
 
-                        <div>
+                        <label class="form-label">
+                            Destination Market
+                        </label>
 
-                            <h4>
+                        <select name="destinationMarket"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Destination
+                            </option>
+
+                            <option value="Central Mandi">
                                 Central Mandi
-                            </h4>
+                            </option>
 
-                            <p>
-                                26 Aug 2026
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="transport-grid">
-
-                        <div>
-
-                            <small>Vehicle</small>
-
-                            <strong>
-                                Tata Ace
-                            </strong>
-
-                        </div>
-
-                        <div>
-
-                            <small>Total Cost</small>
-
-                            <strong>
-                                ₹3,000
-                            </strong>
-
-                        </div>
-
-                        <div>
-
-                            <small>Available Capacity</small>
-
-                            <strong class="green-text">
-                                400 kg
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                    <a asp-action="TransportSuggestions"
-                       class="btn farm-btn-outline w-100">
-
-                        View / Join Trip
-
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-lg-6">
-
-                <div class="transport-card">
-
-                    <div class="transport-card-header">
-
-                        <div class="transport-icon-large">
-
-                            <i class="fa-solid fa-truck"></i>
-
-                        </div>
-
-                        <div>
-
-                            <h4>
+                            <option value="City Hub">
                                 City Hub
-                            </h4>
+                            </option>
 
-                            <p>
-                                27 Aug 2026
-                            </p>
+                            <option value="Wholesale Market">
+                                Wholesale Market
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Dispatch Date
+                        </label>
+
+                        <input type="date"
+                               name="dispatchDate"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Required Cargo Weight
+                        </label>
+
+                        <div class="input-group">
+
+                            <input type="number"
+                                   name="requiredWeight"
+                                   min="0.01"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="Example 300"
+                                   required />
+
+                            <span class="input-group-text">
+                                kg
+                            </span>
 
                         </div>
 
                     </div>
-
-                    <div class="transport-grid">
-
-                        <div>
-
-                            <small>Vehicle</small>
-
-                            <strong>
-                                Pickup Van
-                            </strong>
-
-                        </div>
-
-                        <div>
-
-                            <small>Total Cost</small>
-
-                            <strong>
-                                ₹2,200
-                            </strong>
-
-                        </div>
-
-                        <div>
-
-                            <small>Available Capacity</small>
-
-                            <strong class="green-text">
-                                250 kg
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                    <a asp-action="TransportSuggestions"
-                       class="btn farm-btn-outline w-100">
-
-                        View / Join Trip
-
-                    </a>
 
                 </div>
 
-            </div>
+                <button type="submit"
+                        class="btn farm-btn-primary">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    Find Matching Transport
+
+                </button>
+
+            </form>
 
         </div>
 

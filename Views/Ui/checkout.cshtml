@@ -1,44 +1,74 @@
-﻿@{
+﻿@model FarmGrid.ViewModels.CheckoutViewModel
+
+@{
     ViewData["Title"] = "Checkout";
+
+    decimal subtotal =
+        ViewBag.Subtotal ?? 0;
+
+    decimal deliveryCharge =
+        ViewBag.DeliveryCharge ?? 30;
+
+    decimal total =
+        ViewBag.Total ?? subtotal + deliveryCharge;
 }
 
 <div class="form-page">
 
     <div class="container">
 
-        <div class="row g-4">
+        <form asp-controller="Orders"
+              asp-action="Checkout"
+              method="post">
 
-            <div class="col-lg-8">
+            @Html.AntiForgeryToken()
 
-                <div class="form-card">
+            <div class="row g-4">
 
-                    <h3>
-                        Delivery Details
-                    </h3>
+                <div class="col-lg-8">
 
-                    <form>
+                    <div class="form-card">
+
+                        <h3>
+                            Delivery Details
+                        </h3>
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
 
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
 
-                                <label class="form-label">
+                                <label asp-for="CustomerName"
+                                       class="form-label">
                                     Full Name
                                 </label>
 
-                                <input class="form-control"
-                                       value="Aarav" />
+                                <input asp-for="CustomerName"
+                                       class="form-control" />
+
+                                <span asp-validation-for="CustomerName"
+                                      class="text-danger">
+                                </span>
 
                             </div>
 
                             <div class="col-md-6 mb-3">
 
-                                <label class="form-label">
+                                <label asp-for="PhoneNumber"
+                                       class="form-label">
                                     Phone Number
                                 </label>
 
-                                <input class="form-control"
+                                <input asp-for="PhoneNumber"
+                                       class="form-control"
                                        placeholder="+91" />
+
+                                <span asp-validation-for="PhoneNumber"
+                                      class="text-danger">
+                                </span>
 
                             </div>
 
@@ -46,12 +76,19 @@
 
                         <div class="mb-3">
 
-                            <label class="form-label">
+                            <label asp-for="DeliveryAddress"
+                                   class="form-label">
                                 Address
                             </label>
 
-                            <textarea class="form-control"
-                                      rows="3"></textarea>
+                            <textarea asp-for="DeliveryAddress"
+                                      class="form-control"
+                                      rows="3">
+                            </textarea>
+
+                            <span asp-validation-for="DeliveryAddress"
+                                  class="text-danger">
+                            </span>
 
                         </div>
 
@@ -59,26 +96,41 @@
 
                             <div class="col-md-6 mb-3">
 
-                                <label class="form-label">
+                                <label asp-for="City"
+                                       class="form-label">
                                     City
                                 </label>
 
-                                <input class="form-control"
-                                       value="Vadodara" />
+                                <input asp-for="City"
+                                       class="form-control" />
+
+                                <span asp-validation-for="City"
+                                      class="text-danger">
+                                </span>
 
                             </div>
 
                             <div class="col-md-6 mb-3">
 
-                                <label class="form-label">
+                                <label asp-for="DeliverySlot"
+                                       class="form-label">
                                     Delivery Slot
                                 </label>
 
-                                <select class="form-select">
+                                <select asp-for="DeliverySlot"
+                                        class="form-select">
 
-                                    <option>6 AM - 9 AM</option>
-                                    <option>9 AM - 12 PM</option>
-                                    <option>4 PM - 7 PM</option>
+                                    <option value="6 AM - 9 AM">
+                                        6 AM - 9 AM
+                                    </option>
+
+                                    <option value="9 AM - 12 PM">
+                                        9 AM - 12 PM
+                                    </option>
+
+                                    <option value="4 PM - 7 PM">
+                                        4 PM - 7 PM
+                                    </option>
 
                                 </select>
 
@@ -92,7 +144,9 @@
 
                         <div class="payment-option">
 
-                            <input type="radio"
+                            <input asp-for="PaymentMethod"
+                                   type="radio"
+                                   value="Cash on Delivery"
                                    checked />
 
                             <span>
@@ -103,7 +157,9 @@
 
                         <div class="payment-option">
 
-                            <input type="radio" />
+                            <input asp-for="PaymentMethod"
+                                   type="radio"
+                                   value="Online Payment" />
 
                             <span>
                                 Online Payment
@@ -111,56 +167,69 @@
 
                         </div>
 
-                    </form>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4">
+
+                    <div class="order-summary">
+
+                        <h4>
+                            Order Summary
+                        </h4>
+
+                        <div>
+
+                            <span>Products</span>
+
+                            <strong>
+                                ₹@subtotal.ToString("0.00")
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>Delivery</span>
+
+                            <strong>
+                                ₹@deliveryCharge.ToString("0.00")
+                            </strong>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="summary-total">
+
+                            <span>Total</span>
+
+                            <strong>
+                                ₹@total.ToString("0.00")
+                            </strong>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn farm-btn-primary w-100 mt-4">
+
+                            Place Order
+
+                        </button>
+
+                    </div>
 
                 </div>
 
             </div>
 
-
-            <div class="col-lg-4">
-
-                <div class="order-summary">
-
-                    <h4>
-                        Order Summary
-                    </h4>
-
-                    <div>
-
-                        <span>Products</span>
-                        <strong>₹240</strong>
-
-                    </div>
-
-                    <div>
-
-                        <span>Delivery</span>
-                        <strong>₹30</strong>
-
-                    </div>
-
-                    <hr />
-
-                    <div class="summary-total">
-
-                        <span>Total</span>
-                        <strong>₹270</strong>
-
-                    </div>
-
-                    <button class="btn farm-btn-primary w-100 mt-4">
-
-                        Place Order
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
+        </form>
 
     </div>
 
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

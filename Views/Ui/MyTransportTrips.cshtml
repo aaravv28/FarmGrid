@@ -1,0 +1,195 @@
+﻿@model IEnumerable<FarmGrid.Models.TransportTrip>
+
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "My Transport Trips";
+
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<div class="transport-page">
+
+    <div class="container">
+
+        <div class="page-heading">
+
+            <div>
+                <span class="farm-badge">My Logistics</span>
+
+                <h2>My Transport Trips</h2>
+
+                <p>Trips you created or joined.</p>
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a asp-controller="Transport"
+                   asp-action="Index"
+                   class="btn farm-btn-outline">
+                    Find Transport
+                </a>
+
+                <a asp-controller="Transport"
+                   asp-action="Create"
+                   class="btn farm-btn-primary">
+                    Create Trip
+                </a>
+
+            </div>
+
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="dashboard-card text-center">
+
+                <h4>No transport trips yet</h4>
+
+                <p>
+                    Create a trip or join another farmer's trip.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var trip in Model)
+                {
+                    var myParticipation = trip.Participants
+                        .FirstOrDefault(p => p.FarmerId == currentUserId);
+
+                    <div class="col-lg-6">
+
+                        <div class="transport-card">
+
+                            <div class="transport-card-header">
+
+                                <div class="transport-icon-large">
+                                    <i class="fa-solid fa-truck"></i>
+                                </div>
+
+                                <div>
+                                    <h4>@trip.DestinationMarket</h4>
+
+                                    <p>
+                                        @trip.DispatchDate.ToString("dd MMM yyyy")
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="transport-grid">
+
+                                <div>
+                                    <small>Vehicle</small>
+
+                                    <strong>
+                                        @trip.VehicleType
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Total Cost</small>
+
+                                    <strong>
+                                        ₹@trip.TotalVehicleCost.ToString("0.00")
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Available Capacity</small>
+
+                                    <strong class="green-text">
+                                        @trip.AvailableCapacityKg kg
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            @if (trip.FarmerId == currentUserId)
+                            {
+                                <div class="alert alert-success mb-0">
+
+                                    <strong>
+                                        You created this trip.
+                                    </strong>
+
+                                    @if (myParticipation != null)
+                                    {
+                                        <div class="mt-2">
+
+                                            Your Cargo:
+                                            <strong>
+                                                @myParticipation.CargoWeightKg kg
+                                            </strong>
+
+                                            <br />
+
+                                            Your Fare Share:
+                                            <strong>
+                                                ₹@myParticipation.FareShare.ToString("0.00")
+                                            </strong>
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mb-0">
+
+                                    <strong>
+                                        You joined this trip.
+                                    </strong>
+
+                                    @if (myParticipation != null)
+                                    {
+                                        <div class="mt-2">
+
+                                            Your Cargo:
+                                            <strong>
+                                                @myParticipation.CargoWeightKg kg
+                                            </strong>
+
+                                            <br />
+
+                                            Your Fare Share:
+                                            <strong>
+                                                ₹@myParticipation.FareShare.ToString("0.00")
+                                            </strong>
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

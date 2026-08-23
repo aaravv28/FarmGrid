@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FarmGrid.Models.TransportTrip
+
+@{
     ViewData["Title"] = "Create Transport Trip";
 }
 
@@ -13,36 +15,67 @@
             </h2>
 
             <p>
-                Register spare vehicle capacity for
-                other farmers.
+                Register spare vehicle capacity for other farmers.
             </p>
 
-            <form>
+            <form asp-controller="Transport"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label asp-for="DestinationMarket"
+                           class="form-label">
                         Destination Market
                     </label>
 
-                    <select class="form-select">
+                    <select asp-for="DestinationMarket"
+                            class="form-select">
 
-                        <option>Central Mandi</option>
-                        <option>City Hub</option>
-                        <option>Wholesale Market</option>
+                        <option value="">
+                            Select Destination
+                        </option>
+
+                        <option value="Central Mandi">
+                            Central Mandi
+                        </option>
+
+                        <option value="City Hub">
+                            City Hub
+                        </option>
+
+                        <option value="Wholesale Market">
+                            Wholesale Market
+                        </option>
 
                     </select>
+
+                    <span asp-validation-for="DestinationMarket"
+                          class="text-danger">
+                    </span>
 
                 </div>
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label asp-for="DispatchDate"
+                           class="form-label">
                         Dispatch Date
                     </label>
 
-                    <input type="date"
+                    <input asp-for="DispatchDate"
+                           type="date"
                            class="form-control" />
+
+                    <span asp-validation-for="DispatchDate"
+                          class="text-danger">
+                    </span>
 
                 </div>
 
@@ -50,44 +83,91 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="VehicleType"
+                               class="form-label">
                             Vehicle Type
                         </label>
 
-                        <input class="form-control"
+                        <input asp-for="VehicleType"
+                               class="form-control"
                                placeholder="Example Tata Ace" />
+
+                        <span asp-validation-for="VehicleType"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="TotalVehicleCost"
+                               class="form-label">
                             Total Vehicle Cost
                         </label>
 
-                        <input type="number"
+                        <input asp-for="TotalVehicleCost"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
                                class="form-control"
                                placeholder="₹" />
+
+                        <span asp-validation-for="TotalVehicleCost"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="mb-4">
+                <div class="row">
 
-                    <label class="form-label">
-                        Available Spare Capacity
-                    </label>
+                    <div class="col-md-6 mb-3">
 
-                    <input type="number"
-                           class="form-control"
-                           placeholder="kg" />
+                        <label asp-for="HostCargoWeightKg"
+                               class="form-label">
+                            Your Cargo Weight
+                        </label>
+
+                        <input asp-for="HostCargoWeightKg"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
+                               class="form-control"
+                               placeholder="kg" />
+
+                        <span asp-validation-for="HostCargoWeightKg"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+
+                        <label asp-for="AvailableCapacityKg"
+                               class="form-label">
+                            Available Spare Capacity
+                        </label>
+
+                        <input asp-for="AvailableCapacityKg"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               class="form-control"
+                               placeholder="kg" />
+
+                        <span asp-validation-for="AvailableCapacityKg"
+                              class="text-danger">
+                        </span>
+
+                    </div>
 
                 </div>
 
-                <button class="btn farm-btn-primary">
+                <button type="submit"
+                        class="btn farm-btn-primary">
 
-                    Find Matching Trips
+                    Create Transport Trip
 
                 </button>
 
@@ -98,3 +178,7 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

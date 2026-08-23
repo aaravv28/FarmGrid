@@ -1,5 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Add Product";
+﻿@model FarmGrid.Models.Product
+
+@{
+    bool isEdit = Model != null && Model.Id > 0;
+
+    ViewData["Title"] = isEdit
+        ? "Edit Product"
+        : "Add Product";
 }
 
 <div class="form-page">
@@ -11,62 +17,129 @@
             <div class="form-heading">
 
                 <h2>
-                    Add New Product
+                    @(isEdit ? "Edit Product" : "Add New Product")
                 </h2>
 
                 <p>
-                    List fresh produce on FarmGrid marketplace.
+                    @(isEdit
+                        ? "Update your FarmGrid product information."
+                        : "List fresh produce on FarmGrid marketplace.")
                 </p>
 
             </div>
 
-            <form>
+            <form asp-controller="Products"
+                  asp-action="@(isEdit ? "Edit" : "Create")"
+                  asp-route-id="@(isEdit ? Model.Id : null)"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="Id"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
 
                 <div class="mb-3">
 
-                    <label class="form-label">
+                    <label asp-for="Title"
+                           class="form-label">
+
                         Product Title
+
                     </label>
 
-                    <input class="form-control"
+                    <input asp-for="Title"
+                           class="form-control"
                            placeholder="Example Fresh Tomatoes" />
 
+                    <span asp-validation-for="Title"
+                          class="text-danger">
+                    </span>
+
                 </div>
 
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="Category"
+                               class="form-label">
+
                             Category
+
                         </label>
 
-                        <select class="form-select">
+                        <select asp-for="Category"
+                                class="form-select">
 
-                            <option>Select Category</option>
-                            <option>Fruits</option>
-                            <option>Vegetables</option>
-                            <option>Groceries</option>
-                            <option>Dairy Products</option>
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Fruits">
+                                Fruits
+                            </option>
+
+                            <option value="Vegetables">
+                                Vegetables
+                            </option>
+
+                            <option value="Groceries">
+                                Groceries
+                            </option>
+
+                            <option value="Dairy Products">
+                                Dairy Products
+                            </option>
 
                         </select>
+
+                        <span asp-validation-for="Category"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="UnitMeasure"
+                               class="form-label">
+
                             Unit
+
                         </label>
 
-                        <select class="form-select">
+                        <select asp-for="UnitMeasure"
+                                class="form-select">
 
-                            <option>kg</option>
-                            <option>litre</option>
-                            <option>dozen</option>
-                            <option>unit</option>
+                            <option value="">
+                                Select Unit
+                            </option>
+
+                            <option value="kg">
+                                kg
+                            </option>
+
+                            <option value="litre">
+                                litre
+                            </option>
+
+                            <option value="dozen">
+                                dozen
+                            </option>
+
+                            <option value="unit">
+                                unit
+                            </option>
 
                         </select>
+
+                        <span asp-validation-for="UnitMeasure"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
@@ -76,25 +149,45 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="UnitPrice"
+                               class="form-label">
+
                             Price
+
                         </label>
 
-                        <input type="number"
+                        <input asp-for="UnitPrice"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
                                class="form-control"
                                placeholder="₹" />
 
+                        <span asp-validation-for="UnitPrice"
+                              class="text-danger">
+                        </span>
+
                     </div>
 
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
+                        <label asp-for="StockQuantity"
+                               class="form-label">
+
                             Available Stock
+
                         </label>
 
-                        <input type="number"
+                        <input asp-for="StockQuantity"
+                               type="number"
+                               step="0.01"
+                               min="0"
                                class="form-control"
                                placeholder="Quantity" />
+
+                        <span asp-validation-for="StockQuantity"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
@@ -102,21 +195,42 @@
 
                 <div class="mb-4">
 
-                    <label class="form-label">
+                    <label asp-for="Description"
+                           class="form-label">
+
                         Description
+
                     </label>
 
-                    <textarea class="form-control"
+                    <textarea asp-for="Description"
+                              class="form-control"
                               rows="4"
-                              placeholder="Describe your produce"></textarea>
+                              placeholder="Describe your produce">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
 
                 </div>
 
-                <button class="btn farm-btn-primary">
+                <button type="submit"
+                        class="btn farm-btn-primary">
 
-                    Save Product
+                    @(isEdit ? "Update Product" : "Save Product")
 
                 </button>
+
+                @if (isEdit)
+                {
+                    <a asp-controller="Products"
+                       asp-action="Index"
+                       class="btn farm-btn-outline ms-2">
+
+                        Cancel
+
+                    </a>
+                }
 
             </form>
 
@@ -125,3 +239,9 @@
     </div>
 
 </div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

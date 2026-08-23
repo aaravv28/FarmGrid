@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<FarmGrid.Models.Product>
+
+@{
     ViewData["Title"] = "Marketplace";
 }
 
@@ -24,265 +26,247 @@
 
             </div>
 
+            <a asp-controller="Products"
+               asp-action="Create"
+               class="btn farm-btn-primary">
+
+                Add Product
+
+            </a>
+
         </div>
 
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
 
-        <div class="market-toolbar">
+        <form method="get"
+              asp-controller="Products"
+              asp-action="Index"
+              class="market-toolbar">
 
             <div class="search-box">
 
                 <i class="fa-solid fa-magnifying-glass"></i>
 
                 <input type="text"
-                       id="productSearch"
+                       name="search"
+                       value="@Context.Request.Query["search"]"
                        placeholder="Search fruits vegetables dairy..." />
 
             </div>
 
-            <select class="form-select category-filter">
+            <select name="category"
+                    class="form-select category-filter">
 
-                <option>All Categories</option>
-                <option>Fruits</option>
-                <option>Vegetables</option>
-                <option>Groceries</option>
-                <option>Dairy Products</option>
+                <option value="">
+                    All Categories
+                </option>
+
+                <option value="Fruits">
+                    Fruits
+                </option>
+
+                <option value="Vegetables">
+                    Vegetables
+                </option>
+
+                <option value="Groceries">
+                    Groceries
+                </option>
+
+                <option value="Dairy Products">
+                    Dairy Products
+                </option>
 
             </select>
 
-        </div>
+            <button type="submit"
+                    class="btn farm-btn-primary">
 
+                Filter
 
-        <div class="row g-4"
-             id="productGrid">
+            </button>
 
-            <div class="col-lg-3 col-md-6 product-item">
+        </form>
 
-                <div class="product-card">
+        @if (!Model.Any())
+        {
+            <div class="dashboard-card text-center">
 
-                    <div class="product-image tomato-bg">
+                <h4>
+                    No products found
+                </h4>
 
-                        <span class="product-category">
-                            Vegetables
-                        </span>
-
-                        <i class="fa-solid fa-seedling"></i>
-
-                    </div>
-
-                    <div class="product-body">
-
-                        <small>
-                            Ramesh Farms • Anand
-                        </small>
-
-                        <h5>
-                            Fresh Tomatoes
-                        </h5>
-
-                        <p>
-                            Freshly harvested premium tomatoes.
-                        </p>
-
-                        <div class="product-price">
-
-                            <strong>₹40</strong>
-                            <span>/ kg</span>
-
-                        </div>
-
-                        <div class="product-actions">
-
-                            <a asp-action="ProductDetails"
-                               class="btn farm-btn-outline">
-
-                                View
-
-                            </a>
-
-                            <button class="btn farm-btn-primary add-cart-btn">
-                                Add
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                <p>
+                    There are currently no matching products.
+                </p>
 
             </div>
+        }
+        else
+        {
+            <div class="row g-4">
 
+                @foreach (var product in Model)
+                {
+                    string icon;
+                    string backgroundClass;
 
-            <div class="col-lg-3 col-md-6 product-item">
+                    switch (product.Category)
+                    {
+                        case "Fruits":
+                            icon = "fa-apple-whole";
+                            backgroundClass = "fruit-bg";
+                            break;
 
-                <div class="product-card">
+                        case "Dairy Products":
+                            icon = "fa-bottle-water";
+                            backgroundClass = "dairy-bg";
+                            break;
 
-                    <div class="product-image fruit-bg">
+                        case "Groceries":
+                            icon = "fa-wheat-awn";
+                            backgroundClass = "grocery-bg";
+                            break;
 
-                        <span class="product-category">
-                            Fruits
-                        </span>
+                        default:
+                            icon = "fa-seedling";
+                            backgroundClass = "tomato-bg";
+                            break;
+                    }
 
-                        <i class="fa-solid fa-apple-whole"></i>
+                    <div class="col-lg-3 col-md-6">
 
-                    </div>
+                        <div class="product-card">
 
-                    <div class="product-body">
+                            <div class="product-image @backgroundClass">
 
-                        <small>
-                            Patel Farms • Vadodara
-                        </small>
+                                <span class="product-category">
+                                    @product.Category
+                                </span>
 
-                        <h5>
-                            Fresh Apples
-                        </h5>
+                                <i class="fa-solid @icon"></i>
 
-                        <p>
-                            Crisp naturally grown premium apples.
-                        </p>
+                            </div>
 
-                        <div class="product-price">
+                            <div class="product-body">
 
-                            <strong>₹160</strong>
-                            <span>/ kg</span>
+                                <small>
+                                    FarmGrid Farmer
+                                </small>
+
+                                <h5>
+                                    @product.Title
+                                </h5>
+
+                                <p>
+                                    @(string.IsNullOrWhiteSpace(product.Description)
+                                        ? "Fresh agricultural produce."
+                                        : product.Description)
+                                </p>
+
+                                <div class="product-price">
+
+                                    <strong>
+                                        ₹@product.UnitPrice.ToString("0.00")
+                                    </strong>
+
+                                    <span>
+                                        / @product.UnitMeasure
+                                    </span>
+
+                                </div>
+
+                                <small>
+                                    Stock:
+                                    @product.StockQuantity
+                                    @product.UnitMeasure
+                                </small>
+
+                                <div class="product-actions">
+
+                                    <a asp-controller="Products"
+                                       asp-action="Details"
+                                       asp-route-id="@product.Id"
+                                       class="btn farm-btn-outline">
+
+                                        View
+
+                                    </a>
+
+                                    <a asp-controller="Products"
+                                       asp-action="Edit"
+                                       asp-route-id="@product.Id"
+                                       class="btn farm-btn-outline">
+
+                                        Edit
+
+                                    </a>
+
+                                </div>
+
+                                <div class="product-actions mt-2">
+
+                                    <form asp-controller="Cart"
+                                          asp-action="Add"
+                                          method="post"
+                                          class="w-100">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.Id" />
+
+                                        <input type="hidden"
+                                               name="quantity"
+                                               value="1" />
+
+                                        <button type="submit"
+                                                class="btn farm-btn-primary w-100">
+
+                                            Add to Cart
+
+                                        </button>
+
+                                    </form>
+
+                                    <form asp-controller="Products"
+                                          asp-action="Delete"
+                                          method="post"
+                                          class="w-100"
+                                          onsubmit="return confirm('Are you sure you want to remove this product?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@product.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger w-100">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
 
                         </div>
 
-                        <div class="product-actions">
-
-                            <a asp-action="ProductDetails"
-                               class="btn farm-btn-outline">
-
-                                View
-
-                            </a>
-
-                            <button class="btn farm-btn-primary add-cart-btn">
-                                Add
-                            </button>
-
-                        </div>
-
                     </div>
-
-                </div>
+                }
 
             </div>
-
-
-            <div class="col-lg-3 col-md-6 product-item">
-
-                <div class="product-card">
-
-                    <div class="product-image dairy-bg">
-
-                        <span class="product-category">
-                            Dairy
-                        </span>
-
-                        <i class="fa-solid fa-bottle-water"></i>
-
-                    </div>
-
-                    <div class="product-body">
-
-                        <small>
-                            Green Dairy • Nadiad
-                        </small>
-
-                        <h5>
-                            Organic Milk
-                        </h5>
-
-                        <p>
-                            Fresh farm milk delivered every morning.
-                        </p>
-
-                        <div class="product-price">
-
-                            <strong>₹65</strong>
-                            <span>/ litre</span>
-
-                        </div>
-
-                        <div class="product-actions">
-
-                            <a asp-action="ProductDetails"
-                               class="btn farm-btn-outline">
-
-                                View
-
-                            </a>
-
-                            <button class="btn farm-btn-primary add-cart-btn">
-                                Add
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-lg-3 col-md-6 product-item">
-
-                <div class="product-card">
-
-                    <div class="product-image grocery-bg">
-
-                        <span class="product-category">
-                            Groceries
-                        </span>
-
-                        <i class="fa-solid fa-wheat-awn"></i>
-
-                    </div>
-
-                    <div class="product-body">
-
-                        <small>
-                            Shakti Farms • Bharuch
-                        </small>
-
-                        <h5>
-                            Organic Wheat
-                        </h5>
-
-                        <p>
-                            Naturally cultivated high-quality wheat.
-                        </p>
-
-                        <div class="product-price">
-
-                            <strong>₹48</strong>
-                            <span>/ kg</span>
-
-                        </div>
-
-                        <div class="product-actions">
-
-                            <a asp-action="ProductDetails"
-                               class="btn farm-btn-outline">
-
-                                View
-
-                            </a>
-
-                            <button class="btn farm-btn-primary add-cart-btn">
-                                Add
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        }
 
     </div>
 

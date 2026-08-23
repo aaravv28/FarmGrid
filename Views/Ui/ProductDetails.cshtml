@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FarmGrid.Models.Product
+
+@{
     ViewData["Title"] = "Product Details";
 }
 
@@ -21,73 +23,96 @@
             <div class="col-lg-6">
 
                 <span class="farm-badge">
-                    Vegetables
+                    @Model.Category
                 </span>
 
                 <h1>
-                    Fresh Farm Tomatoes
+                    @Model.Title
                 </h1>
 
                 <p class="farmer-origin">
 
                     <i class="fa-solid fa-location-dot"></i>
 
-                    Ramesh Farms • Anand Gujarat
+                    FarmGrid Farmer
 
                 </p>
 
                 <p class="product-description">
 
-                    Fresh red tomatoes harvested this morning.
-                    Naturally grown and directly supplied by the farmer.
+                    @(string.IsNullOrWhiteSpace(Model.Description)
+                        ? "Fresh agricultural produce directly from the farmer."
+                        : Model.Description)
 
                 </p>
 
                 <div class="detail-price">
 
-                    ₹40
+                    ₹@Model.UnitPrice.ToString("0.00")
 
-                    <span>/ kg</span>
+                    <span>
+                        / @Model.UnitMeasure
+                    </span>
 
                 </div>
 
                 <p>
 
                     <strong>Available Stock:</strong>
-                    120 kg
+
+                    @Model.StockQuantity
+                    @Model.UnitMeasure
 
                 </p>
 
-                <div class="quantity-row">
+                <form asp-controller="Cart"
+                      asp-action="Add"
+                      method="post">
 
-                    <label>
-                        Quantity
-                    </label>
+                    @Html.AntiForgeryToken()
 
-                    <input type="number"
-                           value="1"
-                           min="1"
-                           class="form-control quantity-input" />
+                    <input type="hidden"
+                           name="productId"
+                           value="@Model.Id" />
 
-                </div>
+                    <div class="quantity-row">
 
-                <div class="d-flex gap-3 mt-4">
+                        <label class="form-label">
+                            Quantity
+                        </label>
 
-                    <button class="btn farm-btn-primary btn-lg">
+                        <input type="number"
+                               name="quantity"
+                               value="1"
+                               min="0.01"
+                               max="@Model.StockQuantity"
+                               step="0.01"
+                               class="form-control quantity-input" />
 
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        Add to Cart
+                    </div>
 
-                    </button>
+                    <div class="d-flex gap-3 mt-4">
 
-                    <a asp-action="ProductCatalog"
-                       class="btn farm-btn-outline btn-lg">
+                        <button type="submit"
+                                class="btn farm-btn-primary btn-lg">
 
-                        Back
+                            <i class="fa-solid fa-cart-shopping"></i>
 
-                    </a>
+                            Add to Cart
 
-                </div>
+                        </button>
+
+                        <a asp-controller="Products"
+                           asp-action="Index"
+                           class="btn farm-btn-outline btn-lg">
+
+                            Back
+
+                        </a>
+
+                    </div>
+
+                </form>
 
             </div>
 

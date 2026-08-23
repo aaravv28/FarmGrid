@@ -1,5 +1,11 @@
-﻿@{
+﻿@model IEnumerable<FarmGrid.Models.CartItem>
+
+@{
     ViewData["Title"] = "Shopping Cart";
+
+    decimal subtotal = Model
+        .Where(x => x.Product != null)
+        .Sum(x => x.Product!.UnitPrice * x.Quantity);
 }
 
 <div class="cart-page">
@@ -10,141 +16,184 @@
             Shopping Cart
         </h2>
 
-        <div class="row g-4">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
 
-            <div class="col-lg-8">
+        @if (!Model.Any())
+        {
+            <div class="dashboard-card text-center">
 
-                <div class="cart-item">
+                <h4>
+                    Your cart is empty
+                </h4>
 
-                    <div class="cart-icon">
+                <p>
+                    Add some fresh products from the marketplace.
+                </p>
 
-                        <i class="fa-solid fa-seedling"></i>
+                <a asp-controller="Products"
+                   asp-action="Index"
+                   class="btn farm-btn-primary">
 
-                    </div>
+                    Browse Products
 
-                    <div class="cart-info">
+                </a>
 
-                        <h5>
-                            Fresh Tomatoes
-                        </h5>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
 
-                        <p>
-                            ₹40 / kg
-                        </p>
+                <div class="col-lg-8">
 
-                    </div>
+                    @foreach (var item in Model)
+                    {
+                        if (item.Product == null)
+                        {
+                            continue;
+                        }
 
-                    <div class="cart-quantity">
+                        <div class="cart-item">
 
-                        <button>-</button>
+                            <div class="cart-icon">
 
-                        <span>2</span>
+                                <i class="fa-solid fa-seedling"></i>
 
-                        <button>+</button>
+                            </div>
 
-                    </div>
+                            <div class="cart-info">
 
-                    <strong>
-                        ₹80
-                    </strong>
+                                <h5>
+                                    @item.Product.Title
+                                </h5>
 
-                    <button class="remove-btn">
+                                <p>
+                                    ₹@item.Product.UnitPrice.ToString("0.00")
+                                    /
+                                    @item.Product.UnitMeasure
+                                </p>
 
-                        <i class="fa-solid fa-trash"></i>
+                            </div>
 
-                    </button>
+                            <form asp-controller="Cart"
+                                  asp-action="Update"
+                                  method="post"
+                                  class="d-flex align-items-center gap-2">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@item.Id" />
+
+                                <input type="number"
+                                       name="quantity"
+                                       value="@item.Quantity"
+                                       min="0.01"
+                                       max="@item.Product.StockQuantity"
+                                       step="0.01"
+                                       class="form-control"
+                                       style="width:100px;" />
+
+                                <button type="submit"
+                                        class="btn farm-btn-outline">
+
+                                    Update
+
+                                </button>
+
+                            </form>
+
+                            <strong>
+
+                                ₹@((item.Product.UnitPrice * item.Quantity)
+                                                                    .ToString("0.00"))
+
+                            </strong>
+
+                            <form asp-controller="Cart"
+                                  asp-action="Remove"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@item.Id" />
+
+                                <button type="submit"
+                                        class="remove-btn">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+
+                            </form>
+
+                        </div>
+                    }
 
                 </div>
 
+                <div class="col-lg-4">
 
-                <div class="cart-item">
+                    <div class="order-summary">
 
-                    <div class="cart-icon">
+                        <h4>
+                            Order Summary
+                        </h4>
 
-                        <i class="fa-solid fa-apple-whole"></i>
+                        <div>
+
+                            <span>Subtotal</span>
+
+                            <strong>
+                                ₹@subtotal.ToString("0.00")
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>Delivery</span>
+
+                            <strong>
+                                ₹30.00
+                            </strong>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="summary-total">
+
+                            <span>Total</span>
+
+                            <strong>
+                                ₹@((subtotal + 30).ToString("0.00"))
+                            </strong>
+
+                        </div>
+
+                        <a asp-controller="Orders"
+                           asp-action="Checkout"
+                           class="btn farm-btn-primary w-100 mt-4">
+
+                            Proceed to Checkout
+
+                        </a>
 
                     </div>
-
-                    <div class="cart-info">
-
-                        <h5>
-                            Fresh Apples
-                        </h5>
-
-                        <p>
-                            ₹160 / kg
-                        </p>
-
-                    </div>
-
-                    <div class="cart-quantity">
-
-                        <button>-</button>
-
-                        <span>1</span>
-
-                        <button>+</button>
-
-                    </div>
-
-                    <strong>
-                        ₹160
-                    </strong>
-
-                    <button class="remove-btn">
-
-                        <i class="fa-solid fa-trash"></i>
-
-                    </button>
 
                 </div>
 
             </div>
-
-
-            <div class="col-lg-4">
-
-                <div class="order-summary">
-
-                    <h4>
-                        Order Summary
-                    </h4>
-
-                    <div>
-
-                        <span>Subtotal</span>
-                        <strong>₹240</strong>
-
-                    </div>
-
-                    <div>
-
-                        <span>Delivery</span>
-                        <strong>₹30</strong>
-
-                    </div>
-
-                    <hr />
-
-                    <div class="summary-total">
-
-                        <span>Total</span>
-                        <strong>₹270</strong>
-
-                    </div>
-
-                    <a asp-action="Checkout"
-                       class="btn farm-btn-primary w-100 mt-4">
-
-                        Proceed to Checkout
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
+        }
 
     </div>
 

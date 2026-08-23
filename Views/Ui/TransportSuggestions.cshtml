@@ -1,0 +1,175 @@
+﻿@model IEnumerable<FarmGrid.Models.TransportTrip>
+
+@{
+    ViewData["Title"] = "Transport Suggestions";
+
+    decimal requiredWeight =
+        ViewBag.RequiredWeight ?? 0;
+}
+
+<div class="transport-page">
+
+    <div class="container">
+
+        <div class="page-heading">
+
+            <div>
+
+                <h2>
+                    Transport Suggestions
+                </h2>
+
+                <p>
+                    Matching trips based on destination date and available capacity.
+                </p>
+
+            </div>
+
+            <a asp-controller="Transport"
+               asp-action="Index"
+               class="btn farm-btn-outline">
+
+                Back to Transport
+
+            </a>
+
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="dashboard-card text-center">
+
+                <h4>
+                    No matching trips found
+                </h4>
+
+                <p>
+                    Try another destination date or cargo weight.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var trip in Model)
+                {
+                    <div class="col-lg-6">
+
+                        <div class="suggestion-card">
+
+                            <div class="suggestion-driver">
+
+                                <div class="avatar-circle">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h5>
+                                        FarmGrid Farmer
+                                    </h5>
+
+                                    <p>
+                                        Transport Host
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="suggestion-info">
+
+                                <div>
+
+                                    <small>
+                                        Destination
+                                    </small>
+
+                                    <strong>
+                                        @trip.DestinationMarket
+                                    </strong>
+
+                                </div>
+
+                                <div>
+
+                                    <small>
+                                        Capacity Available
+                                    </small>
+
+                                    <strong>
+                                        @trip.AvailableCapacityKg kg
+                                    </strong>
+
+                                </div>
+
+                                <div>
+
+                                    <small>
+                                        Vehicle Cost
+                                    </small>
+
+                                    <strong>
+                                        ₹@trip.TotalVehicleCost.ToString("0.00")
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <form asp-controller="Transport"
+                                  asp-action="Join"
+                                  method="post"
+                                  class="share-box">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="TripId"
+                                       value="@trip.Id" />
+
+                                <label class="form-label">
+                                    Your Cargo Weight
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input type="number"
+                                           name="CargoWeightKg"
+                                           value="@requiredWeight"
+                                           min="0.01"
+                                           max="@trip.AvailableCapacityKg"
+                                           step="0.01"
+                                           class="form-control"
+                                           required />
+
+                                    <span class="input-group-text">
+                                        kg
+                                    </span>
+
+                                </div>
+
+                                <button type="submit"
+                                        class="btn farm-btn-primary mt-3">
+
+                                    Join Trip
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>
