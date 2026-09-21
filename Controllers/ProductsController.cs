@@ -10,12 +10,12 @@ namespace FarmGrid.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductsController(
-            ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        // PRODUCT CATALOG
         public async Task<IActionResult> Index(
             string? search,
             string? category)
@@ -44,6 +44,7 @@ namespace FarmGrid.Controllers
                 products);
         }
 
+        // PRODUCT DETAILS
         public async Task<IActionResult> Details(int id)
         {
             var product = await _context.Products
@@ -61,13 +62,16 @@ namespace FarmGrid.Controllers
                 product);
         }
 
+        // CREATE - GET
         [HttpGet]
         public IActionResult Create()
         {
             return View(
-                "~/Views/UI/ProductForm.cshtml");
+                "~/Views/UI/ProductForm.cshtml",
+                new Product());
         }
 
+        // CREATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -94,6 +98,7 @@ namespace FarmGrid.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // EDIT - GET
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -110,6 +115,7 @@ namespace FarmGrid.Controllers
                 product);
         }
 
+        // EDIT - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -136,12 +142,21 @@ namespace FarmGrid.Controllers
                     model);
             }
 
-            product.Title = model.Title;
-            product.Category = model.Category;
-            product.UnitMeasure = model.UnitMeasure;
-            product.UnitPrice = model.UnitPrice;
+            product.Title =
+                model.Title;
+
+            product.Category =
+                model.Category;
+
+            product.UnitMeasure =
+                model.UnitMeasure;
+
+            product.UnitPrice =
+                model.UnitPrice;
+
             product.StockQuantity =
                 model.StockQuantity;
+
             product.Description =
                 model.Description;
 
@@ -150,6 +165,7 @@ namespace FarmGrid.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // DELETE
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

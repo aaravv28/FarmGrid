@@ -35,8 +35,11 @@
 
                 @Html.AntiForgeryToken()
 
-                <input asp-for="Id"
-                       type="hidden" />
+                @if (isEdit)
+                {
+                    <input asp-for="Id"
+                           type="hidden" />
+                }
 
                 <div asp-validation-summary="ModelOnly"
                      class="text-danger mb-3">
@@ -205,8 +208,7 @@
                     <textarea asp-for="Description"
                               class="form-control"
                               rows="4"
-                              placeholder="Describe your produce">
-                    </textarea>
+                              placeholder="Describe your produce"></textarea>
 
                     <span asp-validation-for="Description"
                           class="text-danger">
@@ -217,7 +219,9 @@
                 <button type="submit"
                         class="btn farm-btn-primary">
 
-                    @(isEdit ? "Update Product" : "Save Product")
+                    @(isEdit
+                        ? "Update Product"
+                        : "Save Product")
 
                 </button>
 
@@ -240,8 +244,7 @@
 
 </div>
 
-@section Scripts {
-
+@section Scripts
+{
     <partial name="_ValidationScriptsPartial" />
-
 }
