@@ -1,4 +1,4 @@
-﻿@model FarmGrid.Models.Product
+@model FarmGrid.Models.Product
 
 @{
     bool isEdit = Model != null && Model.Id > 0;
@@ -30,7 +30,7 @@
 
             <form asp-controller="Products"
                   asp-action="@(isEdit ? "Edit" : "Create")"
-                  asp-route-id="@(isEdit ? Model.Id : null)"
+                  asp-route-id="@(isEdit ? Model?.Id : null)"
                   method="post">
 
                 @Html.AntiForgeryToken()

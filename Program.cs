@@ -1,4 +1,5 @@
 using FarmGrid.Data;
+using FarmGrid.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ASP.NET Core Identity
+// ASP.NET Core Identity with ApplicationUser & Roles
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(options =>
+    .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         // For now we are not using real email confirmation
         options.SignIn.RequireConfirmedAccount = false;
@@ -29,7 +30,15 @@ builder.Services
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequiredLength = 6;
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 // MVC
 builder.Services.AddControllersWithViews();
@@ -63,7 +72,18 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.MapRazorPages()
-    .WithStaticAssets();
+// Seed default Identity Roles
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roles = ["Farmer", "Customer", "B2B Buyer"];
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
 
 app.Run();

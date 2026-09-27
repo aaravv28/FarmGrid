@@ -1,0 +1,84 @@
+@model FarmGrid.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="form-page">
+    <div class="container">
+        <div class="form-card" style="max-width: 650px; margin: 0 auto;">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="profile-top d-flex align-items-center gap-3 mb-4">
+                <div class="profile-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; font-size: 1.8rem;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h2 class="mb-1">@Model.FullName</h2>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                        <i class="fa-solid fa-shield-halved me-1"></i> @Model.UserRole Account
+                    </span>
+                    <p class="text-muted small mt-1 mb-0">Manage personal contact and delivery details.</p>
+                </div>
+            </div>
+
+            <form asp-controller="Account" asp-action="Profile" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="+91" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control bg-light" readonly />
+                    <small class="text-muted">Email address is linked to your login credentials.</small>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control" placeholder="e.g. Anand" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="District" class="form-label"></label>
+                        <input asp-for="District" class="form-control" placeholder="e.g. Kheda" />
+                        <span asp-validation-for="District" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                        Back to Home
+                    </a>
+                    <button type="submit" class="btn farm-btn-primary">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,6 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@using Microsoft.AspNetCore.Identity
+@using FarmGrid.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <!DOCTYPE html>
 
@@ -180,10 +181,10 @@
                                     <li>
 
                                         <a class="dropdown-item"
-                                           asp-controller="UI"
+                                           asp-controller="Account"
                                            asp-action="Profile">
 
-                                            Profile
+                                            <i class="fa-solid fa-id-badge me-2"></i> Profile
 
                                         </a>
 
@@ -195,17 +196,14 @@
 
                                     <li>
 
-                                        <form asp-area="Identity"
-                                              asp-page="/Account/Logout"
-                                              asp-route-returnUrl="@Url.Action("Index", "Home")"
+                                        <form asp-controller="Account"
+                                              asp-action="Logout"
                                               method="post">
 
                                             <button type="submit"
-                                                    class="dropdown-item">
+                                                    class="dropdown-item text-danger">
 
-                                                <i class="fa-solid fa-right-from-bracket"></i>
-
-                                                Logout
+                                                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
 
                                             </button>
 
@@ -222,10 +220,10 @@
                             <li class="nav-item">
 
                                 <a class="nav-link"
-                                   asp-area="Identity"
-                                   asp-page="/Account/Login">
+                                   asp-controller="Account"
+                                   asp-action="Login">
 
-                                    Login
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i> Login
 
                                 </a>
 
@@ -234,10 +232,10 @@
                             <li class="nav-item">
 
                                 <a class="nav-link"
-                                   asp-area="Identity"
-                                   asp-page="/Account/Register">
+                                   asp-controller="Account"
+                                   asp-action="Register">
 
-                                    Register
+                                    <i class="fa-solid fa-user-plus me-1"></i> Register
 
                                 </a>
 

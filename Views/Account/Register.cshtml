@@ -1,0 +1,114 @@
+@model FarmGrid.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="form-page">
+    <div class="container">
+        <div class="form-card" style="max-width: 650px; margin: 0 auto;">
+            <div class="text-center mb-4">
+                <span class="farm-badge mb-2">Join FarmGrid</span>
+                <h2 class="mt-2">Create Your Account</h2>
+                <p class="text-muted">Register as a Farmer, Direct Consumer, or B2B Bulk Buyer</p>
+            </div>
+
+            <form asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <!-- Role Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Select Account Type</label>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="Role" id="roleFarmer" value="Farmer" @(Model.Role == "Farmer" ? "checked" : "") />
+                            <label class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center" for="roleFarmer">
+                                <i class="fa-solid fa-tractor fa-2x mb-2"></i>
+                                <span class="fw-bold">Farmer</span>
+                                <small class="text-muted" style="font-size: 0.75rem;">Sell Produce</small>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="Role" id="roleCustomer" value="Customer" @(Model.Role == "Customer" ? "checked" : "") />
+                            <label class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center" for="roleCustomer">
+                                <i class="fa-solid fa-basket-shopping fa-2x mb-2"></i>
+                                <span class="fw-bold">Customer</span>
+                                <small class="text-muted" style="font-size: 0.75rem;">Retail Buyer</small>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="Role" id="roleB2B" value="B2B Buyer" @(Model.Role == "B2B Buyer" ? "checked" : "") />
+                            <label class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center" for="roleB2B">
+                                <i class="fa-solid fa-warehouse fa-2x mb-2"></i>
+                                <span class="fw-bold">B2B Buyer</span>
+                                <small class="text-muted" style="font-size: 0.75rem;">Bulk Purchases</small>
+                            </label>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" placeholder="e.g. Ramesh Patel" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. +91 9876543210" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control" placeholder="e.g. Anand" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="District" class="form-label"></label>
+                        <input asp-for="District" class="form-control" placeholder="e.g. Kheda" />
+                        <span asp-validation-for="District" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" placeholder="At least 6 characters" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn farm-btn-primary w-100 py-2">
+                    <i class="fa-solid fa-user-plus me-1"></i> Create Account
+                </button>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted">Already have an account? <a asp-controller="Account" asp-action="Login" class="text-success fw-bold">Sign In</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

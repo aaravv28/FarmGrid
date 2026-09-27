@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FarmGrid.Controllers
 {
@@ -16,7 +16,7 @@ namespace FarmGrid.Controllers
 
         public IActionResult Profile()
         {
-            return View();
+            return RedirectToAction("Profile", "Account");
         }
 
         public IActionResult ProductCatalog()
