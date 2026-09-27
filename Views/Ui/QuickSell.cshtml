@@ -26,11 +26,14 @@
                 </p>
             </div>
 
-            <div class="d-flex gap-2">
-                <a asp-controller="QuickSell" asp-action="Create" class="btn farm-btn-primary">
-                    <i class="fa-solid fa-plus me-1"></i> Create Quick Sell
-                </a>
-            </div>
+            @if (User.IsInRole("Farmer"))
+            {
+                <div class="d-flex gap-2">
+                    <a asp-controller="QuickSell" asp-action="Create" class="btn farm-btn-primary">
+                        <i class="fa-solid fa-plus me-1"></i> Create Quick Sell
+                    </a>
+                </div>
+            }
         </div>
 
         <!-- Filter & Search Toolbar -->

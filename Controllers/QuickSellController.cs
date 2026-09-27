@@ -86,7 +86,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - GET
-        [Authorize]
+        [Authorize(Roles = "Farmer")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -103,7 +103,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - POST
-        [Authorize]
+        [Authorize(Roles = "Farmer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuickSellCreateViewModel model)
@@ -149,7 +149,7 @@ namespace FarmGrid.Controllers
         }
 
         // PURCHASE - POST
-        [Authorize]
+        [Authorize(Roles = "Customer,B2B Buyer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Purchase(QuickSellPurchaseViewModel model)

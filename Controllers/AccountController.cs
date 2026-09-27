@@ -145,6 +145,16 @@ namespace FarmGrid.Controllers
                 return View(model);
             }
 
+            // Ensure user has their role attached in Identity system
+            if (!string.IsNullOrEmpty(user.UserRole) && !await _userManager.IsInRoleAsync(user, user.UserRole))
+            {
+                if (!await _roleManager.RoleExistsAsync(user.UserRole))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(user.UserRole));
+                }
+                await _userManager.AddToRoleAsync(user, user.UserRole);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
                 user.UserName!,
                 model.Password,
@@ -164,9 +174,13 @@ namespace FarmGrid.Controllers
                 {
                     return RedirectToAction("FarmerDashboard", "UI");
                 }
+                else if (user.UserRole == "Customer")
+                {
+                    return RedirectToAction("CustomerDashboard", "UI");
+                }
                 else if (user.UserRole == "B2B Buyer")
                 {
-                    return RedirectToAction("QuickSell", "UI");
+                    return RedirectToAction("Index", "QuickSell");
                 }
 
                 return RedirectToAction("Index", "Home");

@@ -1,4 +1,4 @@
-﻿using FarmGrid.Data;
+using FarmGrid.Data;
 using FarmGrid.Models;
 using FarmGrid.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace FarmGrid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Farmer")]
     public class TransportController : Controller
     {
         private readonly ApplicationDbContext _context;

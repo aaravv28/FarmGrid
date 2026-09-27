@@ -95,17 +95,16 @@
 
                         </li>
 
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               asp-controller="Transport"
-                               asp-action="Index">
-
-                                Transport
-
-                            </a>
-
-                        </li>
+                        @if (!SignInManager.IsSignedIn(User) || User.IsInRole("Farmer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Transport"
+                                   asp-action="Index">
+                                    <i class="fa-solid fa-truck me-1"></i> Transport
+                                </a>
+                            </li>
+                        }
 
                     </ul>
 
@@ -113,19 +112,16 @@
 
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="nav-item">
-
-                                <a class="nav-link"
-                                   asp-controller="Cart"
-                                   asp-action="Index">
-
-                                    <i class="fa-solid fa-cart-shopping"></i>
-
-                                    Cart
-
-                                </a>
-
-                            </li>
+                            @if (!User.IsInRole("Farmer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Cart"
+                                       asp-action="Index">
+                                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                                    </a>
+                                </li>
+                            }
 
                             <li class="nav-item dropdown">
 
@@ -134,16 +130,28 @@
                                    role="button"
                                    data-bs-toggle="dropdown">
 
-                                    <i class="fa-solid fa-user"></i>
-
+                                    <i class="fa-solid fa-user me-1"></i>
                                     @User.Identity?.Name
+                                    @if (User.IsInRole("Farmer"))
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size:0.7rem;">Farmer</span>
+                                    }
+                                    else if (User.IsInRole("B2B Buyer"))
+                                    {
+                                        <span class="badge bg-warning-subtle text-dark border border-warning-subtle ms-1" style="font-size:0.7rem;">B2B</span>
+                                    }
+                                    else if (User.IsInRole("Customer"))
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1" style="font-size:0.7rem;">Customer</span>
+                                    }
 
                                 </a>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
 
-                                    @if (User.IsInRole("Farmer") || !User.IsInRole("Customer"))
+                                    @if (User.IsInRole("Farmer"))
                                     {
+                                        <li class="dropdown-header text-uppercase small fw-bold text-success">Farmer Portal</li>
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="UI"
@@ -151,10 +159,31 @@
                                                 <i class="fa-solid fa-tractor me-2 text-success"></i> Farmer Dashboard
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Products"
+                                               asp-action="Create">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i> Add New Product
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="QuickSell"
+                                               asp-action="Create">
+                                                <i class="fa-solid fa-bolt me-2 text-danger"></i> New Quick Sell
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Transport"
+                                               asp-action="Create">
+                                                <i class="fa-solid fa-truck me-2 text-primary"></i> Schedule Transport
+                                            </a>
+                                        </li>
                                     }
-
-                                    @if (User.IsInRole("Customer") || User.IsInRole("B2B Buyer") || !User.IsInRole("Farmer"))
+                                    else
                                     {
+                                        <li class="dropdown-header text-uppercase small fw-bold text-primary">Buyer Portal</li>
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="UI"
@@ -162,26 +191,32 @@
                                                 <i class="fa-solid fa-basket-shopping me-2 text-primary"></i> Customer Dashboard
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Orders"
+                                               asp-action="Index">
+                                                <i class="fa-solid fa-box-open me-2 text-warning"></i> My Orders
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Cart"
+                                               asp-action="Index">
+                                                <i class="fa-solid fa-cart-shopping me-2 text-success"></i> Shopping Cart
+                                            </a>
+                                        </li>
                                     }
 
                                     <li>
-                                        <a class="dropdown-item"
-                                           asp-controller="Orders"
-                                           asp-action="Index">
-                                            <i class="fa-solid fa-box-open me-2 text-warning"></i> My Orders
-                                        </a>
+                                        <hr class="dropdown-divider" />
                                     </li>
 
                                     <li>
-
                                         <a class="dropdown-item"
                                            asp-controller="Account"
                                            asp-action="Profile">
-
-                                            <i class="fa-solid fa-id-badge me-2"></i> Profile
-
+                                            <i class="fa-solid fa-id-badge me-2 text-secondary"></i> My Profile
                                         </a>
-
                                     </li>
 
                                     <li>

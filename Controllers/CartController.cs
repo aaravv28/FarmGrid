@@ -1,4 +1,4 @@
-﻿using FarmGrid.Data;
+using FarmGrid.Data;
 using FarmGrid.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace FarmGrid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Customer,B2B Buyer")]
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;

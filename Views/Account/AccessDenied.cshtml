@@ -1,18 +1,94 @@
+@using Microsoft.AspNetCore.Identity
+@using FarmGrid.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Access Denied";
+    ViewData["Title"] = "Access Restricted";
+    var user = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
+    var isFarmer = User.IsInRole("Farmer");
+    var isCustomer = User.IsInRole("Customer");
+    var isB2B = User.IsInRole("B2B Buyer");
 }
 
 <div class="container py-5 text-center">
-    <div class="card p-5 shadow-sm mx-auto" style="max-width: 500px; border-radius: 16px;">
+    <div class="card p-5 shadow-sm mx-auto border-0 rounded-4 bg-white" style="max-width: 580px;">
         <div class="text-danger mb-3">
-            <i class="fa-solid fa-triangle-exclamation fa-4x"></i>
+            <div class="d-inline-flex p-3 bg-danger-subtle text-danger rounded-circle">
+                <i class="fa-solid fa-shield-halved fa-3x"></i>
+            </div>
         </div>
-        <h2 class="mb-2">Access Denied</h2>
-        <p class="text-muted">You do not have the required permissions to view this resource.</p>
-        <div class="mt-4">
-            <a asp-controller="Home" asp-action="Index" class="btn farm-btn-primary">
-                <i class="fa-solid fa-house me-1"></i> Return Home
-            </a>
-        </div>
+
+        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 mb-2 d-inline-block mx-auto">
+            Role-Based Access Control
+        </span>
+
+        <h2 class="mb-2 fw-bold">Access Restricted</h2>
+
+        @if (isFarmer)
+        {
+            <div class="alert alert-warning text-start my-3" role="alert">
+                <h6 class="alert-heading fw-bold mb-1">
+                    <i class="fa-solid fa-tractor me-1"></i> Farmer Account Detected
+                </h6>
+                <p class="small mb-0">
+                    You are signed in with a <strong>Farmer</strong> profile. Retail shopping cart, consumer orders, and the Customer Portal are restricted to buyers and consumers.
+                </p>
+            </div>
+
+            <p class="text-muted small">
+                As a farmer, you have full access to produce management, quick-sell decay creation, transport logistics, and your seller dashboard.
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                <a asp-controller="UI" asp-action="FarmerDashboard" class="btn farm-btn-primary">
+                    <i class="fa-solid fa-tractor me-1"></i> Farmer Dashboard
+                </a>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-outline-success">
+                    <i class="fa-solid fa-leaf me-1"></i> Manage Products
+                </a>
+            </div>
+        }
+        else if (isCustomer || isB2B)
+        {
+            <div class="alert alert-info text-start my-3" role="alert">
+                <h6 class="alert-heading fw-bold mb-1">
+                    <i class="fa-solid fa-basket-shopping me-1"></i> @(isB2B ? "B2B Buyer" : "Customer") Account Detected
+                </h6>
+                <p class="small mb-0">
+                    You are signed in with a <strong>@(isB2B ? "B2B Bulk Buyer" : "Retail Customer")</strong> profile. The Farmer Portal, product listing tools, and group transport operations are restricted to verified farmers.
+                </p>
+            </div>
+
+            <p class="text-muted small">
+                You can browse the fresh marketplace, participate in quick-sell bulk deals, and track your purchases from your dashboard.
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                <a asp-controller="UI" asp-action="CustomerDashboard" class="btn farm-btn-primary">
+                    <i class="fa-solid fa-basket-shopping me-1"></i> Customer Dashboard
+                </a>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-outline-success">
+                    <i class="fa-solid fa-store me-1"></i> Shop Marketplace
+                </a>
+                <a asp-controller="QuickSell" asp-action="Index" class="btn btn-outline-danger">
+                    <i class="fa-solid fa-bolt me-1"></i> Quick Sell Deals
+                </a>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted my-3">
+                You do not have permission to view this resource. Please sign in with an authorized account or return to the homepage.
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 mt-4">
+                <a asp-controller="Account" asp-action="Login" class="btn farm-btn-primary">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-house me-1"></i> Home
+                </a>
+            </div>
+        }
     </div>
 </div>

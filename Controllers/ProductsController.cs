@@ -1,5 +1,6 @@
-﻿using FarmGrid.Data;
+using FarmGrid.Data;
 using FarmGrid.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -15,7 +16,7 @@ namespace FarmGrid.Controllers
             _context = context;
         }
 
-        // PRODUCT CATALOG
+        // PRODUCT CATALOG - Open to everyone
         public async Task<IActionResult> Index(
             string? search,
             string? category)
@@ -44,7 +45,7 @@ namespace FarmGrid.Controllers
                 products);
         }
 
-        // PRODUCT DETAILS
+        // PRODUCT DETAILS - Open to everyone
         public async Task<IActionResult> Details(int id)
         {
             var product = await _context.Products
@@ -62,7 +63,8 @@ namespace FarmGrid.Controllers
                 product);
         }
 
-        // CREATE - GET
+        // CREATE - GET (Strictly Farmer)
+        [Authorize(Roles = "Farmer")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -71,7 +73,8 @@ namespace FarmGrid.Controllers
                 new Product());
         }
 
-        // CREATE - POST
+        // CREATE - POST (Strictly Farmer)
+        [Authorize(Roles = "Farmer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -92,13 +95,14 @@ namespace FarmGrid.Controllers
             product.IsActive = true;
 
             _context.Products.Add(product);
-
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = $"Product '{product.Title}' listed successfully!";
             return RedirectToAction(nameof(Index));
         }
 
-        // EDIT - GET
+        // EDIT - GET (Strictly Farmer)
+        [Authorize(Roles = "Farmer")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -110,12 +114,20 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            {
+                TempData["Error"] = "You can only edit your own listed products.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(
                 "~/Views/UI/ProductForm.cshtml",
                 product);
         }
 
-        // EDIT - POST
+        // EDIT - POST (Strictly Farmer)
+        [Authorize(Roles = "Farmer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -135,6 +147,13 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            {
+                TempData["Error"] = "You can only modify your own products.";
+                return RedirectToAction(nameof(Index));
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(
@@ -142,30 +161,21 @@ namespace FarmGrid.Controllers
                     model);
             }
 
-            product.Title =
-                model.Title;
-
-            product.Category =
-                model.Category;
-
-            product.UnitMeasure =
-                model.UnitMeasure;
-
-            product.UnitPrice =
-                model.UnitPrice;
-
-            product.StockQuantity =
-                model.StockQuantity;
-
-            product.Description =
-                model.Description;
+            product.Title = model.Title;
+            product.Category = model.Category;
+            product.UnitMeasure = model.UnitMeasure;
+            product.UnitPrice = model.UnitPrice;
+            product.StockQuantity = model.StockQuantity;
+            product.Description = model.Description;
 
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = $"Product '{product.Title}' updated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
-        // DELETE
+        // DELETE (Strictly Farmer)
+        [Authorize(Roles = "Farmer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -178,10 +188,17 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
-            product.IsActive = false;
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            {
+                TempData["Error"] = "You can only remove your own products.";
+                return RedirectToAction(nameof(Index));
+            }
 
+            product.IsActive = false;
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = $"Product '{product.Title}' removed from catalog.";
             return RedirectToAction(nameof(Index));
         }
     }

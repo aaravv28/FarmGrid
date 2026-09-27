@@ -193,6 +193,26 @@
                                     </div>
                                 </div>
                             }
+                            else if (User.IsInRole("Farmer"))
+                            {
+                                <div class="card p-4 bg-light-subtle border rounded-3 text-center my-3">
+                                    <div class="text-success mb-2">
+                                        <i class="fa-solid fa-tractor fa-2x"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-1">Farmer Inspection Mode</h5>
+                                    <p class="text-muted small mb-3">
+                                        You are logged in as a <strong>Farmer</strong>. Quick Sell wholesale purchasing is reserved for <strong>Customers & B2B Buyers</strong>.
+                                    </p>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="UI" asp-action="FarmerDashboard" class="btn farm-btn-primary btn-sm">
+                                            <i class="fa-solid fa-tractor me-1"></i> Farmer Dashboard
+                                        </a>
+                                        <a asp-controller="QuickSell" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                                            Quick Sell Catalog
+                                        </a>
+                                    </div>
+                                </div>
+                            }
                             else
                             {
                                 <form asp-controller="QuickSell" asp-action="Purchase" method="post" id="purchaseForm">

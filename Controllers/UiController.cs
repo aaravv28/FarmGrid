@@ -23,7 +23,7 @@ namespace FarmGrid.Controllers
         }
 
         // FARMER DASHBOARD
-        [Authorize]
+        [Authorize(Roles = "Farmer")]
         public async Task<IActionResult> FarmerDashboard()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -96,7 +96,7 @@ namespace FarmGrid.Controllers
         }
 
         // CUSTOMER DASHBOARD
-        [Authorize]
+        [Authorize(Roles = "Customer,B2B Buyer")]
         public async Task<IActionResult> CustomerDashboard()
         {
             var user = await _userManager.GetUserAsync(User);
