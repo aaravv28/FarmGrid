@@ -142,40 +142,34 @@
 
                                 <ul class="dropdown-menu dropdown-menu-end">
 
-                                    <li>
+                                    @if (User.IsInRole("Farmer") || !User.IsInRole("Customer"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="UI"
+                                               asp-action="FarmerDashboard">
+                                                <i class="fa-solid fa-tractor me-2 text-success"></i> Farmer Dashboard
+                                            </a>
+                                        </li>
+                                    }
 
-                                        <a class="dropdown-item"
-                                           asp-controller="UI"
-                                           asp-action="FarmerDashboard">
-
-                                            Farmer Dashboard
-
-                                        </a>
-
-                                    </li>
-
-                                    <li>
-
-                                        <a class="dropdown-item"
-                                           asp-controller="UI"
-                                           asp-action="CustomerDashboard">
-
-                                            Customer Dashboard
-
-                                        </a>
-
-                                    </li>
+                                    @if (User.IsInRole("Customer") || User.IsInRole("B2B Buyer") || !User.IsInRole("Farmer"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="UI"
+                                               asp-action="CustomerDashboard">
+                                                <i class="fa-solid fa-basket-shopping me-2 text-primary"></i> Customer Dashboard
+                                            </a>
+                                        </li>
+                                    }
 
                                     <li>
-
                                         <a class="dropdown-item"
                                            asp-controller="Orders"
                                            asp-action="Index">
-
-                                            My Orders
-
+                                            <i class="fa-solid fa-box-open me-2 text-warning"></i> My Orders
                                         </a>
-
                                     </li>
 
                                     <li>

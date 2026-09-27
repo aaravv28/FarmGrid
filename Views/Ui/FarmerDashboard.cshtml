@@ -1,294 +1,338 @@
-﻿@{
+@model FarmGrid.ViewModels.FarmerDashboardViewModel
+@{
     ViewData["Title"] = "Farmer Dashboard";
 }
 
-<div class="dashboard-page">
-
+<div class="dashboard-page py-4">
     <div class="container">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
-        <div class="dashboard-header">
-
+        <div class="dashboard-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
-
-                <p class="small-label">
-                    Farmer Portal
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 mb-2">
+                    <i class="fa-solid fa-tractor me-1"></i> Farmer Portal
+                </span>
+                <h2 class="mb-1">Welcome back, @Model.FarmerName 👋</h2>
+                <p class="text-muted mb-0">
+                    <i class="fa-solid fa-location-dot me-1 text-danger"></i> @Model.Location • Manage produce sales, quick-sell decay listings, and transport.
                 </p>
-
-                <h2>
-                    Welcome back Ramesh 👋
-                </h2>
-
-                <p>
-                    Manage your produce sales quick sell
-                    listings and transport.
-                </p>
-
             </div>
 
-            <a asp-action="ProductForm"
-               class="btn farm-btn-primary">
-
-                <i class="fa-solid fa-plus"></i>
-                Add Product
-
-            </a>
-
-        </div>
-
-
-        <div class="row g-4 mb-5">
-
-            <div class="col-md-3">
-
-                <div class="stat-card">
-
-                    <i class="fa-solid fa-box"></i>
-
-                    <div>
-
-                        <h3>12</h3>
-
-                        <p>Active Products</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-3">
-
-                <div class="stat-card">
-
-                    <i class="fa-solid fa-bolt"></i>
-
-                    <div>
-
-                        <h3>4</h3>
-
-                        <p>Quick Sell</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-3">
-
-                <div class="stat-card">
-
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-
-                    <div>
-
-                        <h3>₹18,450</h3>
-
-                        <p>Total Earnings</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-3">
-
-                <div class="stat-card">
-
-                    <i class="fa-solid fa-truck"></i>
-
-                    <div>
-
-                        <h3>3</h3>
-
-                        <p>Transport Trips</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="dashboard-card mb-4">
-
-            <div class="card-title-row">
-
-                <h4>
-                    My Products
-                </h4>
-
-                <a asp-action="ProductCatalog">
-                    View All
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-controller="Products" asp-action="Create" class="btn farm-btn-primary">
+                    <i class="fa-solid fa-plus me-1"></i> Add Product
                 </a>
-
+                <a asp-controller="QuickSell" asp-action="Create" class="btn btn-outline-danger">
+                    <i class="fa-solid fa-bolt me-1"></i> New Quick Sell
+                </a>
+                <a asp-controller="Transport" asp-action="Create" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-truck me-1"></i> Log Trip
+                </a>
             </div>
-
-            <div class="table-responsive">
-
-                <table class="table farm-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>Fresh Tomatoes</td>
-                            <td>Vegetables</td>
-                            <td>₹40/kg</td>
-                            <td>120 kg</td>
-
-                            <td>
-                                <span class="status active">
-                                    Active
-                                </span>
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>Organic Milk</td>
-                            <td>Dairy</td>
-                            <td>₹65/L</td>
-                            <td>60 L</td>
-
-                            <td>
-                                <span class="status active">
-                                    Active
-                                </span>
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>Potatoes</td>
-                            <td>Vegetables</td>
-                            <td>₹30/kg</td>
-                            <td>240 kg</td>
-
-                            <td>
-                                <span class="status low">
-                                    Low Stock
-                                </span>
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
         </div>
 
-
-        <div class="row g-4">
-
-            <div class="col-lg-6">
-
-                <div class="dashboard-card">
-
-                    <div class="card-title-row">
-
-                        <h4>
-                            Quick Sell
-                        </h4>
-
-                        <a asp-action="QuickSell">
-                            View All
-                        </a>
-
+        <!-- Metric Stat Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card p-3 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3">
+                    <div class="p-3 bg-success-subtle text-success rounded-3 fs-3">
+                        <i class="fa-solid fa-box"></i>
                     </div>
-
-                    <div class="quick-dashboard-item">
-
-                        <div>
-
-                            <strong>Tomatoes</strong>
-
-                            <p>350 kg remaining</p>
-
-                        </div>
-
-                        <div>
-
-                            <strong class="green-text">
-                                ₹22.50/kg
-                            </strong>
-
-                            <p>24h remaining</p>
-
-                        </div>
-
+                    <div>
+                        <h3 class="mb-0 fw-bold">@Model.ActiveProductsCount</h3>
+                        <p class="text-muted small mb-0">Active Products</p>
                     </div>
-
                 </div>
-
             </div>
 
-
-            <div class="col-lg-6">
-
-                <div class="dashboard-card">
-
-                    <div class="card-title-row">
-
-                        <h4>
-                            Upcoming Transport
-                        </h4>
-
-                        <a asp-action="Transport">
-                            View All
-                        </a>
-
+            <div class="col-6 col-md-3">
+                <div class="stat-card p-3 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3">
+                    <div class="p-3 bg-danger-subtle text-danger rounded-3 fs-3">
+                        <i class="fa-solid fa-bolt"></i>
                     </div>
+                    <div>
+                        <h3 class="mb-0 fw-bold">@Model.ActiveQuickSellsCount</h3>
+                        <p class="text-muted small mb-0">Active Quick Sells</p>
+                    </div>
+                </div>
+            </div>
 
-                    <div class="transport-dashboard-item">
+            <div class="col-6 col-md-3">
+                <div class="stat-card p-3 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3">
+                    <div class="p-3 bg-warning-subtle text-warning rounded-3 fs-3">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0 fw-bold">₹@Model.TotalEarnings.ToString("N0")</h3>
+                        <p class="text-muted small mb-0">Total Sales</p>
+                    </div>
+                </div>
+            </div>
 
+            <div class="col-6 col-md-3">
+                <div class="stat-card p-3 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3">
+                    <div class="p-3 bg-primary-subtle text-primary rounded-3 fs-3">
                         <i class="fa-solid fa-truck"></i>
-
-                        <div>
-
-                            <strong>
-                                Central Mandi
-                            </strong>
-
-                            <p>
-                                26 Aug • 500 kg capacity available
-                            </p>
-
-                        </div>
-
                     </div>
-
+                    <div>
+                        <h3 class="mb-0 fw-bold">@Model.TransportTripsCount</h3>
+                        <p class="text-muted small mb-0">Transport Trips</p>
+                    </div>
                 </div>
-
             </div>
-
         </div>
 
-    </div>
+        <!-- My Products Table -->
+        <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <div class="card-title-row d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="fa-solid fa-leaf text-success me-2"></i> My Marketplace Products
+                </h4>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-sm btn-outline-success">
+                    View Catalog <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
 
+            @if (!Model.MyProducts.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    <p class="mb-2">You haven't listed any regular marketplace products yet.</p>
+                    <a asp-controller="Products" asp-action="Create" class="btn btn-sm farm-btn-primary">
+                        <i class="fa-solid fa-plus me-1"></i> List Produce
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Unit Price</th>
+                                <th>Stock Available</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var prod in Model.MyProducts)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">@prod.Title</div>
+                                        <small class="text-muted">ID #@prod.Id</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">@prod.Category</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">₹@prod.UnitPrice.ToString("F2")</strong> / @prod.UnitMeasure
+                                    </td>
+                                    <td>
+                                        @prod.StockQuantity @prod.UnitMeasure
+                                    </td>
+                                    <td>
+                                        @if (prod.StockQuantity <= 0)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Out of Stock</span>
+                                        }
+                                        else if (prod.StockQuantity < 20)
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Low Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-controller="Products" asp-action="Edit" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-secondary me-1">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-success">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- Active Quick Sells -->
+            <div class="col-lg-6">
+                <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+                    <div class="card-title-row d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fa-solid fa-bolt text-danger me-2"></i> Active Quick Sells (48h)
+                        </h4>
+                        <a asp-controller="QuickSell" asp-action="Index" class="btn btn-sm btn-outline-danger">
+                            View All <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    @if (!Model.MyQuickSells.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <p class="mb-2">No quick sell listings running right now.</p>
+                            <a asp-controller="QuickSell" asp-action="Create" class="btn btn-sm farm-btn-primary">
+                                <i class="fa-solid fa-plus me-1"></i> Create Quick Sell
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column gap-3">
+                            @foreach (var qs in Model.MyQuickSells)
+                            {
+                                var livePrice = qs.CalculateCurrentPrice();
+                                var rem = qs.GetRemainingTime();
+
+                                <div class="p-3 border rounded-3 bg-light-subtle d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <strong class="fs-6">@qs.CropTitle</strong>
+                                            <span class="badge @(qs.IsExpired() ? "bg-secondary" : "bg-danger")" style="font-size: 0.7rem;">
+                                                @(qs.IsExpired() ? "EXPIRED" : "LIVE DECAY")
+                                            </span>
+                                        </div>
+                                        <div class="small text-muted">
+                                            Available: <strong>@qs.AvailableQuantity @qs.UnitMeasure</strong> • Starts ₹@qs.StartingPrice -> Floor ₹@qs.FloorPrice
+                                        </div>
+                                        <div class="small text-danger mt-1">
+                                            <i class="fa-regular fa-clock me-1"></i>
+                                            @string.Format("{0:D2}h {1:D2}m remaining", (int)rem.TotalHours, rem.Minutes)
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fs-5 fw-bold text-success">₹@livePrice.ToString("F2")<small class="text-muted fs-6">/@qs.UnitMeasure</small></div>
+                                        <a asp-controller="QuickSell" asp-action="Details" asp-route-id="@qs.Id" class="btn btn-sm btn-outline-success mt-1">
+                                            Inspect
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Sell Sales / Orders -->
+            <div class="col-lg-6">
+                <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+                    <div class="card-title-row d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fa-solid fa-receipt text-primary me-2"></i> Recent Quick Sell Orders
+                        </h4>
+                        <span class="badge bg-primary-subtle text-primary border px-2 py-1">Wholesale Sales</span>
+                    </div>
+
+                    @if (!Model.RecentQuickSellOrders.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <p class="mb-0">No wholesale orders recorded yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 small">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Buyer</th>
+                                        <th>Produce</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ord in Model.RecentQuickSellOrders)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@ord.BuyerName</strong>
+                                                <div class="text-muted" style="font-size:0.75rem;">@ord.City</div>
+                                            </td>
+                                            <td>
+                                                @(ord.QuickSellListing?.CropTitle ?? "Produce")
+                                            </td>
+                                            <td>@ord.QuantityPurchased kg</td>
+                                            <td>
+                                                <strong class="text-success">₹@ord.TotalAmount.ToString("F2")</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success-subtle text-success border">@ord.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Transport Trips -->
+        <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="card-title-row d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="fa-solid fa-truck-front text-primary me-2"></i> Upcoming Transport Trips
+                </h4>
+                <a asp-controller="Transport" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                    Transport Hub <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            @if (!Model.MyTransportTrips.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    <p class="mb-2">No active group transport trips logged yet.</p>
+                    <a asp-controller="Transport" asp-action="Create" class="btn btn-sm farm-btn-primary">
+                        <i class="fa-solid fa-truck me-1"></i> Schedule a Group Trip
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var trip in Model.MyTransportTrips)
+                    {
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light-subtle h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary-subtle text-primary border">@trip.VehicleType</span>
+                                    <small class="text-muted">@trip.DispatchDate.ToString("dd MMM yyyy")</small>
+                                </div>
+                                <h5 class="fw-bold mb-1">
+                                    <i class="fa-solid fa-arrow-right text-success me-1"></i> @trip.DestinationMarket
+                                </h5>
+                                <p class="text-muted small mb-2">Host Cargo: @trip.HostCargoWeightKg kg</p>
+                                <div class="d-flex justify-content-between small text-secondary border-top pt-2">
+                                    <span>Available Capacity:</span>
+                                    <strong class="text-success">@trip.AvailableCapacityKg kg</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-secondary">
+                                    <span>Trip Cost:</span>
+                                    <strong>₹@trip.TotalVehicleCost.ToString("F2")</strong>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 </div>
