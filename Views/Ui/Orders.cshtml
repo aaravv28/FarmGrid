@@ -1,22 +1,26 @@
-﻿@model IEnumerable<FarmGrid.Models.Order>
+@model IEnumerable<FarmGrid.Models.Order>
 
 @{
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "My Orders";
 }
 
-<div class="dashboard-page">
+<div class="dashboard-page py-4">
 
     <div class="container">
 
-        <div class="page-heading">
+        <div class="page-heading d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
 
             <div>
 
-                <h2>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 mb-2">
+                    <i class="fa-solid fa-basket-shopping me-1"></i> Order History
+                </span>
+
+                <h2 class="mb-1">
                     My Orders
                 </h2>
 
-                <p>
+                <p class="text-muted mb-0">
                     Track current and previous FarmGrid orders.
                 </p>
 
@@ -26,25 +30,33 @@
                asp-action="Index"
                class="btn farm-btn-primary">
 
-                Continue Shopping
+                <i class="fa-solid fa-store me-1"></i> Continue Shopping
 
             </a>
 
         </div>
 
-        <div class="dashboard-card">
+        <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 bg-white">
 
             @if (!Model.Any())
             {
-                <div class="text-center">
+                <div class="text-center py-5">
+
+                    <div class="text-muted mb-3">
+                        <i class="fa-solid fa-box-open fa-4x text-success opacity-50"></i>
+                    </div>
 
                     <h4>
-                        No orders yet
+                        No orders placed yet
                     </h4>
 
-                    <p>
-                        Your FarmGrid orders will appear here.
+                    <p class="text-muted mb-3">
+                        Explore our fresh produce marketplace and support local farmers directly.
                     </p>
+
+                    <a asp-controller="Products" asp-action="Index" class="btn farm-btn-primary">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Explore Marketplace
+                    </a>
 
                 </div>
             }
@@ -52,17 +64,19 @@
             {
                 <div class="table-responsive">
 
-                    <table class="table farm-table">
+                    <table class="table table-hover align-middle mb-0">
 
-                        <thead>
+                        <thead class="table-light">
 
                             <tr>
 
                                 <th>Order ID</th>
                                 <th>Date</th>
                                 <th>Items</th>
+                                <th>Delivery City</th>
                                 <th>Total</th>
                                 <th>Status</th>
+                                <th class="text-end">Actions</th>
 
                             </tr>
 
@@ -75,7 +89,7 @@
                                 <tr>
 
                                     <td>
-                                        #FG@order.Id.ToString("D4")
+                                        <strong>#FG@order.Id.ToString("D4")</strong>
                                     </td>
 
                                     <td>
@@ -83,18 +97,49 @@
                                     </td>
 
                                     <td>
-                                        @order.OrderItems.Count
+                                        @if (order.OrderItems.Any())
+                                        {
+                                            @foreach (var item in order.OrderItems.Take(2))
+                                            {
+                                                <span class="badge bg-light text-dark border me-1">@item.Quantity @item.UnitMeasure @item.ProductTitle</span>
+                                            }
+                                            @if (order.OrderItems.Count > 2)
+                                            {
+                                                <small class="text-muted">+@(order.OrderItems.Count - 2) more</small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Direct Order</span>
+                                        }
                                     </td>
 
                                     <td>
-                                        ₹@order.TotalAmount.ToString("0.00")
+                                        <i class="fa-solid fa-location-dot me-1 text-danger small"></i> @order.City
+                                    </td>
+
+                                    <td>
+                                        <strong class="text-success">₹@order.TotalAmount.ToString("0.00")</strong>
                                     </td>
 
                                     <td>
 
-                                        <span class="status active">
+                                        <span class="badge @(order.Status == "Delivered" ? "bg-success" : "bg-warning-subtle text-warning border")">
                                             @order.Status
                                         </span>
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        <a asp-controller="Orders"
+                                           asp-action="Details"
+                                           asp-route-id="@order.Id"
+                                           class="btn btn-sm btn-outline-success">
+
+                                            <i class="fa-solid fa-receipt me-1"></i> Invoice
+
+                                        </a>
 
                                     </td>
 

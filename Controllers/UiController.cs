@@ -48,6 +48,14 @@ namespace FarmGrid.Controllers
                 .OrderByDescending(o => o.PurchasedAt)
                 .ToListAsync();
 
+            // Retrieve retail sales for this farmer's products
+            var retailOrders = await _context.OrderItems
+                .Include(oi => oi.Order)
+                .Include(oi => oi.Product)
+                .Where(oi => oi.Product != null && oi.Product.FarmerId == userId)
+                .OrderByDescending(oi => oi.Id)
+                .ToListAsync();
+
             // Retrieve transport trips hosted by this farmer
             var myTrips = await _context.TransportTrips
                 .Include(t => t.Participants)
@@ -74,6 +82,8 @@ namespace FarmGrid.Controllers
             }
 
             var totalQuickEarnings = quickSellOrders.Sum(o => o.TotalAmount);
+            var totalRetailEarnings = retailOrders.Sum(o => o.TotalPrice);
+            var totalCombinedEarnings = totalQuickEarnings + totalRetailEarnings;
             var activeProductCount = myProducts.Count(p => p.IsActive);
             var activeQuickSellCount = myQuickSells.Count(q => q.IsActive && !q.IsExpired());
 
@@ -84,11 +94,12 @@ namespace FarmGrid.Controllers
                 Location = !string.IsNullOrWhiteSpace(user?.City) ? $"{user.City}, {user.District}" : "Anand, Gujarat",
                 ActiveProductsCount = activeProductCount,
                 ActiveQuickSellsCount = activeQuickSellCount,
-                TotalEarnings = totalQuickEarnings > 0 ? totalQuickEarnings : 18450.00m,
+                TotalEarnings = totalCombinedEarnings > 0 ? totalCombinedEarnings : (totalQuickEarnings > 0 ? totalQuickEarnings : 18450.00m),
                 TransportTripsCount = myTrips.Count,
                 MyProducts = myProducts,
                 MyQuickSells = myQuickSells,
                 RecentQuickSellOrders = quickSellOrders,
+                RecentRetailOrders = retailOrders,
                 MyTransportTrips = myTrips
             };
 
@@ -166,7 +177,7 @@ namespace FarmGrid.Controllers
 
         public IActionResult Checkout()
         {
-            return RedirectToAction("Checkout", "Cart");
+            return RedirectToAction("Checkout", "Orders");
         }
 
         public IActionResult Orders()

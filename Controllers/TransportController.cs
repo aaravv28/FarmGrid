@@ -18,11 +18,20 @@ namespace FarmGrid.Controllers
             _context = context;
         }
 
-        // Transport landing page
-        // Do NOT show all trips automatically.
-        public IActionResult Index()
+        // Transport landing page with active open trips
+        public async Task<IActionResult> Index()
         {
-            return View("~/Views/UI/Transport.cshtml");
+            var farmerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var today = DateTime.Today;
+
+            var upcomingTrips = await _context.TransportTrips
+                .Include(t => t.Participants)
+                .Where(t => t.IsActive && t.DispatchDate >= today && t.AvailableCapacityKg > 0)
+                .OrderBy(t => t.DispatchDate)
+                .Take(6)
+                .ToListAsync();
+
+            return View("~/Views/UI/Transport.cshtml", upcomingTrips);
         }
 
         // Open Create Transport page
@@ -116,16 +125,33 @@ namespace FarmGrid.Controllers
                     .Include(t => t.Participants)
                     .Where(t =>
                         t.IsActive &&
-                        t.DestinationMarket ==
-                            destinationMarket &&
-                        t.DispatchDate.Date ==
-                            dispatchDate.Date &&
-                        t.AvailableCapacityKg >=
-                            requiredWeight &&
+                        t.DestinationMarket == destinationMarket &&
+                        t.DispatchDate.Date == dispatchDate.Date &&
+                        t.AvailableCapacityKg >= requiredWeight &&
                         t.FarmerId != farmerId)
                     .OrderBy(t =>
                         t.TotalVehicleCost)
                     .ToListAsync();
+
+            if (!matches.Any())
+            {
+                var nearbyMatches = await _context.TransportTrips
+                    .Include(t => t.Participants)
+                    .Where(t =>
+                        t.IsActive &&
+                        t.DestinationMarket == destinationMarket &&
+                        t.AvailableCapacityKg >= requiredWeight &&
+                        t.FarmerId != farmerId &&
+                        t.DispatchDate >= DateTime.Today)
+                    .OrderBy(t => t.DispatchDate)
+                    .ToListAsync();
+
+                if (nearbyMatches.Any())
+                {
+                    ViewBag.IsNearbyDateMatch = true;
+                    matches = nearbyMatches;
+                }
+            }
 
             ViewBag.RequiredWeight =
                 requiredWeight;

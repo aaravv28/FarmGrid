@@ -1,0 +1,160 @@
+@model FarmGrid.Models.Order
+@{
+    ViewData["Title"] = $"Order #FG{Model.Id:D4} Details";
+}
+
+<div class="dashboard-page py-4">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Orders" asp-action="Index">My Orders</a></li>
+                <li class="breadcrumb-item active">Order #FG@Model.Id.ToString("D4")</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 mb-2">
+                    <i class="fa-solid fa-receipt me-1"></i> Order Invoice
+                </span>
+                <h2 class="mb-1">Order #FG@Model.Id.ToString("D4")</h2>
+                <p class="text-muted mb-0">
+                    Placed on @Model.CreatedAt.ToString("dd MMMM yyyy, hh:mm tt")
+                </p>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Orders
+                </a>
+                <a asp-controller="Products" asp-action="Index" class="btn farm-btn-primary">
+                    <i class="fa-solid fa-store me-1"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Order Items Column -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fa-solid fa-basket-shopping text-success me-2"></i> Ordered Items (@Model.OrderItems.Count)
+                        </h4>
+                        <span class="badge @(Model.Status == "Delivered" ? "bg-success" : "bg-warning-subtle text-warning border") px-3 py-2 fs-6">
+                            @Model.Status
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Rate</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="p-2 bg-light-subtle rounded-3 text-success fs-4">
+                                                    <i class="fa-solid fa-seedling"></i>
+                                                </div>
+                                                <div>
+                                                    <strong class="d-block text-dark">@item.ProductTitle</strong>
+                                                    <small class="text-muted">Item ID #@item.ProductId</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>₹@item.UnitPrice.ToString("F2") / @item.UnitMeasure</td>
+                                        <td><strong>@item.Quantity @item.UnitMeasure</strong></td>
+                                        <td class="text-end">
+                                            <strong class="text-success fs-6">₹@item.TotalPrice.ToString("F2")</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Delivery Information Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fa-solid fa-truck-ramp-box text-primary me-2"></i> Delivery & Dispatch Details
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3">
+                                <small class="text-muted d-block">Recipient Name</small>
+                                <strong class="text-dark">@Model.CustomerName</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3">
+                                <small class="text-muted d-block">Contact Phone</small>
+                                <strong class="text-dark">@Model.PhoneNumber</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="p-3 bg-light rounded-3">
+                                <small class="text-muted d-block">Delivery Address</small>
+                                <strong class="text-dark">@Model.DeliveryAddress, @Model.City</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3">
+                                <small class="text-muted d-block">Delivery Slot</small>
+                                <strong class="text-dark">@(string.IsNullOrWhiteSpace(Model.DeliverySlot) ? "Standard Slot" : Model.DeliverySlot)</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Breakdown Column -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-bold mb-3">Payment Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal:</span>
+                        <strong>₹@Model.Subtotal.ToString("F2")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Delivery Charges:</span>
+                        <strong>₹@Model.DeliveryCharge.ToString("F2")</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fs-5 fw-bold text-dark">Total Amount:</span>
+                        <span class="fs-4 fw-bolder text-success">₹@Model.TotalAmount.ToString("F2")</span>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="fa-solid fa-money-bill-wave text-success"></i>
+                            <span class="small text-muted">Payment Method:</span>
+                        </div>
+                        <strong class="d-block">@Model.PaymentMethod</strong>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-success-subtle border border-success-subtle text-success">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fa-solid fa-leaf fs-4"></i>
+                        <h6 class="mb-0 fw-bold">Direct From Farmers</h6>
+                    </div>
+                    <p class="small mb-0 text-success-emphasis">
+                        Your purchase directly supports verified local producers with zero middleman commissions. Thank you for empowering sustainable local farming!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

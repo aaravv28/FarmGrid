@@ -37,6 +37,12 @@ namespace FarmGrid.Controllers
                 cartItems);
         }
 
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return RedirectToAction("Index", "Products");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(

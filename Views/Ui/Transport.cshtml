@@ -1,26 +1,27 @@
-﻿@{
+@model IEnumerable<FarmGrid.Models.TransportTrip>
+
+@{
     ViewData["Title"] = "Shared Transport";
 }
 
-<div class="transport-page">
+<div class="transport-page py-4">
 
     <div class="container">
 
-        <div class="page-heading">
+        <div class="page-heading d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
 
             <div>
 
-                <span class="farm-badge">
-                    Smart Logistics
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+                    <i class="fa-solid fa-truck-moving me-1"></i> Smart Logistics
                 </span>
 
-                <h2>
+                <h2 class="mb-1">
                     Shared Farmer Transport
                 </h2>
 
-                <p>
-                    Find matching farmer transport trips
-                    and reduce delivery costs.
+                <p class="text-muted mb-0">
+                    Find matching farmer transport trips, pool vehicle capacity, and cut transit expenses.
                 </p>
 
             </div>
@@ -30,18 +31,14 @@
                 <a asp-controller="Transport"
                    asp-action="MyTrips"
                    class="btn farm-btn-outline">
-
-                    My Trips
-
+                    <i class="fa-solid fa-list-check me-1"></i> My Trips
                 </a>
 
                 <a asp-controller="Transport"
                    asp-action="Create"
                    class="btn farm-btn-primary">
 
-                    <i class="fa-solid fa-plus"></i>
-
-                    Create Transport Trip
+                    <i class="fa-solid fa-plus me-1"></i> Create Transport Trip
 
                 </a>
 
@@ -51,27 +48,29 @@
 
         @if (TempData["Success"] != null)
         {
-            <div class="alert alert-success">
-                @TempData["Success"]
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
         @if (TempData["Error"] != null)
         {
-            <div class="alert alert-danger">
-                @TempData["Error"]
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
-        <div class="dashboard-card">
+        <!-- Search / Filter Card -->
+        <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
 
-            <h4 class="mb-2">
-                Find Matching Transport
+            <h4 class="fw-bold mb-2">
+                <i class="fa-solid fa-magnifying-glass text-success me-2"></i> Find Matching Transport
             </h4>
 
             <p class="text-muted mb-4">
-                Enter your destination date and required
-                cargo weight to find suitable trips.
+                Enter your destination market, dispatch date, and required cargo weight to find matching pooled trips.
             </p>
 
             <form asp-controller="Transport"
@@ -82,7 +81,7 @@
 
                     <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
                             Destination Market
                         </label>
 
@@ -112,20 +111,21 @@
 
                     <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
                             Dispatch Date
                         </label>
 
                         <input type="date"
                                name="dispatchDate"
                                class="form-control"
+                               value="@DateTime.Today.ToString("yyyy-MM-dd")"
                                required />
 
                     </div>
 
                     <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
                             Required Cargo Weight
                         </label>
 
@@ -139,7 +139,7 @@
                                    placeholder="Example 300"
                                    required />
 
-                            <span class="input-group-text">
+                            <span class="input-group-text bg-light">
                                 kg
                             </span>
 
@@ -152,15 +152,73 @@
                 <button type="submit"
                         class="btn farm-btn-primary">
 
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    Find Matching Transport
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Find Matching Transport
 
                 </button>
 
             </form>
 
         </div>
+
+        <!-- Upcoming Active Scheduled Trips -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 bg-white">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fa-solid fa-truck text-primary me-2"></i> Open Scheduled Trips
+                    </h4>
+                    <span class="badge bg-primary-subtle text-primary border px-3 py-1">Available for Pooling</span>
+                </div>
+
+                <div class="row g-3">
+                    @foreach (var trip in Model)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 border rounded-3 bg-light-subtle h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-success-subtle text-success border">@trip.VehicleType</span>
+                                        <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> @trip.DispatchDate.ToString("dd MMM yyyy")</small>
+                                    </div>
+
+                                    <h5 class="fw-bold mb-1 text-dark">
+                                        <i class="fa-solid fa-location-dot text-danger me-1"></i> @trip.DestinationMarket
+                                    </h5>
+
+                                    <p class="text-muted small mb-2">
+                                        Host Cargo: <strong>@trip.HostCargoWeightKg kg</strong>
+                                    </p>
+
+                                    <div class="d-flex justify-content-between small text-secondary border-top pt-2">
+                                        <span>Spare Capacity:</span>
+                                        <strong class="text-success fs-6">@trip.AvailableCapacityKg kg</strong>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between small text-secondary">
+                                        <span>Total Vehicle Cost:</span>
+                                        <strong>₹@trip.TotalVehicleCost.ToString("F2")</strong>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <a asp-controller="Transport"
+                                       asp-action="Suggestions"
+                                       asp-route-destinationMarket="@trip.DestinationMarket"
+                                       asp-route-dispatchDate="@trip.DispatchDate.ToString("yyyy-MM-dd")"
+                                       asp-route-requiredWeight="@Math.Min(trip.AvailableCapacityKg, 100)"
+                                       class="btn btn-sm btn-outline-success w-100">
+                                        <i class="fa-solid fa-handshake me-1"></i> Request to Join
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        }
 
     </div>
 

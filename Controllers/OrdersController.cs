@@ -2,6 +2,7 @@ using FarmGrid.Data;
 using FarmGrid.Models;
 using FarmGrid.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -12,10 +13,14 @@ namespace FarmGrid.Controllers
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -54,9 +59,19 @@ namespace FarmGrid.Controllers
 
             LoadCheckoutSummary(cartItems);
 
+            var user = await _userManager.GetUserAsync(User);
+            var model = new CheckoutViewModel();
+            if (user != null)
+            {
+                model.CustomerName = user.FullName;
+                model.PhoneNumber = user.PhoneNumber ?? string.Empty;
+                model.City = user.City ?? string.Empty;
+                model.DeliveryAddress = !string.IsNullOrWhiteSpace(user.District) ? $"{user.City}, {user.District}" : (user.City ?? string.Empty);
+            }
+
             return View(
                 "~/Views/UI/Checkout.cshtml",
-                new CheckoutViewModel());
+                model);
         }
 
         [HttpPost]
@@ -221,8 +236,8 @@ namespace FarmGrid.Controllers
             }
 
             return View(
-                "~/Views/UI/Orders.cshtml",
-                new List<Order> { order });
+                "~/Views/UI/OrderDetails.cshtml",
+                order);
         }
 
         private void LoadCheckoutSummary(

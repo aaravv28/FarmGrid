@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.Models
 {
@@ -14,8 +15,9 @@ namespace FarmGrid.Models
         public Product? Product { get; set; }
 
         [Range(0.01, double.MaxValue)]
+        [Precision(18, 2)]
         public decimal Quantity { get; set; }
 
         public DateTime AddedAt { get; set; } = DateTime.Now;
     }
-}
+}
