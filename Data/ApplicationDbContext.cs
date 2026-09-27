@@ -24,9 +24,19 @@ namespace FarmGrid.Data
 
         public DbSet<TransportParticipant> TransportParticipants { get; set; }
 
+        public DbSet<QuickSellListing> QuickSellListings { get; set; }
+
+        public DbSet<QuickSellOrder> QuickSellOrders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<QuickSellOrder>()
+                .HasOne(qso => qso.QuickSellListing)
+                .WithMany(qsl => qsl.Orders)
+                .HasForeignKey(qso => qso.QuickSellListingId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<CartItem>()
                 .HasOne(c => c.Product)

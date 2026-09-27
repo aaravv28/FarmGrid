@@ -51,17 +51,21 @@ namespace FarmGrid.Controllers
 
         public IActionResult QuickSell()
         {
-            return View();
+            return RedirectToAction("Index", "QuickSell");
         }
 
         public IActionResult QuickSellCreate()
         {
-            return View();
+            return RedirectToAction("Create", "QuickSell");
         }
 
-        public IActionResult QuickSellDetails()
+        public IActionResult QuickSellDetails(int? id)
         {
-            return View();
+            if (id.HasValue)
+            {
+                return RedirectToAction("Details", "QuickSell", new { id = id.Value });
+            }
+            return RedirectToAction("Index", "QuickSell");
         }
 
         public IActionResult Transport()

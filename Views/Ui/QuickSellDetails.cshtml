@@ -1,99 +1,385 @@
-﻿@{
-    ViewData["Title"] = "Quick Sell Details";
+@model FarmGrid.Models.QuickSellListing
+@{
+    ViewData["Title"] = $"{Model.CropTitle} - Quick Sell";
+    var currentPrice = Model.CalculateCurrentPrice();
+    var remaining = Model.GetRemainingTime();
+    var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, 50) });
+    var isExpired = Model.IsExpired();
+    var isFarmerOwner = User.Identity?.Name == Model.FarmerName || User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.FarmerId;
 }
 
-<div class="detail-page">
-
+<div class="detail-page py-4">
     <div class="container">
-
-        <div class="row g-5">
-
-            <div class="col-lg-6">
-
-                <div class="quick-large-image">
-
-                    <i class="fa-solid fa-seedling"></i>
-
-                    <span class="urgent-badge">
-                        URGENT HARVEST
-                    </span>
-
-                </div>
-
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="QuickSell" asp-action="Index">Quick Sell</a></li>
+                <li class="breadcrumb-item active">@Model.CropTitle</li>
+            </ol>
+        </nav>
 
+        <div class="row g-4">
+            <!-- Left Column: Visuals & Listing Information -->
             <div class="col-lg-6">
-
-                <h1>
-                    Bulk Tomatoes
-                </h1>
-
-                <p class="farmer-origin">
-
-                    Ramesh Farms • Anand
-
-                </p>
-
-                <div class="live-price-card">
-
-                    <small>
-                        Current Live Price
-                    </small>
-
-                    <h2 id="liveQuickPrice">
-                        ₹22.50/kg
-                    </h2>
-
-                    <p>
-
-                        Starting price
-                        <del>
-                            ₹30
-                        </del>
-
-                        • Floor price
-                        ₹15
-
-                    </p>
-
-                    <div class="big-countdown">
-
-                        <i class="fa-regular fa-clock"></i>
-
-                        <span id="quickTimer">
-                            24:15:30
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white mb-4">
+                    <div class="py-5 bg-light rounded-4 position-relative mb-4">
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-3 py-2 fs-6">
+                            <i class="fa-solid fa-bolt me-1"></i> URGENT HARVEST
                         </span>
-
+                        
+                        <div class="text-success my-4" style="font-size: 5.5rem;">
+                            @if (Model.Category == "Fruits")
+                            {
+                                <i class="fa-solid fa-apple-whole"></i>
+                            }
+                            else if (Model.CropTitle.Contains("Tomato", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <i class="fa-solid fa-seedling"></i>
+                            }
+                            else if (Model.CropTitle.Contains("Carrot", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <i class="fa-solid fa-carrot"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-leaf"></i>
+                            }
+                        </div>
                     </div>
 
+                    <div class="text-start">
+                        <h3 class="fw-bold mb-2">Harvest Description</h3>
+                        <p class="text-muted">
+                            @(string.IsNullOrWhiteSpace(Model.Description) ? "Fresh direct-from-farm harvest available for immediate bulk clearance." : Model.Description)
+                        </p>
+
+                        <div class="row g-2 mt-2">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <small class="text-muted d-block">Listed By</small>
+                                    <strong class="text-dark"><i class="fa-solid fa-tractor me-1 text-success"></i> @Model.FarmerName</strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <small class="text-muted d-block">Location</small>
+                                    <strong class="text-dark"><i class="fa-solid fa-location-dot me-1 text-danger"></i> @Model.Location</strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <small class="text-muted d-block">Initial Bulk Lot</small>
+                                    <strong class="text-dark">@Model.BulkQuantity @Model.UnitMeasure</strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <small class="text-muted d-block">Remaining Stock</small>
+                                    <strong class="text-success fs-6">@Model.AvailableQuantity @Model.UnitMeasure</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <p>
-
-                    <strong>Available Quantity:</strong>
-                    350 kg
-
-                </p>
-
-                <label class="form-label">
-                    Bulk Quantity Required
-                </label>
-
-                <input type="number"
-                       class="form-control mb-3"
-                       placeholder="kg" />
-
-                <button class="btn farm-btn-primary btn-lg w-100">
-
-                    Purchase at Current Price
-
-                </button>
-
+                <!-- 48-Hour Decay Mechanics Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-light-subtle">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="bg-success text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fa-solid fa-chart-line-down"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Dynamic Time-Decay Model</h5>
+                    </div>
+                    <p class="small text-muted mb-2">
+                        Every minute, the price decreases continuously according to the 48-hour formula:
+                    </p>
+                    <code class="d-block p-2 bg-white rounded border small text-dark mb-2">
+                        CurrentPrice = Max(FloorPrice, StartPrice - [(StartPrice - FloorPrice) / 48h] * ElapsedHours)
+                    </code>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>• Starts at: <strong>₹@Model.StartingPrice.ToString("F2")/kg</strong></span>
+                        <span>• Floor limit: <strong>₹@Model.FloorPrice.ToString("F2")/kg</strong></span>
+                    </div>
+                </div>
             </div>
 
+            <!-- Right Column: Live Price & Purchase Form -->
+            <div class="col-lg-6">
+                <!-- Live Price Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 mb-2">
+                                <i class="fa-solid fa-satellite-dish me-1"></i> LIVE TICKER
+                            </span>
+                            <h2 class="fw-bold mb-0">@Model.CropTitle</h2>
+                            <p class="text-muted small">Category: @Model.Category</p>
+                        </div>
+                        <span class="badge @(isExpired ? "bg-secondary" : "bg-danger") px-3 py-2 fs-6">
+                            @(isExpired ? "EXPIRED" : "ACTIVE")
+                        </span>
+                    </div>
+
+                    <div class="live-price-card p-4 rounded-3 text-center my-3 bg-light border">
+                        <small class="text-uppercase fw-bold text-muted tracking-wider d-block mb-1">
+                            Current Live Price
+                        </small>
+                        <h1 id="liveQuickPrice" class="text-success display-4 fw-bolder mb-2">
+                            ₹@currentPrice.ToString("F2")<span class="fs-4 text-muted font-monospace">/@Model.UnitMeasure</span>
+                        </h1>
+
+                        <div class="d-flex justify-content-center align-items-center gap-3 mb-3 text-muted">
+                            <div>
+                                <small class="d-block text-muted">Starting</small>
+                                <del class="text-danger fw-bold">₹@Model.StartingPrice.ToString("F2")</del>
+                            </div>
+                            <div class="vr"></div>
+                            <div>
+                                <small class="d-block text-muted">Guaranteed Floor</small>
+                                <span class="fw-bold text-dark">₹@Model.FloorPrice.ToString("F2")</span>
+                            </div>
+                        </div>
+
+                        <!-- Live Countdown Clock -->
+                        <div class="big-countdown p-3 rounded-pill bg-danger-subtle text-danger d-inline-flex align-items-center gap-2 px-4 shadow-sm">
+                            <i class="fa-regular fa-clock fs-5"></i>
+                            <span id="quickTimer" class="fs-5 fw-bold font-monospace">
+                                @string.Format("{0:D2}:{1:D2}:{2:D2}", (int)remaining.TotalHours, remaining.Minutes, remaining.Seconds)
+                            </span>
+                            <small class="text-danger-emphasis">remaining</small>
+                        </div>
+                    </div>
+
+                    @if (isExpired)
+                    {
+                        <div class="alert alert-secondary text-center my-3" role="alert">
+                            <i class="fa-solid fa-lock me-2"></i> This quick sell listing has closed.
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Purchase Checkout Section -->
+                        <div class="mt-4">
+                            <h4 class="fw-bold mb-3">
+                                <i class="fa-solid fa-cart-shopping text-success me-2"></i> Buy Bulk Produce
+                            </h4>
+
+                            @if (!User.Identity?.IsAuthenticated == true)
+                            {
+                                <div class="card p-4 text-center bg-light border-0 rounded-3">
+                                    <p class="mb-2 fw-semibold">Please sign in to place wholesale and retail bulk orders.</p>
+                                    <div class="d-flex justify-content-center gap-2 mt-2">
+                                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "QuickSell", new { id = Model.Id })" class="btn farm-btn-primary">
+                                            <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In to Buy
+                                        </a>
+                                        <a asp-controller="Account" asp-action="Register" class="btn btn-outline-secondary">
+                                            Register
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-controller="QuickSell" asp-action="Purchase" method="post" id="purchaseForm">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="ListingId" value="@Model.Id" />
+
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label fw-semibold mb-0">Quantity Required (kg)</label>
+                                            <small class="text-muted">Available: <strong>@Model.AvailableQuantity kg</strong></small>
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="number" id="purchaseQuantity" name="Quantity"
+                                                   class="form-control form-control-lg"
+                                                   min="1" max="@Model.AvailableQuantity"
+                                                   value="@purchaseModel.Quantity" step="1" required />
+                                            <span class="input-group-text bg-light">kg</span>
+                                        </div>
+                                        <!-- Quick Presets -->
+                                        <div class="d-flex gap-2 mt-2">
+                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="25">25 kg</button>
+                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="50">50 kg</button>
+                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="100">100 kg</button>
+                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="@Model.AvailableQuantity">All (@Model.AvailableQuantity kg)</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-semibold">Buyer / Business Name</label>
+                                            <input type="text" name="BuyerName" class="form-control" value="@purchaseModel.BuyerName" required />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-semibold">Contact Phone</label>
+                                            <input type="tel" name="BuyerPhone" class="form-control" value="@purchaseModel.BuyerPhone" placeholder="+91" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label small fw-semibold">Delivery / Warehouse Address</label>
+                                            <input type="text" name="DeliveryAddress" class="form-control" value="@purchaseModel.DeliveryAddress" required />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-semibold">City</label>
+                                            <input type="text" name="City" class="form-control" value="@purchaseModel.City" required />
+                                        </div>
+                                    </div>
+
+                                    <!-- Estimated Cost Breakdown Box -->
+                                    <div class="card p-3 bg-success-subtle border border-success-subtle rounded-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-success fw-bold">Live Unit Price:</span>
+                                            <strong id="calcUnitPrice" class="text-dark">₹@currentPrice.ToString("F2")/kg</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-success fw-bold">Order Quantity:</span>
+                                            <strong id="calcQty" class="text-dark">@purchaseModel.Quantity kg</strong>
+                                        </div>
+                                        <hr class="my-2 border-success-subtle" />
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fs-5 fw-bold text-success-emphasis">Estimated Total:</span>
+                                            <span id="calcTotal" class="fs-4 fw-bolder text-success">
+                                                ₹@((purchaseModel.Quantity * currentPrice).ToString("F2"))
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn farm-btn-primary btn-lg w-100 py-3 shadow-sm" id="btnSubmitPurchase">
+                                        <i class="fa-solid fa-lock me-1"></i> Lock Price & Place Order
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
-
     </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const listingId = @Model.Id;
+            const startPrice = @Model.StartingPrice;
+            const floorPrice = @Model.FloorPrice;
+            const durationHours = @Model.DurationHours;
+            const createdAt = new Date("@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")");
+            const expiresAt = new Date("@Model.ExpiresAt.ToString("yyyy-MM-ddTHH:mm:ss")");
+            const availableQuantity = @Model.AvailableQuantity;
+
+            const livePriceEl = document.getElementById("liveQuickPrice");
+            const timerEl = document.getElementById("quickTimer");
+            const calcUnitPriceEl = document.getElementById("calcUnitPrice");
+            const calcQtyEl = document.getElementById("calcQty");
+            const calcTotalEl = document.getElementById("calcTotal");
+            const qtyInput = document.getElementById("purchaseQuantity");
+            const btnSubmit = document.getElementById("btnSubmitPurchase");
+
+            let currentLivePrice = @currentPrice;
+
+            function calculateCurrentDecayPrice() {
+                const now = new Date();
+                const elapsedMs = now - createdAt;
+                const elapsedHours = elapsedMs / (1000 * 60 * 60);
+
+                if (elapsedHours <= 0) return startPrice;
+                if (elapsedHours >= durationHours || now >= expiresAt) return floorPrice;
+
+                const hourlyDrop = (startPrice - floorPrice) / durationHours;
+                const calculated = startPrice - (hourlyDrop * elapsedHours);
+                return Math.max(floorPrice, Math.round(calculated * 100) / 100);
+            }
+
+            function updateTick() {
+                const now = new Date();
+                const diffMs = expiresAt - now;
+
+                if (diffMs <= 0) {
+                    if (timerEl) timerEl.innerText = "00:00:00";
+                    if (livePriceEl) livePriceEl.innerHTML = `₹${floorPrice.toFixed(2)}<span class="fs-4 text-muted font-monospace">/kg</span>`;
+                    return;
+                }
+
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                if (timerEl) {
+                    timerEl.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+
+                currentLivePrice = calculateCurrentDecayPrice();
+                if (livePriceEl) {
+                    livePriceEl.innerHTML = `₹${currentLivePrice.toFixed(2)}<span class="fs-4 text-muted font-monospace">/kg</span>`;
+                }
+
+                recalculateOrderTotal();
+            }
+
+            function recalculateOrderTotal() {
+                if (!qtyInput) return;
+                const qty = parseFloat(qtyInput.value) || 0;
+                const total = Math.round(qty * currentLivePrice * 100) / 100;
+
+                if (calcUnitPriceEl) calcUnitPriceEl.innerText = `₹${currentLivePrice.toFixed(2)}/kg`;
+                if (calcQtyEl) calcQtyEl.innerText = `${qty} kg`;
+                if (calcTotalEl) calcTotalEl.innerText = `₹${total.toFixed(2)}`;
+
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-lock me-1"></i> Lock Price & Place Order (₹${total.toFixed(2)})`;
+                }
+            }
+
+            // Sync with backend API every 30 seconds to stay aligned with server clock
+            function syncWithServer() {
+                fetch(`/api/quicksell/price/${listingId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.currentPrice) {
+                            currentLivePrice = data.currentPrice;
+                            recalculateOrderTotal();
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            // Presets buttons
+            document.querySelectorAll(".preset-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const val = parseFloat(this.getAttribute("data-qty"));
+                    if (qtyInput) {
+                        qtyInput.value = Math.min(val, availableQuantity);
+                        recalculateOrderTotal();
+                    }
+                });
+            });
+
+            if (qtyInput) {
+                qtyInput.addEventListener("input", recalculateOrderTotal);
+            }
+
+            setInterval(updateTick, 1000);
+            setInterval(syncWithServer, 30000);
+            updateTick();
+        });
+    </script>
+}
