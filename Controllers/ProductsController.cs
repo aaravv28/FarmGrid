@@ -1,5 +1,6 @@
 using FarmGrid.Data;
 using FarmGrid.Models;
+using FarmGrid.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +70,7 @@ namespace FarmGrid.Controllers
         {
             return View(
                 "~/Views/UI/ProductForm.cshtml",
-                new Product());
+                new ProductInputModel());
         }
 
         // CREATE - POST (Strictly Farmer)
@@ -77,21 +78,22 @@ namespace FarmGrid.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            Product product)
+            ProductInputModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(
                     "~/Views/UI/ProductForm.cshtml",
-                    product);
+                    model);
             }
 
-            product.FarmerId =
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier);
-
-            product.CreatedAt = DateTime.Now;
-            product.IsActive = true;
+            var product = new Product
+            {
+                FarmerId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                CreatedAt = DateTime.Now,
+                IsActive = true
+            };
+            model.ApplyTo(product);
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -122,7 +124,7 @@ namespace FarmGrid.Controllers
 
             return View(
                 "~/Views/UI/ProductForm.cshtml",
-                product);
+                ProductInputModel.From(product));
         }
 
         // EDIT - POST (Strictly Farmer)
@@ -131,7 +133,7 @@ namespace FarmGrid.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            Product model)
+            ProductInputModel model)
         {
             if (id != model.Id)
             {
@@ -160,12 +162,7 @@ namespace FarmGrid.Controllers
                     model);
             }
 
-            product.Title = model.Title;
-            product.Category = model.Category;
-            product.UnitMeasure = model.UnitMeasure;
-            product.UnitPrice = model.UnitPrice;
-            product.StockQuantity = model.StockQuantity;
-            product.Description = model.Description;
+            model.ApplyTo(product);
 
             await _context.SaveChangesAsync();
 

@@ -39,13 +39,13 @@ namespace FarmGrid.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View("~/Views/UI/TransportCreate.cshtml");
+            return View("~/Views/UI/TransportCreate.cshtml", new TripInputModel());
         }
 
         // Create new transport trip
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TransportTrip trip)
+        public async Task<IActionResult> Create(TripInputModel model)
         {
             var farmerId =
                 User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -55,18 +55,25 @@ namespace FarmGrid.Controllers
                 return Challenge();
             }
 
-            ModelState.Remove(nameof(TransportTrip.FarmerId));
-
             if (!ModelState.IsValid)
             {
                 return View(
                     "~/Views/UI/TransportCreate.cshtml",
-                    trip);
+                    model);
             }
 
-            trip.FarmerId = farmerId;
-            trip.CreatedAt = DateTime.Now;
-            trip.IsActive = true;
+            var trip = new TransportTrip
+            {
+                FarmerId = farmerId,
+                DestinationMarket = model.DestinationMarket,
+                DispatchDate = model.DispatchDate,
+                VehicleType = model.VehicleType,
+                TotalVehicleCost = model.TotalVehicleCost,
+                HostCargoWeightKg = model.HostCargoWeightKg,
+                AvailableCapacityKg = model.AvailableCapacityKg,
+                CreatedAt = DateTime.Now,
+                IsActive = true
+            };
 
             _context.TransportTrips.Add(trip);
 
