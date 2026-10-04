@@ -12,6 +12,8 @@ namespace FarmGrid.Data
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
+            var utcNow = time.GetUtcNow().UtcDateTime;
 
             // 1. Ensure Database & Migrations are applied
             await context.Database.MigrateAsync();
@@ -69,7 +71,7 @@ namespace FarmGrid.Data
                         City = u.City,
                         District = u.District,
                         EmailConfirmed = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     };
 
                     var result = await userManager.CreateAsync(user, u.Password);
@@ -110,7 +112,7 @@ namespace FarmGrid.Data
                         StockQuantity = 120,
                         Description = "Naturally vine-ripened red hybrid tomatoes, harvested daily without synthetic pesticides.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -122,7 +124,7 @@ namespace FarmGrid.Data
                         StockQuantity = 350,
                         Description = "Locally grown clean dirt-free yellow potatoes, perfect for daily domestic and commercial cooking.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -134,7 +136,7 @@ namespace FarmGrid.Data
                         StockQuantity = 150,
                         Description = "Crisp, sweet, and juicy handpicked mountain apples from high-altitude orchards.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -146,7 +148,7 @@ namespace FarmGrid.Data
                         StockQuantity = 200,
                         Description = "Rich in Vitamin C, naturally sweet and tangy fresh citrus oranges directly from farmer groves.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -158,7 +160,7 @@ namespace FarmGrid.Data
                         StockQuantity = 45,
                         Description = "Hand-churned A2 desi cow ghee prepared through traditional curd-bilona wood-fire processing.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -170,7 +172,7 @@ namespace FarmGrid.Data
                         StockQuantity = 80,
                         Description = "100% pure raw whole buffalo milk with high natural fat content, chilled and packed fresh.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -182,7 +184,7 @@ namespace FarmGrid.Data
                         StockQuantity = 500,
                         Description = "Aged extra-long grain fragrant basmati rice directly processed from local paddy farmers.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     },
                     new Product
                     {
@@ -194,7 +196,7 @@ namespace FarmGrid.Data
                         StockQuantity = 800,
                         Description = "Golden heavy-kernel Sharbati wheat grains, cleaned and graded for wholesome soft rotis.",
                         IsActive = true,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = utcNow
                     }
                 };
 
@@ -205,7 +207,7 @@ namespace FarmGrid.Data
             // 5. Seed QuickSell Listings
             if (!await context.QuickSellListings.AnyAsync())
             {
-                var now = DateTime.Now;
+                var now = utcNow;
                 var sampleQuickSells = new List<QuickSellListing>
                 {
                     new QuickSellListing
@@ -271,7 +273,7 @@ namespace FarmGrid.Data
             // 6. Seed Shared Transport Trips
             if (!await context.TransportTrips.AnyAsync())
             {
-                var today = DateTime.Today;
+                var today = IndiaTime.Today(time);
 
                 var trip1 = new TransportTrip
                 {
@@ -283,7 +285,7 @@ namespace FarmGrid.Data
                     HostCargoWeightKg = 600.00m,
                     AvailableCapacityKg = 900.00m,
                     IsActive = true,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = utcNow
                 };
 
                 var trip2 = new TransportTrip
@@ -296,7 +298,7 @@ namespace FarmGrid.Data
                     HostCargoWeightKg = 1200.00m,
                     AvailableCapacityKg = 1300.00m,
                     IsActive = true,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = utcNow
                 };
 
                 var trip3 = new TransportTrip
@@ -309,7 +311,7 @@ namespace FarmGrid.Data
                     HostCargoWeightKg = 2500.00m,
                     AvailableCapacityKg = 2000.00m,
                     IsActive = true,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = utcNow
                 };
 
                 context.TransportTrips.AddRange(trip1, trip2, trip3);
@@ -324,7 +326,7 @@ namespace FarmGrid.Data
                         CargoWeightKg = trip1.HostCargoWeightKg,
                         FareShare = trip1.TotalVehicleCost,
                         IsHost = true,
-                        JoinedAt = DateTime.Now
+                        JoinedAt = utcNow
                     },
                     new TransportParticipant
                     {
@@ -333,7 +335,7 @@ namespace FarmGrid.Data
                         CargoWeightKg = trip2.HostCargoWeightKg,
                         FareShare = trip2.TotalVehicleCost,
                         IsHost = true,
-                        JoinedAt = DateTime.Now
+                        JoinedAt = utcNow
                     },
                     new TransportParticipant
                     {
@@ -342,7 +344,7 @@ namespace FarmGrid.Data
                         CargoWeightKg = trip3.HostCargoWeightKg,
                         FareShare = trip3.TotalVehicleCost,
                         IsHost = true,
-                        JoinedAt = DateTime.Now
+                        JoinedAt = utcNow
                     }
                 );
 

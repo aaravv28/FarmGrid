@@ -13,14 +13,19 @@ namespace FarmGrid.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TimeProvider _time;
 
         public UiController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            TimeProvider time)
         {
             _context = context;
             _userManager = userManager;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         // FARMER DASHBOARD
         [Authorize(Roles = Roles.Farmer)]
@@ -70,7 +75,7 @@ namespace FarmGrid.Controllers
                 .Sum(o => o.Subtotal);
             var totalCombinedEarnings = totalQuickEarnings + totalRetailEarnings;
             var activeProductCount = myProducts.Count(p => p.IsActive);
-            var activeQuickSellCount = myQuickSells.Count(q => q.IsBuyable());
+            var activeQuickSellCount = myQuickSells.Count(q => q.IsBuyable(UtcNow));
 
             var viewModel = new FarmerDashboardViewModel
             {

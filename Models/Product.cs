@@ -38,7 +38,7 @@ namespace FarmGrid.Models
         /// <summary>Customers can see and buy a product while it is listed and in stock.</summary>
         public bool IsAvailable => IsActive && StockQuantity > 0;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<CartItem> CartItems { get; set; }
             = new List<CartItem>();

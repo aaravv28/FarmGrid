@@ -24,7 +24,7 @@ namespace FarmGrid.Tests
                 User = new ClaimsPrincipal(new ClaimsIdentity(
                     [new Claim(ClaimTypes.NameIdentifier, farmerId)], "test"))
             };
-            return new TransportController(context)
+            return new TransportController(context, TimeProvider.System)
             {
                 ControllerContext = new ControllerContext { HttpContext = httpContext },
                 TempData = new TempDataDictionary(httpContext, new NullTempDataProvider())
@@ -60,7 +60,7 @@ namespace FarmGrid.Tests
             int tripId;
             await using (var context = db.CreateContext())
             {
-                var trip = Trip(DateTime.Today.AddDays(-1));
+                var trip = Trip(IndiaTime.Today(TimeProvider.System).AddDays(-1));
                 context.TransportTrips.Add(trip);
                 await context.SaveChangesAsync();
                 tripId = trip.Id;
@@ -83,7 +83,7 @@ namespace FarmGrid.Tests
         public async Task Suggestions_never_offer_a_closed_trip_even_for_its_exact_date()
         {
             using var db = new TestDb();
-            var yesterday = DateTime.Today.AddDays(-1);
+            var yesterday = IndiaTime.Today(TimeProvider.System).AddDays(-1);
             await using (var context = db.CreateContext())
             {
                 context.TransportTrips.Add(Trip(yesterday));
@@ -104,7 +104,7 @@ namespace FarmGrid.Tests
             using var db = new TestDb();
             await using (var context = db.CreateContext())
             {
-                context.TransportTrips.AddRange(Trip(DateTime.Today.AddDays(-1), "Closed Market"), Trip(DateTime.Today.AddDays(2), "Open Market"));
+                context.TransportTrips.AddRange(Trip(IndiaTime.Today(TimeProvider.System).AddDays(-1), "Closed Market"), Trip(IndiaTime.Today(TimeProvider.System).AddDays(2), "Open Market"));
                 await context.SaveChangesAsync();
             }
 

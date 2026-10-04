@@ -53,7 +53,7 @@ namespace FarmGrid.Tests
                 {
                     FarmerId = "farmer", FarmerName = "Ramesh", CropTitle = "Carrots",
                     BulkQuantity = 100m, AvailableQuantity = 100m, StartingPrice = 30m, FloorPrice = 15m,
-                    CreatedAt = DateTime.Now.AddHours(-1), ExpiresAt = DateTime.Now.AddHours(47)
+                    CreatedAt = DateTime.UtcNow.AddHours(-1), ExpiresAt = DateTime.UtcNow.AddHours(47)
                 };
                 setup.QuickSellListings.Add(listing);
                 await setup.SaveChangesAsync();
@@ -70,7 +70,7 @@ namespace FarmGrid.Tests
                 await competitor.SaveChangesAsync();
             }
 
-            var controller = SignedIn(new QuickSellController(context, UserManagerFor(context)), "cust-1");
+            var controller = SignedIn(new QuickSellController(context, UserManagerFor(context), TimeProvider.System), "cust-1");
             await controller.Purchase(new QuickSellPurchaseViewModel
             {
                 ListingId = listingId, Quantity = 80m, CustomerName = "Priya",
@@ -106,7 +106,7 @@ namespace FarmGrid.Tests
                 await competitor.SaveChangesAsync();
             }
 
-            var result = await SignedIn(new OrdersController(context, null!), "cust").Checkout(new CheckoutViewModel
+            var result = await SignedIn(new OrdersController(context, null!, TimeProvider.System), "cust").Checkout(new CheckoutViewModel
             {
                 CustomerName = "Priya", PhoneNumber = "9999999999", DeliveryAddress = "12 Main Rd", City = "Vadodara"
             });
@@ -127,7 +127,7 @@ namespace FarmGrid.Tests
             {
                 var trip = new TransportTrip
                 {
-                    FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = DateTime.Today.AddDays(2),
+                    FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                     VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m,
                     Participants = { new TransportParticipant { FarmerId = "host", CargoWeightKg = 200m, FareShare = 3000m, IsHost = true } }
                 };
@@ -147,7 +147,7 @@ namespace FarmGrid.Tests
                 await competitor.SaveChangesAsync();
             }
 
-            await SignedIn(new TransportController(context), "joiner").Join(new TransportJoinViewModel { TripId = tripId, CargoWeightKg = 500m });
+            await SignedIn(new TransportController(context, TimeProvider.System), "joiner").Join(new TransportJoinViewModel { TripId = tripId, CargoWeightKg = 500m });
 
             await using var check = db.CreateContext();
             var saved = await check.TransportTrips.Include(t => t.Participants).SingleAsync();
@@ -162,7 +162,7 @@ namespace FarmGrid.Tests
             await using var context = db.CreateContext();
             var trip = new TransportTrip
             {
-                FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = DateTime.Today.AddDays(2),
+                FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                 VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m
             };
             context.TransportTrips.Add(trip);

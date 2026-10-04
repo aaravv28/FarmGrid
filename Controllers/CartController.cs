@@ -11,12 +11,17 @@ namespace FarmGrid.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly TimeProvider _time;
 
         public CartController(
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            TimeProvider time)
         {
             _context = context;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         public async Task<IActionResult> Index()
         {
@@ -123,7 +128,7 @@ namespace FarmGrid.Controllers
                             quantity,
 
                         AddedAt =
-                            DateTime.Now
+                            UtcNow
                     });
             }
 

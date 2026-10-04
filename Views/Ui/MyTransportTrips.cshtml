@@ -1,4 +1,5 @@
-﻿@model IEnumerable<FarmGrid.Models.TransportTrip>
+@model IEnumerable<FarmGrid.Models.TransportTrip>
+@inject TimeProvider Time
 
 @using System.Security.Claims
 
@@ -90,7 +91,7 @@
 
                                     <p>
                                         @trip.DispatchDate.ToString("dd MMM yyyy")
-                                        @if (trip.IsOpen(DateTime.Today))
+                                        @if (trip.IsOpen(IndiaTime.Today(Time)))
                                         {
                                             <span class="badge bg-success-subtle text-success border ms-1">Upcoming</span>
                                         }

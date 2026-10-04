@@ -15,6 +15,6 @@ namespace FarmGrid.Models
         [StringLength(100)]
         public string? District { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

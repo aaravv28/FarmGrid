@@ -51,9 +51,9 @@ namespace FarmGrid.Models
 
         public int DurationHours { get; set; } = 48;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime ExpiresAt { get; set; } = DateTime.Now.AddHours(48);
+        public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddHours(48);
 
         public bool IsActive { get; set; } = true;
 
@@ -68,7 +68,7 @@ namespace FarmGrid.Models
         /// </summary>
         public decimal CalculateCurrentPrice(DateTime? asOf = null)
         {
-            var now = asOf ?? DateTime.Now;
+            var now = asOf ?? DateTime.UtcNow;
             var elapsedHours = (decimal)(now - CreatedAt).TotalHours;
 
             if (elapsedHours <= 0)
@@ -94,14 +94,14 @@ namespace FarmGrid.Models
 
         public TimeSpan GetRemainingTime(DateTime? asOf = null)
         {
-            var now = asOf ?? DateTime.Now;
+            var now = asOf ?? DateTime.UtcNow;
             var remaining = ExpiresAt - now;
             return remaining < TimeSpan.Zero ? TimeSpan.Zero : remaining;
         }
 
         public bool IsExpired(DateTime? asOf = null)
         {
-            var now = asOf ?? DateTime.Now;
+            var now = asOf ?? DateTime.UtcNow;
             return now >= ExpiresAt;
         }
 

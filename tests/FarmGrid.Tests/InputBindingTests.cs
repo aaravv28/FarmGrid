@@ -73,7 +73,7 @@ namespace FarmGrid.Tests
             using var db = new TestDb();
             await using (var context = db.CreateContext())
             {
-                var result = await SignedIn(new ProductsController(context), "farmer-a").Create(new ProductInputModel
+                var result = await SignedIn(new ProductsController(context, TimeProvider.System), "farmer-a").Create(new ProductInputModel
                 {
                     Id = 999,
                     Title = "Okra",
@@ -102,10 +102,10 @@ namespace FarmGrid.Tests
             using var db = new TestDb();
             await using (var context = db.CreateContext())
             {
-                var result = await SignedIn(new TransportController(context), "host").Create(new TripInputModel
+                var result = await SignedIn(new TransportController(context, TimeProvider.System), "host").Create(new TripInputModel
                 {
                     DestinationMarket = "Central Mandi",
-                    DispatchDate = DateTime.Today.AddDays(2),
+                    DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                     VehicleType = "Tata Ace",
                     TotalVehicleCost = 3000m,
                     HostCargoWeightKg = 200m,
@@ -140,7 +140,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                await SignedIn(new ProductsController(context), "farmer-a").Edit(id, new ProductInputModel
+                await SignedIn(new ProductsController(context, TimeProvider.System), "farmer-a").Edit(id, new ProductInputModel
                 {
                     Id = id,
                     Title = "Fresh Okra",

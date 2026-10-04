@@ -14,14 +14,19 @@ namespace FarmGrid.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TimeProvider _time;
 
         public OrdersController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            TimeProvider time)
         {
             _context = context;
             _userManager = userManager;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         public async Task<IActionResult> Index()
         {
@@ -152,7 +157,7 @@ namespace FarmGrid.Controllers
                         Subtotal = farmerPlan.Subtotal,
                         DeliveryCharge = farmerPlan.DeliveryCharge,
                         TotalAmount = farmerPlan.Total,
-                        CreatedAt = DateTime.Now
+                        CreatedAt = UtcNow
                     };
 
                     foreach (var cart in farmerPlan.Items)

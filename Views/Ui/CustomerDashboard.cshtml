@@ -113,7 +113,7 @@
                             {
                                 <tr>
                                     <td><strong class="text-dark">#@ord.Id</strong></td>
-                                    <td>@ord.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                    <td>@ord.CreatedAt.ToIndiaTime().ToString("dd MMM yyyy, hh:mm tt")</td>
                                     <td>
                                         @foreach (var item in ord.OrderItems.Take(2))
                                         {
@@ -188,7 +188,7 @@
                                     <td>@qord.QuantityPurchased kg</td>
                                     <td>₹@qord.PricePerKg.ToString("F2")</td>
                                     <td><strong class="text-success">₹@qord.TotalAmount.ToString("F2")</strong></td>
-                                    <td>@qord.PurchasedAt.ToString("dd MMM yyyy")</td>
+                                    <td>@qord.PurchasedAt.ToIndiaTime().ToString("dd MMM yyyy")</td>
                                     <td><span class="badge @OrderStatuses.BadgeClass(qord.Status)">@qord.Status</span></td>
                                 </tr>
                             }

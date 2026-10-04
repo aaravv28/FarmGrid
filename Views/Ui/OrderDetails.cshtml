@@ -20,7 +20,7 @@
                 </span>
                 <h2 class="mb-1">Order #FG@Model.Id.ToString("D4")</h2>
                 <p class="text-muted mb-0">
-                    Placed on @Model.CreatedAt.ToString("dd MMMM yyyy, hh:mm tt")
+                    Placed on @Model.CreatedAt.ToIndiaTime().ToString("dd MMMM yyyy, hh:mm tt")
                 </p>
             </div>
 

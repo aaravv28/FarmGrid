@@ -20,7 +20,7 @@ namespace FarmGrid.Tests
         private static async Task<FarmerDashboardViewModel> DashboardFor(TestDb db, string farmerId)
         {
             await using var context = db.CreateContext();
-            var controller = new UiController(context, UserManagerFor(context))
+            var controller = new UiController(context, UserManagerFor(context), TimeProvider.System)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -49,7 +49,7 @@ namespace FarmGrid.Tests
                 var listing = new QuickSellListing { FarmerId = "veteran", FarmerName = "Ramesh", CropTitle = "Carrots", BulkQuantity = 100m, AvailableQuantity = 60m, StartingPrice = 30m, FloorPrice = 15m };
                 context.Products.Add(product);
                 context.QuickSellListings.Add(listing);
-                context.TransportTrips.Add(new TransportTrip { FarmerId = "veteran", DestinationMarket = "Central Mandi", DispatchDate = DateTime.Today.AddDays(1), VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 100m, AvailableCapacityKg = 500m });
+                context.TransportTrips.Add(new TransportTrip { FarmerId = "veteran", DestinationMarket = "Central Mandi", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(1), VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 100m, AvailableCapacityKg = 500m });
                 await context.SaveChangesAsync();
 
                 context.QuickSellOrders.Add(new QuickSellOrder { QuickSellListingId = listing.Id, CustomerId = "cust", CustomerName = "Priya", PhoneNumber = "1", DeliveryAddress = "a", City = "Vadodara", QuantityPurchased = 40m, PricePerKg = 20m, TotalAmount = 800m });

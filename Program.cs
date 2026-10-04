@@ -40,6 +40,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+// Clock: instants are stored in UTC; see Models/IndiaTime for display and calendar dates
+builder.Services.AddSingleton(TimeProvider.System);
+
 // MVC
 builder.Services.AddControllersWithViews();
 

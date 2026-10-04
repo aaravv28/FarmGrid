@@ -13,14 +13,19 @@ namespace FarmGrid.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TimeProvider _time;
 
         public QuickSellController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            TimeProvider time)
         {
             _context = context;
             _userManager = userManager;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         // MARKETPLACE - GET
         public async Task<IActionResult> Index(string? category, string? search)
@@ -28,7 +33,7 @@ namespace FarmGrid.Controllers
             // Auto-seed initial demo quick-sells if none exist
             await EnsureSeedDataAsync();
 
-            var now = DateTime.Now;
+            var now = UtcNow;
             var query = _context.QuickSellListings
                 .Buyable(now);
 
@@ -135,8 +140,8 @@ namespace FarmGrid.Controllers
                 StartingPrice = model.StartingPrice,
                 FloorPrice = model.FloorPrice,
                 DurationHours = 48,
-                CreatedAt = DateTime.Now,
-                ExpiresAt = DateTime.Now.AddHours(48),
+                CreatedAt = UtcNow,
+                ExpiresAt = UtcNow.AddHours(48),
                 IsActive = true,
                 Description = model.Description
             };
@@ -162,7 +167,9 @@ namespace FarmGrid.Controllers
                 return NotFound("Listing not found.");
             }
 
-            if (!listing.IsBuyable())
+            var now = UtcNow;
+
+            if (!listing.IsBuyable(now))
             {
                 TempData["Error"] = "This quick sell listing has sold out or ended.";
                 return RedirectToAction(nameof(Details), new { id = model.ListingId });
@@ -184,7 +191,7 @@ namespace FarmGrid.Controllers
             }
 
             // Calculate live decay price securely on the server
-            var currentPrice = listing.CalculateCurrentPrice();
+            var currentPrice = listing.CalculateCurrentPrice(now);
             var totalAmount = Math.Round(model.Quantity * currentPrice, 2);
 
             var user = await _userManager.GetUserAsync(User);
@@ -204,7 +211,7 @@ namespace FarmGrid.Controllers
                 TotalAmount = totalAmount,
                 PaymentMethod = PaymentMethods.CashOnDelivery,
                 Status = OrderStatuses.Placed,
-                PurchasedAt = DateTime.Now
+                PurchasedAt = now
             };
 
             // Saved only if AvailableQuantity is unchanged since it was read (concurrency token)
@@ -240,8 +247,9 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
-            var currentPrice = listing.CalculateCurrentPrice();
-            var remaining = listing.GetRemainingTime();
+            var now = UtcNow;
+            var currentPrice = listing.CalculateCurrentPrice(now);
+            var remaining = listing.GetRemainingTime(now);
 
             return Json(new
             {
@@ -251,9 +259,9 @@ namespace FarmGrid.Controllers
                 floorPrice = listing.FloorPrice,
                 availableQuantity = listing.AvailableQuantity,
                 remainingSeconds = Math.Max(0, (int)remaining.TotalSeconds),
-                isExpired = listing.IsExpired(),
+                isExpired = listing.IsExpired(now),
                 isSoldOut = listing.IsSoldOut,
-                elapsedHours = (decimal)(DateTime.Now - listing.CreatedAt).TotalHours
+                elapsedHours = (decimal)(now - listing.CreatedAt).TotalHours
             });
         }
 
@@ -265,7 +273,7 @@ namespace FarmGrid.Controllers
                 return;
             }
 
-            var now = DateTime.Now;
+            var now = UtcNow;
             var sampleListings = new List<QuickSellListing>
             {
                 new QuickSellListing

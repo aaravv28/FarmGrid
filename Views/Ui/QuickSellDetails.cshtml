@@ -302,8 +302,8 @@
             const startPrice = @Model.StartingPrice;
             const floorPrice = @Model.FloorPrice;
             const durationHours = @Model.DurationHours;
-            const createdAt = new Date("@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")");
-            const expiresAt = new Date("@Model.ExpiresAt.ToString("yyyy-MM-ddTHH:mm:ss")");
+            const createdAt = new Date("@Model.CreatedAt.ToUtcIso()");
+            const expiresAt = new Date("@Model.ExpiresAt.ToUtcIso()");
             const availableQuantity = @Model.AvailableQuantity;
 
             const livePriceEl = document.getElementById("liveQuickPrice");

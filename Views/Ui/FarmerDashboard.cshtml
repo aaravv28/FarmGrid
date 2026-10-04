@@ -347,7 +347,7 @@
                                         }
                                     </td>
                                     <td><strong class="text-success">₹@rOrder.Subtotal.ToString("F2")</strong></td>
-                                    <td>@rOrder.CreatedAt.ToString("dd MMM yyyy")</td>
+                                    <td>@rOrder.CreatedAt.ToIndiaTime().ToString("dd MMM yyyy")</td>
                                     <td>
                                         <span class="badge @OrderStatuses.BadgeClass(rOrder.Status)">@rOrder.Status</span>
                                         @if (rOrder.Status == OrderStatuses.Placed)

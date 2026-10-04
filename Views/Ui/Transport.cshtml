@@ -1,4 +1,5 @@
 @model IEnumerable<FarmGrid.Models.TransportTrip>
+@inject TimeProvider Time
 
 @{
     ViewData["Title"] = "Shared Transport";
@@ -118,7 +119,7 @@
                         <input type="date"
                                name="dispatchDate"
                                class="form-control"
-                               value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                               value="@IndiaTime.Today(Time).ToString("yyyy-MM-dd")"
                                required />
 
                     </div>

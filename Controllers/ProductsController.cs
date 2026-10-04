@@ -11,11 +11,15 @@ namespace FarmGrid.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly TimeProvider _time;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, TimeProvider time)
         {
             _context = context;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         // PRODUCT CATALOG - Open to everyone
         public async Task<IActionResult> Index(
@@ -90,7 +94,7 @@ namespace FarmGrid.Controllers
             var product = new Product
             {
                 FarmerId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                CreatedAt = DateTime.Now,
+                CreatedAt = UtcNow,
                 IsActive = true
             };
             model.ApplyTo(product);

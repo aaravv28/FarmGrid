@@ -59,7 +59,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                var controller = new OrdersController(context, null!)
+                var controller = new OrdersController(context, null!, TimeProvider.System)
                 {
                     ControllerContext = new ControllerContext
                     {

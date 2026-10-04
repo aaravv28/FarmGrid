@@ -58,7 +58,7 @@ namespace FarmGrid.Tests
         private static async Task<(int OrderId, int ListingId)> SeedQuickSellOrder(TestDb db, bool expired = false)
         {
             await using var context = db.CreateContext();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var listing = new QuickSellListing
             {
                 FarmerId = "farmer-a",

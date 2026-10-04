@@ -52,7 +52,7 @@ namespace FarmGrid.Models
         [StringLength(50)]
         public string Status { get; set; } = OrderStatuses.Placed;
 
-        public DateTime PurchasedAt { get; set; } = DateTime.Now;
+        public DateTime PurchasedAt { get; set; } = DateTime.UtcNow;
 
         public void MarkDelivered()
         {

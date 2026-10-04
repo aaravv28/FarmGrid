@@ -12,17 +12,21 @@ namespace FarmGrid.Controllers
     public class TransportController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly TimeProvider _time;
 
-        public TransportController(ApplicationDbContext context)
+        public TransportController(ApplicationDbContext context, TimeProvider time)
         {
             _context = context;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         // Transport landing page with active open trips
         public async Task<IActionResult> Index()
         {
             var farmerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var today = DateTime.Today;
+            var today = IndiaTime.Today(_time);
 
             var upcomingTrips = await _context.TransportTrips
                 .Include(t => t.Participants)
@@ -71,7 +75,7 @@ namespace FarmGrid.Controllers
                 TotalVehicleCost = model.TotalVehicleCost,
                 HostCargoWeightKg = model.HostCargoWeightKg,
                 AvailableCapacityKg = model.AvailableCapacityKg,
-                CreatedAt = DateTime.Now,
+                CreatedAt = UtcNow,
                 IsActive = true
             };
 
@@ -88,7 +92,7 @@ namespace FarmGrid.Controllers
                         trip.HostCargoWeightKg,
                     FareShare = 0,
                     IsHost = true,
-                    JoinedAt = DateTime.Now
+                    JoinedAt = UtcNow
                 };
 
             _context.TransportParticipants.Add(
@@ -131,7 +135,7 @@ namespace FarmGrid.Controllers
             var matches =
                 await _context.TransportTrips
                     .Include(t => t.Participants)
-                    .Open(DateTime.Today)
+                    .Open(IndiaTime.Today(_time))
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&
                         t.DispatchDate.Date == dispatchDate.Date &&
@@ -145,7 +149,7 @@ namespace FarmGrid.Controllers
             {
                 var nearbyMatches = await _context.TransportTrips
                     .Include(t => t.Participants)
-                    .Open(DateTime.Today)
+                    .Open(IndiaTime.Today(_time))
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&
                         t.AvailableCapacityKg >= requiredWeight &&
@@ -209,7 +213,7 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
-            if (!trip.IsOpen(DateTime.Today))
+            if (!trip.IsOpen(IndiaTime.Today(_time)))
             {
                 TempData["Error"] =
                     "This trip has already been dispatched and is closed.";
@@ -276,7 +280,7 @@ namespace FarmGrid.Controllers
                             false,
 
                         JoinedAt =
-                            DateTime.Now
+                            UtcNow
                     };
 
                 _context.TransportParticipants.Add(

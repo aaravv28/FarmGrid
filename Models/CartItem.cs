@@ -18,6 +18,6 @@ namespace FarmGrid.Models
         [Precision(18, 2)]
         public decimal Quantity { get; set; }
 
-        public DateTime AddedAt { get; set; } = DateTime.Now;
+        public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }
-}
+}

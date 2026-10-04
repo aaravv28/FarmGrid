@@ -41,7 +41,7 @@ namespace FarmGrid.Models
         [Precision(18, 2)]
         public decimal TotalAmount { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<OrderItem> OrderItems { get; set; }
             = new List<OrderItem>();

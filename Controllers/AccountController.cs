@@ -11,16 +11,21 @@ namespace FarmGrid.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly TimeProvider _time;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            TimeProvider time)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _time = time;
         }
+
+        private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
         // REGISTER - GET
         [HttpGet]
@@ -68,7 +73,7 @@ namespace FarmGrid.Controllers
                 PhoneNumber = model.PhoneNumber,
                 City = model.City,
                 District = model.District,
-                CreatedAt = DateTime.Now
+                CreatedAt = UtcNow
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

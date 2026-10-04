@@ -37,7 +37,7 @@ namespace FarmGrid.Tests
         private static async Task<List<string>> CatalogTitles(TestDb db)
         {
             await using var context = db.CreateContext();
-            var result = await new ProductsController(context).Index(null, null);
+            var result = await new ProductsController(context, TimeProvider.System).Index(null, null);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(Assert.IsType<ViewResult>(result).Model);
             return model.Select(p => p.Title).OrderBy(t => t).ToList();
         }
@@ -73,7 +73,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                Assert.IsType<NotFoundResult>(await new ProductsController(context).Details(id));
+                Assert.IsType<NotFoundResult>(await new ProductsController(context, TimeProvider.System).Details(id));
             }
         }
 
@@ -94,7 +94,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                var controller = SignedInAs(new OrdersController(context, null!), "cust");
+                var controller = SignedInAs(new OrdersController(context, null!, TimeProvider.System), "cust");
                 var result = await controller.Checkout(new CheckoutViewModel
                 {
                     CustomerName = "Priya",
@@ -148,7 +148,7 @@ namespace FarmGrid.Tests
         public async Task Quick_sell_marketplace_hides_sold_out_lots()
         {
             using var db = new TestDb();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             await using (var context = db.CreateContext())
             {
                 QuickSellListing Lot(string title, decimal available) => new()
@@ -169,7 +169,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                var result = await new QuickSellController(context, null!).Index(null, null);
+                var result = await new QuickSellController(context, null!, TimeProvider.System).Index(null, null);
                 var model = Assert.IsAssignableFrom<IEnumerable<QuickSellListing>>(Assert.IsType<ViewResult>(result).Model);
                 Assert.Equal(new[] { "Has stock" }, model.Select(l => l.CropTitle));
             }
