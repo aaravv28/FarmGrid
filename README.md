@@ -1,186 +1,165 @@
 # 🌱 FarmGrid
 
-> **Smart Direct-to-Consumer & B2B AgriTech Marketplace, 48-Hour Dutch Decay Engine, and Shared Farmer Logistics Platform**
+> **A farmer-to-customer produce marketplace, with Quick Sell surplus clearance and shared transport for farmers**
 
-FarmGrid bridges the gap between rural farmers, urban consumers, and commercial bulk buyers. It eliminates exploitative intermediaries, dramatically curtails post-harvest crop perishability losses through automated Dutch-auction price decay, and reduces rural transportation logistics costs through pooled vehicle transport.
+FarmGrid connects farmers directly with customers. Farmers list produce in a catalog, clear perishable surplus through **Quick Sell** lots whose price falls steadily over 48 hours, and share vehicles to market through pooled **Trips**, splitting the cost by cargo weight.
+
+There are two roles: **Farmer** and **Customer**. The domain vocabulary is defined in [CONTEXT.md](CONTEXT.md).
 
 ---
 
 ## 📑 Table of Contents
 
-- [Key Highlights](#-key-highlights)
-- [System Architecture & Tech Stack](#-system-architecture--tech-stack)
-- [End-to-End System Workflows](#-end-to-end-system-workflows)
-  - [1. User Registration & Role Selection](#1-user-registration--role-selection)
-  - [2. Marketplace & Retail Shopping Flow](#2-marketplace--retail-shopping-flow)
-  - [3. Urgent Harvest Quick Sell (48h Dutch Decay Engine)](#3-urgent-harvest-quick-sell-48h-dutch-decay-engine)
-  - [4. Shared Farmer Logistics & Vehicle Pooling](#4-shared-farmer-logistics--vehicle-pooling)
-  - [5. Role-Specific Dashboards & Analytics](#5-role-specific-dashboards--analytics)
-- [Architecture & Data Model](#-architecture--data-model)
-- [Pre-Seeded Demo Accounts](#-pre-seeded-demo-accounts)
-- [Local Development & Setup Guide](#-local-development--setup-guide)
-- [Security & Access Control Matrix](#-security--access-control-matrix)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Workflows](#-workflows)
+  - [1. Registration and Roles](#1-registration-and-roles)
+  - [2. Catalog, Cart and Checkout](#2-catalog-cart-and-checkout)
+  - [3. Order Status](#3-order-status)
+  - [4. Quick Sell (Surplus Clearance)](#4-quick-sell-surplus-clearance)
+  - [5. Shared Transport](#5-shared-transport)
+  - [6. Dashboards](#6-dashboards)
+- [Data Model](#-data-model)
+- [Demo Accounts](#-demo-accounts)
+- [Local Development](#-local-development)
+- [Access Control](#-access-control)
+- [License](#-license)
 
 ---
 
-## 🌟 Key Highlights
+## 🌟 Key Features
 
-### 1. 🛒 Direct Farmer-to-Consumer Marketplace
-- **Direct Catalog**: Farmers list agricultural produce with custom unit measures (`kg`, `L`, `bunches`, `cobs`), real-time stock levels, pricing, and descriptions.
-- **Search & Categorization**: Instant filtering by categories: **Vegetables**, **Fruits**, **Dairy Products**, and **Groceries**.
-- **Shopping Cart & Checkout**: Atomic stock reservations, flexible delivery slot selection, cash on delivery or online payment, and automatic invoice generation.
+### 🛒 Farmer-to-Customer Catalog
+- Farmers list produce with a unit (`kg`, `L`, `dozen`, `bunch`, `piece`), price and stock. Dozen, bunch and piece are sold in whole numbers only.
+- Categories: **Vegetables**, **Fruits**, **Dairy Products** and **Groceries**, shared by the catalog and Quick Sell.
+- Only products that are listed **and in stock** are shown. A sold-out product reappears automatically when restocked.
+- A cart with produce from several farmers becomes **one order per farmer** at checkout, each with its own ₹30 delivery charge.
+- **Cash on Delivery** is the only payment method.
 
-### 2. ⚡ Quick Sell: 48-Hour Dynamic Dutch Auction Decay Engine
-- **Surplus Crop Salvage**: Designed for perishable harvests (tomatoes, leafy greens, mangoes) that must sell before spoilage.
-- **Continuous Algorithmic Price Decay**: The price smoothly drops every hour according to a strict mathematical curve:
-  $$\text{CurrentPrice} = \max\left(\text{FloorPrice}, \text{StartPrice} - \left[\frac{\text{StartPrice} - \text{FloorPrice}}{48\text{ hrs}}\right] \times \text{ElapsedHours}\right)$$
-- **Farmer Safety Net**: The price never drops below the farmer's guaranteed **Floor Price**.
-- **Live Client Ticker**: Front-end JavaScript ticks down every second while synchronizing with the backend REST endpoint (`/api/quicksell/price/{id}`) to prevent race conditions.
-- **Batch Presets**: Wholesale buyers can instantly lock in `25kg`, `50kg`, `100kg`, or entire lots with a single click.
+### ⚡ Quick Sell: Surplus Clearance
+- For perishable surplus that must sell fast. A farmer sets a starting price and a floor price for a lot; the price falls in a straight line over 48 hours and never goes below the floor:
 
-### 3. 🚛 Smart Shared Logistics & Vehicle Pooling
-- **Cost Sharing**: Farmers heading to mandis or urban distribution centers register spare vehicle capacity (e.g., Tata Ace, Bolero Maxi, Eicher).
-- **Pro-Rata Fare Splitting**: Each farmer pays strictly in proportion to their cargo weight share:
-  $$\text{FareShare} = \text{TotalVehicleCost} \times \left(\frac{\text{ParticipantCargoWeight}}{\text{CombinedCargoWeight}}\right)$$
-- **Smart Trip Search**: Joining farmers query destination markets (e.g., *Central Mandi*, *City Hub*, *Wholesale Market*) by required payload capacity and date, with automatic nearby-date fallback matching.
+  $$\text{CurrentPrice} = \max\left(\text{FloorPrice},\ \text{StartPrice} - \frac{\text{StartPrice} - \text{FloorPrice}}{48} \times \text{ElapsedHours}\right)$$
 
-### 4. 📊 Tailored Dashboards
-- **Farmer Portal**: Real-time sales metrics, active catalog management, live quick sell monitors, retail & wholesale order logs, upcoming pooled trips.
-- **Customer / B2B Portal**: Real-time order tracking, wholesale quick sell purchase history, expenditure statistics, and itemized invoice details.
+- The server is the only source of the price. The lot page shows the server's price, refreshed every 15 seconds, and a customer is **never charged more than the price they were shown**.
+- Quick quantity presets (25 / 50 / 100 kg or everything left). The minimum order is 1 kg, except when buying the last of a lot.
+
+### 🚛 Shared Transport
+- A farmer heading to a market posts a **Trip** with spare capacity. Other farmers join with their cargo.
+- The vehicle cost is split by cargo weight, rounded to the paisa, and always adds up to exactly the total (the host absorbs any rounding):
+
+  $$\text{FareShare} = \text{TotalVehicleCost} \times \frac{\text{ParticipantCargoKg}}{\text{CombinedCargoKg}}$$
+
+- A Trip is open through its dispatch date (India time) and closes after it.
+
+### 📊 Dashboards
+- **Farmer:** own products, Quick Sell lots, catalog and Quick Sell orders (with Delivered / Cancel actions), earnings and trips.
+- **Customer:** orders, Quick Sell purchases, active orders and total spend.
 
 ---
 
-## 🛠 System Architecture & Tech Stack
+## 🛠 Tech Stack
 
 | Layer | Technologies |
 | :--- | :--- |
-| **Framework** | **ASP.NET Core 10 (MVC)**, C# 13 / .NET 10 |
-| **Database & ORM** | **Microsoft SQL Server / LocalDB**, **Entity Framework Core 10** |
-| **Identity & Security** | ASP.NET Core Identity, PBKDF2 Password Hashing, CSRF Anti-Forgery Tokens, Role-Based Access Control (RBAC) |
-| **Frontend UI** | Razor Views, Bootstrap 5.3, Font Awesome 6.5, Responsive CSS3 Grid System |
-| **Real-Time Client Logic** | Vanilla JavaScript, Asynchronous Fetch API, Live Ticker Clocks |
+| **Framework** | ASP.NET Core 10 MVC, C# 14 / .NET 10 |
+| **Data** | SQL Server / LocalDB, Entity Framework Core 10 |
+| **Identity** | ASP.NET Core Identity (roles, lockout after 5 failed logins), anti-forgery tokens |
+| **UI** | Razor views, Bootstrap 5.3, Font Awesome 6.5 |
+| **Tests** | xUnit, EF Core SQLite (in-memory), `FakeTimeProvider` |
+
+Times are stored in **UTC** and shown in **India Standard Time**. The app's culture is fixed to `en-IN`.
 
 ---
 
-## 🔄 End-to-End System Workflows
+## 🔄 Workflows
 
 ```mermaid
 flowchart TD
-    Start([User Arrives]) --> Auth{Authenticated?}
-    Auth -- No --> Browse[Browse Marketplace / QuickSell]
-    Auth -- Yes --> RoleCheck{User Role?}
+    Start([Visitor]) --> Auth{Signed in?}
+    Auth -- No --> Browse[Browse catalog and Quick Sell]
+    Auth -- Yes --> Role{Role}
 
-    RoleCheck -- Farmer --> FarmerFlow[Farmer Portal]
-    RoleCheck -- Customer / Buyer --> BuyerFlow[Buyer Portal]
+    Role -- Farmer --> F[Farmer]
+    Role -- Customer --> C[Customer]
 
-    subgraph Farmer Actions
-        FarmerFlow --> F1[List Fresh Produce in Marketplace]
-        FarmerFlow --> F2[Create 48h Quick Sell Dutch Auction]
-        FarmerFlow --> F3[Post Vehicle Spare Capacity for Transport]
-        FarmerFlow --> F4[View Real-Time Sales & Earnings on Dashboard]
+    subgraph Farmer
+        F --> F1[List products]
+        F --> F2[Create Quick Sell lot]
+        F --> F3[Post or join a Trip]
+        F --> F4[Mark orders Delivered or Cancelled]
     end
 
-    subgraph Buyer Actions
-        BuyerFlow --> B1[Browse Products & Add to Cart]
-        B1 --> B2[Checkout Delivery Details & Confirm Order]
-        B2 --> B3[Track Order Status & View Invoices]
-        BuyerFlow --> B4[Discover Urgent Harvest Deals on Quick Sell]
-        B4 --> B5[Lock Live Price & Place Wholesale Bulk Order]
-        BuyerFlow --> B6[View Metrics & Order History on Customer Dashboard]
-    end
-
-    subgraph Shared Logistics
-        F3 --> T1[Open Trip Registered with Host Cargo & Capacity]
-        T1 --> T2[Other Farmers Search & Join Trip]
-        T2 --> T3[System Recalculates Pro-Rata Fare Share for All Participants]
+    subgraph Customer
+        C --> C1[Add products to cart]
+        C1 --> C2[Checkout: one order per farmer]
+        C --> C3[Buy from a Quick Sell lot]
+        C --> C4[Track orders and invoices]
     end
 ```
 
-### 1. User Registration & Role Selection
-1. New users register at `/Account/Register`.
-2. Choose one of three specialized roles:
-   - **Farmer**: Grants access to produce listing, Quick Sell creation, vehicle pooling, and the Farmer Dashboard.
-   - **Customer**: Grants access to retail shopping, cart, checkout, order history, and the Customer Dashboard.
-   - **B2B Buyer**: Tailored for restaurants, distributors, and grocery stores looking for bulk produce deals on the Quick Sell marketplace.
-3. Upon registration, the user is signed in and redirected to their role-appropriate dashboard or marketplace view.
+### 1. Registration and Roles
+1. Register at `/Account/Register` as a **Farmer** or a **Customer**.
+2. After registering, farmers land on their dashboard and customers on the home page.
+3. Logging in sends each role to its dashboard. Five wrong passwords lock an account for 15 minutes, and the login form never reveals whether an email has an account.
 
-### 2. Marketplace & Retail Shopping Flow
-1. Users browse `/Products` with category filters (Vegetables, Fruits, Dairy, Groceries) and search queries.
-2. Clicking **View Details** navigates to `/Products/Details/{id}` showing origin, description, price per unit, and live stock.
-3. Customers add items to cart at `/Cart`, where quantities can be incremented, decremented, or removed.
-4. Clicking **Proceed to Checkout** triggers `/Orders/Checkout`:
-   - Delivery address, contact phone, and city are automatically pre-populated from the user's profile.
-   - The user selects a delivery time slot (`6 AM - 9 AM`, `9 AM - 12 PM`, `4 PM - 7 PM`) and payment preference.
-5. Submitting places the order atomically in a transaction, decrements available stock, empties the cart, and redirects to `/Orders`.
-6. Customers can click **Invoice** at any time to open `/Orders/Details/{id}`, reviewing line items, delivery slot, and total billing.
+### 2. Catalog, Cart and Checkout
+1. Browse `/Products` by category or search. Product pages show the farmer's name.
+2. Customers add products to the cart at `/Cart`. Signed-out visitors see **Sign in to buy**, which brings them back to the product.
+3. The cart flags any line that can no longer be bought (removed, sold out, not enough stock) and blocks checkout until it is fixed.
+4. `/Orders/Checkout` pre-fills delivery details from the profile, shows items and delivery grouped by farmer, and places **one order per farmer** in a single transaction, decrementing stock.
+5. `/Orders` lists orders; `/Orders/Details/{id}` is the invoice. Catalog orders are numbered `#FG0001`, Quick Sell orders `#QS0001`.
 
-### 3. Urgent Harvest Quick Sell (48h Dutch Decay Engine)
-1. **Farmer Creation** (`/QuickSell/Create`):
-   - Farmer enters crop title, category, starting price (e.g. ₹30/kg), floor price (e.g. ₹15/kg), and total bulk quantity (e.g. 500kg).
-   - An interactive JavaScript preview demonstrates the exact price at 12h, 24h, 36h, and 48h marks.
-2. **Dynamic Decay Execution**:
-   - The listing stays active for strictly 48 hours.
-   - The price decreases continuously every hour without manual intervention.
-3. **Wholesale Purchase** (`/QuickSell/Details/{id}`):
-   - Buyers watch the live countdown clock and current live price.
-   - Clicking quick presets (`25kg`, `50kg`, `100kg`, or `All`) calculates estimated totals in real-time.
-   - Submitting the purchase locks the server-side decay price, reserves stock, generates a confirmed `QuickSellOrder`, and updates the listing.
+### 3. Order Status
+- Every order starts as **Placed** and moves to **Delivered** or **Cancelled**. Both are final.
+- Only the **farmer who owns the order** can change its status, from the farmer dashboard. Customers cannot cancel.
+- Cancelling returns the quantity to the product's stock (or to the Quick Sell lot). Cancelled orders don't count towards earnings or spend.
 
-### 4. Shared Farmer Logistics & Vehicle Pooling
-1. **Trip Creation** (`/Transport/Create`):
-   - Host farmer schedules a trip specifying destination market (`Central Mandi`, `City Hub`, `Wholesale Market`), dispatch date, vehicle type, total rental cost (e.g. ₹3,500), host cargo payload, and spare capacity (e.g. 800kg).
-   - System registers the host as the first participant with a 100% fare share.
-2. **Trip Discovery** (`/Transport` & `/Transport/Suggestions`):
-   - The Transport Hub displays upcoming open scheduled trips.
-   - Farmers enter their destination market, date, and cargo weight to retrieve exact or nearby-date trip matches.
-3. **Trip Pooling** (`/Transport/Join`):
-   - The joining farmer enters their payload weight (validated against available capacity).
-   - In an atomic transaction, capacity is decremented and the system recalculates each participant's fare share based on combined payload.
-4. **Logistics Oversight** (`/Transport/MyTrips`):
-   - Farmers view all trips they've hosted or joined, displaying their cargo weight and exact calculated fare share.
+### 4. Quick Sell (Surplus Clearance)
+1. **Create** (`/QuickSell/Create`, farmers): crop, category, lot quantity, starting and floor price. A preview shows the price at 12, 24, 36 and 48 hours.
+2. **Browse** (`/QuickSell`): lots that are listed, have quantity left and haven't expired, soonest-closing first.
+3. **Buy** (`/QuickSell/Details/{id}`, customers): the page shows the live server price and a countdown. The order is charged the server's price at that moment, which is never higher than the price shown.
+4. Lot pages show **SOLD OUT** or **EXPIRED** when buying is closed. The live price API is `/api/quicksell/price/{id}`.
 
-### 5. Role-Specific Dashboards & Analytics
-- **Farmer Dashboard** (`/UI/FarmerDashboard`):
-  - Overview cards: Active Products, Active Quick Sells, Total Combined Earnings, and Transport Trips.
-  - Active Marketplace Products table with edit/stock management shortcuts.
-  - 48-Hour Live Decay monitor displaying remaining time and live price.
-  - Wholesale Quick Sell orders log.
-  - Retail customer orders log.
-  - Upcoming scheduled transport trips.
-- **Customer Dashboard** (`/UI/CustomerDashboard`):
-  - Overview cards: Active Orders, Total Orders Placed, and Total Purchases.
-  - Retail Marketplace Orders with status badges (`Placed`, `Delivered`).
-  - Wholesale Quick Sell Bulk purchases log.
+### 5. Shared Transport
+1. **Create** (`/Transport/Create`): destination market, dispatch date (today or later), vehicle, total cost, host cargo and spare capacity. The host is the first participant.
+2. **Find** (`/Transport/Suggestions`): search by market, date and cargo weight. Trips you host or have already joined are left out. If nothing leaves on that date, nearby dates are offered, clearly marked.
+3. **Join** (`/Transport/Join`): capacity is checked and reserved, and every participant's fare share is recalculated. A farmer can join a trip once.
+4. **My Trips** (`/Transport/MyTrips`): trips you host or joined, labelled **Upcoming** or **Closed**, with your fare share.
+
+### 6. Dashboards
+- **Farmer** (`/UI/FarmerDashboard`): products (with Low Stock, Out of Stock and Removed badges), Quick Sell lots (Live, Sold Out, Expired), orders with Delivered / Cancel buttons, earnings and trips.
+- **Customer** (`/UI/CustomerDashboard`): orders and Quick Sell purchases with their status, active order count and total spend.
 
 ---
 
-## 🗄 Architecture & Data Model
+## 🗄 Data Model
+
+Owner and customer ids are foreign keys to users, so every product, lot, trip and order belongs to a real account.
 
 ```mermaid
 erDiagram
-    ApplicationUser ||--o{ Product : "Farmer owns"
-    ApplicationUser ||--o{ CartItem : "Customer has"
-    ApplicationUser ||--o{ Order : "Customer places"
-    ApplicationUser ||--o{ QuickSellListing : "Farmer lists"
-    ApplicationUser ||--o{ QuickSellOrder : "Buyer orders"
-    ApplicationUser ||--o{ TransportTrip : "Farmer hosts"
-    ApplicationUser ||--o{ TransportParticipant : "Farmer joins"
+    ApplicationUser ||--o{ Product : "farmer owns"
+    ApplicationUser ||--o{ QuickSellListing : "farmer lists"
+    ApplicationUser ||--o{ TransportTrip : "farmer hosts"
+    ApplicationUser ||--o{ TransportParticipant : "farmer joins"
+    ApplicationUser ||--o{ CartItem : "customer has"
+    ApplicationUser ||--o{ Order : "customer places"
+    ApplicationUser ||--o{ Order : "farmer fulfils"
+    ApplicationUser ||--o{ QuickSellOrder : "customer places"
 
-    Product ||--o{ CartItem : "contains"
-    Product ||--o{ OrderItem : "referenced in"
+    Product ||--o{ CartItem : "in"
+    Product ||--o{ OrderItem : "sold as"
     Order ||--|{ OrderItem : "contains"
-
-    QuickSellListing ||--o{ QuickSellOrder : "fulfilled by"
-    TransportTrip ||--|{ TransportParticipant : "shared among"
+    QuickSellListing ||--o{ QuickSellOrder : "sold through"
+    TransportTrip ||--|{ TransportParticipant : "shared by"
 
     ApplicationUser {
         string Id PK
         string FullName
         string Email
-        string PhoneNumber
         string City
         string District
-        string UserRole
     }
 
     Product {
@@ -191,43 +170,46 @@ erDiagram
         string UnitMeasure
         decimal UnitPrice
         decimal StockQuantity
-        bool IsActive
+        bool IsActive "false = removed by farmer"
+    }
+
+    Order {
+        int Id PK
+        string CustomerId FK
+        string FarmerId FK
+        string Status "Placed, Delivered, Cancelled"
+        decimal Subtotal
+        decimal DeliveryCharge
+        decimal TotalAmount
     }
 
     QuickSellListing {
         int Id PK
         string FarmerId FK
         string CropTitle
-        string Category
         decimal StartingPrice
         decimal FloorPrice
-        decimal BulkQuantity
         decimal AvailableQuantity
-        DateTime CreatedAt
-        DateTime ExpiresAt
-        bool IsActive
+        datetime CreatedAt "UTC"
+        datetime ExpiresAt "UTC"
     }
 
     QuickSellOrder {
         int Id PK
         int QuickSellListingId FK
-        string BuyerId FK
+        string CustomerId FK
         decimal QuantityPurchased
         decimal PricePerKg
-        decimal TotalAmount
-        string Status
+        string Status "Placed, Delivered, Cancelled"
     }
 
     TransportTrip {
         int Id PK
         string FarmerId FK
         string DestinationMarket
-        DateTime DispatchDate
-        string VehicleType
+        date DispatchDate
         decimal TotalVehicleCost
-        decimal HostCargoWeightKg
         decimal AvailableCapacityKg
-        bool IsActive
     }
 
     TransportParticipant {
@@ -240,85 +222,77 @@ erDiagram
     }
 ```
 
+Stock, lot quantity, trip capacity and order status are optimistic-concurrency tokens, so two simultaneous purchases can't oversell and an order can't be cancelled twice.
+
 ---
 
-## 👥 Pre-Seeded Demo Accounts
+## 👥 Demo Accounts
 
-When the application starts, `DbInitializer.cs` automatically ensures database migrations are applied and provisions default accounts and realistic catalog data:
+On startup, `DbInitializer` applies migrations and creates these accounts with demo catalog data:
 
-| Role | Email | Password | Full Name | Location |
+| Role | Email | Password | Name | Location |
 | :--- | :--- | :--- | :--- | :--- |
 | **Farmer** | `farmer@farmgrid.com` | `Farmer@123` | Ramesh Patel (Demo Farmer) | Anand, Gujarat |
 | **Customer** | `customer@farmgrid.com` | `Customer@123` | Priya Sharma (Demo Customer) | Vadodara, Gujarat |
-| **B2B Buyer** | `buyer@farmgrid.com` | `Buyer@123` | FreshMart Wholesale Co. | Ahmedabad, Gujarat |
 
-*Note: You can also register any custom user account directly from the Register page.*
+In Development, fresh demo Quick Sell lots and trips are added whenever none are live, so the demo never goes empty.
 
 ---
 
-## 🚀 Local Development & Setup Guide
+## 🚀 Local Development
 
 ### Prerequisites
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/)
-- [SQL Server](https://www.microsoft.com/sql-server) or **SQL Server LocalDB** (included with Visual Studio)
+- [.NET 10 SDK](https://dotnet.microsoft.com/)
+- SQL Server or **SQL Server LocalDB** (included with Visual Studio)
 
-### 1. Clone the Repository
+### Run
 ```bash
 git clone https://github.com/aaravv28/FarmGrid.git
 cd FarmGrid
-```
-
-### 2. Configure Database Connection
-Review `appsettings.json` to verify the connection string:
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=aspnet-FarmGrid-f7517bf2-33d0-4a24-b3fd-472a409ba555;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
-}
-```
-
-### 3. Build & Run
-```bash
-dotnet restore
-dotnet build
+dotnet tool restore      # installs dotnet-ef (repo-local tool)
 dotnet run
 ```
 
-On application boot, `DbInitializer` will automatically:
-1. Apply all Entity Framework Core migrations to your SQL Server database.
-2. Seed the Identity roles (`Farmer`, `Customer`, `B2B Buyer`).
-3. Seed the demo user credentials.
-4. Seed active marketplace produce across Vegetables, Fruits, Groceries, and Dairy.
-5. Seed scheduled transport pooling trips and active Quick Sell listings.
+The connection string is in `appsettings.json` (`DefaultConnection`, LocalDB by default). On startup the app applies all migrations, creates the roles and demo accounts, and seeds demo data. Then open the URL printed in the console (e.g. `http://localhost:5086`).
 
-Open your browser and navigate to:
+### Test
+```bash
+dotnet test FarmGrid.slnx
 ```
-http://localhost:5086
+
+Tests run against an in-memory SQLite database per test, with a fake clock where time matters.
+
+### Migrations
+```bash
+dotnet ef migrations add <Name> --project FarmGrid.csproj
 ```
+
+Some migrations convert existing data. Notably, `ConvertTimestampsToUtc` assumes existing timestamps were written on a machine running India Standard Time.
 
 ---
 
-## 🛡 Security & Access Control Matrix
+## 🛡 Access Control
 
-| Controller / Route | Action | Public / Guest | Customer | B2B Buyer | Farmer |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **Home** (`/`) | Index, Privacy | ✅ | ✅ | ✅ | ✅ |
-| **Products** (`/Products`) | Catalog Index, Details | ✅ | ✅ | ✅ | ✅ |
-| **Products** (`/Products`) | Create, Edit, Delete | ❌ | ❌ | ❌ | ✅ |
-| **Cart** (`/Cart`) | View Cart, Add, Update, Remove | ❌ | ✅ | ✅ | ❌ |
-| **Orders** (`/Orders`) | Checkout, My Orders, Details | ❌ | ✅ | ✅ | ❌ |
-| **QuickSell** (`/QuickSell`) | Marketplace Index, Details | ✅ | ✅ | ✅ | ✅ |
-| **QuickSell** (`/QuickSell`) | Create Quick Sell | ❌ | ❌ | ❌ | ✅ |
-| **QuickSell** (`/QuickSell`) | Purchase Bulk Deal | ❌ | ✅ | ✅ | ❌ |
-| **Transport** (`/Transport`) | Index, Suggestions, Create, Join, MyTrips | ❌ | ❌ | ❌ | ✅ |
-| **Dashboard** (`/UI/FarmerDashboard`) | Farmer Operations & Sales | ❌ | ❌ | ❌ | ✅ |
-| **Dashboard** (`/UI/CustomerDashboard`) | Buyer Purchases & Tracking | ❌ | ✅ | ✅ | ❌ |
-| **Account** (`/Account`) | Login, Register | ✅ | ❌ *(Redirect)* | ❌ *(Redirect)* | ❌ *(Redirect)* |
-| **Account** (`/Account`) | Profile, Logout | ❌ | ✅ | ✅ | ✅ |
+| Area | Action | Visitor | Customer | Farmer |
+| :--- | :--- | :---: | :---: | :---: |
+| **Home** (`/`) | Home, Privacy | ✅ | ✅ | ✅ |
+| **Products** (`/Products`) | Catalog, Details | ✅ | ✅ | ✅ |
+| **Products** | Create | ❌ | ❌ | ✅ |
+| **Products** | Edit, Delete | ❌ | ❌ | ✅ own only |
+| **Cart** (`/Cart`) | View, Add, Update, Remove | ❌ | ✅ | ❌ |
+| **Orders** (`/Orders`) | Checkout, My Orders, Invoice | ❌ | ✅ | ❌ |
+| **Order status** (`/FarmerOrders`) | Deliver, Cancel | ❌ | ❌ | ✅ own orders only |
+| **Quick Sell** (`/QuickSell`) | Browse, Details | ✅ | ✅ | ✅ |
+| **Quick Sell** | Create lot | ❌ | ❌ | ✅ |
+| **Quick Sell** | Buy | ❌ | ✅ | ❌ |
+| **Transport** (`/Transport`) | Hub, Create, Suggestions, Join, My Trips | ❌ | ❌ | ✅ |
+| **Dashboards** (`/UI`) | Farmer Dashboard | ❌ | ❌ | ✅ |
+| **Dashboards** | Customer Dashboard | ❌ | ✅ | ❌ |
+| **Account** (`/Account`) | Login, Register | ✅ | redirect | redirect |
+| **Account** | Profile, Logout | ❌ | ✅ | ✅ |
 
 ---
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+Intended to be released under the MIT License. A `LICENSE` file has not been added to the repository yet.
