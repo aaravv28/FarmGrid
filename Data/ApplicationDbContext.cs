@@ -110,6 +110,25 @@ namespace FarmGrid.Data
                 .HasForeignKey(o => o.FarmerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Customers too: carts and orders always belong to a real user
+            builder.Entity<CartItem>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(c => c.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Order>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<QuickSellOrder>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Optimistic concurrency: a save only succeeds if these values are still
             // what the request read, so two requests racing for the same stock,
             // capacity or order cannot both win. The losing save throws

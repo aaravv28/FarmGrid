@@ -18,6 +18,9 @@ namespace FarmGrid.Tests
         /// </summary>
         public static readonly string[] SeededFarmerIds = ["farmer", "farmer-a", "farmer-b", "host", "joiner", "other"];
 
+        /// <summary>The customer user every test database starts with (customer ids are foreign keys too).</summary>
+        public const string SeededCustomerId = "cust";
+
         private readonly SqliteConnection _connection;
 
         public TestDb()
@@ -34,6 +37,7 @@ namespace FarmGrid.Tests
                 UserName = $"{id}@farmgrid.test",
                 FullName = id
             }));
+            context.Users.Add(new ApplicationUser { Id = SeededCustomerId, UserName = "cust@farmgrid.test", FullName = "Priya" });
             context.SaveChanges();
         }
 

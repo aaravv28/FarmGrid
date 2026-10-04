@@ -21,8 +21,7 @@ namespace FarmGrid.Tests
                 context.Roles.AddRange(b2bRole, customerRole);
 
                 var b2bUser = new ApplicationUser { Id = "b2b", UserName = "b2b@x.com", FullName = "FreshMart" };
-                var customer = new ApplicationUser { Id = "cust", UserName = "cust@x.com", FullName = "Priya" };
-                context.Users.AddRange(b2bUser, customer);
+                context.Users.Add(b2bUser);
                 context.UserRoles.AddRange(
                     new IdentityUserRole<string> { UserId = "b2b", RoleId = b2bRole.Id },
                     new IdentityUserRole<string> { UserId = "cust", RoleId = customerRole.Id });
@@ -88,7 +87,6 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                context.Users.Add(new ApplicationUser { Id = "cust", UserName = "cust@x.com", FullName = "Priya" });
                 await context.SaveChangesAsync();
             }
 

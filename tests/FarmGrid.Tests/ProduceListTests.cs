@@ -115,7 +115,6 @@ namespace FarmGrid.Tests
             int listingId;
             await using (var context = db.CreateContext())
             {
-                context.Users.Add(new ApplicationUser { Id = "cust", UserName = "c@x.com", FullName = "Priya" });
                 var listing = new QuickSellListing
                 {
                     FarmerId = "farmer", FarmerName = "Ramesh", CropTitle = "Carrots",
@@ -153,7 +152,6 @@ namespace FarmGrid.Tests
             int listingId;
             await using (var context = db.CreateContext())
             {
-                context.Users.Add(new ApplicationUser { Id = "cust", UserName = "c@x.com", FullName = "Priya" });
                 var listing = new QuickSellListing
                 {
                     FarmerId = "farmer", FarmerName = "Ramesh", CropTitle = "Carrots",

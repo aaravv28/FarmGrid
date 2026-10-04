@@ -44,7 +44,6 @@ namespace FarmGrid.Tests
         private static async Task<int> SeedHalfwayLot(TestDb db)
         {
             await using var context = db.CreateContext();
-            context.Users.Add(new ApplicationUser { Id = "cust", UserName = "c@x.com", FullName = "Priya" });
             var listing = new QuickSellListing
             {
                 FarmerId = "farmer", FarmerName = "Ramesh", CropTitle = "Carrots",
