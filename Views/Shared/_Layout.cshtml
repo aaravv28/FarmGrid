@@ -136,10 +136,6 @@
                                     {
                                         <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size:0.7rem;">Farmer</span>
                                     }
-                                    else if (User.IsInRole("B2B Buyer"))
-                                    {
-                                        <span class="badge bg-warning-subtle text-dark border border-warning-subtle ms-1" style="font-size:0.7rem;">B2B</span>
-                                    }
                                     else if (User.IsInRole("Customer"))
                                     {
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1" style="font-size:0.7rem;">Customer</span>
@@ -183,7 +179,7 @@
                                     }
                                     else
                                     {
-                                        <li class="dropdown-header text-uppercase small fw-bold text-primary">Buyer Portal</li>
+                                        <li class="dropdown-header text-uppercase small fw-bold text-primary">Customer Portal</li>
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="UI"
@@ -317,8 +313,7 @@
 
                     <p>Fresh Produce</p>
                     <p>Quick Sell</p>
-                    <p>Bulk Purchase</p>
-
+                    
                 </div>
 
                 <div class="col-md-3">

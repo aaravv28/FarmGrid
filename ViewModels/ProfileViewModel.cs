@@ -25,6 +25,6 @@ namespace FarmGrid.ViewModels
         public string? District { get; set; }
 
         [Display(Name = "Role")]
-        public string UserRole { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
     }
 }

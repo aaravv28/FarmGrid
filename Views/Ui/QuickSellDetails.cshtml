@@ -65,7 +65,7 @@
                     <div class="text-start">
                         <h3 class="fw-bold mb-2">Harvest Description</h3>
                         <p class="text-muted">
-                            @(string.IsNullOrWhiteSpace(Model.Description) ? "Fresh direct-from-farm harvest available for immediate bulk clearance." : Model.Description)
+                            @(string.IsNullOrWhiteSpace(Model.Description) ? "Fresh direct-from-farm harvest available for immediate surplus clearance." : Model.Description)
                         </p>
 
                         <div class="row g-2 mt-2">
@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded-3">
-                                    <small class="text-muted d-block">Initial Bulk Lot</small>
+                                    <small class="text-muted d-block">Initial Lot</small>
                                     <strong class="text-dark">@Model.BulkQuantity @Model.UnitMeasure</strong>
                                 </div>
                             </div>
@@ -176,13 +176,13 @@
                         <!-- Purchase Checkout Section -->
                         <div class="mt-4">
                             <h4 class="fw-bold mb-3">
-                                <i class="fa-solid fa-cart-shopping text-success me-2"></i> Buy Bulk Produce
+                                <i class="fa-solid fa-cart-shopping text-success me-2"></i> Buy Surplus Produce
                             </h4>
 
                             @if (!User.Identity?.IsAuthenticated == true)
                             {
                                 <div class="card p-4 text-center bg-light border-0 rounded-3">
-                                    <p class="mb-2 fw-semibold">Please sign in to place wholesale and retail bulk orders.</p>
+                                    <p class="mb-2 fw-semibold">Please sign in as a Customer to buy from Quick Sell.</p>
                                     <div class="d-flex justify-content-center gap-2 mt-2">
                                         <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "QuickSell", new { id = Model.Id })" class="btn farm-btn-primary">
                                             <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In to Buy
@@ -201,7 +201,7 @@
                                     </div>
                                     <h5 class="fw-bold mb-1">Farmer Inspection Mode</h5>
                                     <p class="text-muted small mb-3">
-                                        You are logged in as a <strong>Farmer</strong>. Quick Sell wholesale purchasing is reserved for <strong>Customers & B2B Buyers</strong>.
+                                        You are logged in as a <strong>Farmer</strong>. Quick Sell purchasing is reserved for <strong>Customers</strong>.
                                     </p>
                                     <div class="d-flex justify-content-center gap-2">
                                         <a asp-controller="UI" asp-action="FarmerDashboard" class="btn farm-btn-primary btn-sm">
@@ -242,7 +242,7 @@
 
                                     <div class="row g-2 mb-3">
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-semibold">Buyer / Business Name</label>
+                                            <label class="form-label small fw-semibold">Customer Name</label>
                                             <input type="text" name="BuyerName" class="form-control" value="@purchaseModel.BuyerName" required />
                                         </div>
                                         <div class="col-md-6">

@@ -16,9 +16,11 @@ namespace FarmGrid.Data
             // 1. Ensure Database & Migrations are applied
             await context.Database.MigrateAsync();
 
+            // Remove leftover users and data from the retired B2B role
+            await LegacyB2BCleanup.RunAsync(context);
+
             // 2. Seed Identity Roles
-            string[] roles = ["Farmer", "Customer", "B2B Buyer"];
-            foreach (var role in roles)
+            foreach (var role in Roles.All)
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
@@ -37,7 +39,7 @@ namespace FarmGrid.Data
                     Phone = "+91 98765 43210",
                     City = "Anand",
                     District = "Gujarat",
-                    Role = "Farmer"
+                    Role = Roles.Farmer
                 },
                 new
                 {
@@ -47,17 +49,7 @@ namespace FarmGrid.Data
                     Phone = "+91 98123 45678",
                     City = "Vadodara",
                     District = "Gujarat",
-                    Role = "Customer"
-                },
-                new
-                {
-                    Email = "buyer@farmgrid.com",
-                    Password = "Buyer@123",
-                    FullName = "FreshMart Wholesale Co.",
-                    Phone = "+91 99000 11223",
-                    City = "Ahmedabad",
-                    District = "Gujarat",
-                    Role = "B2B Buyer"
+                    Role = Roles.Customer
                 }
             };
 
@@ -76,7 +68,6 @@ namespace FarmGrid.Data
                         PhoneNumber = u.Phone,
                         City = u.City,
                         District = u.District,
-                        UserRole = u.Role,
                         EmailConfirmed = true,
                         CreatedAt = DateTime.Now
                     };
@@ -85,13 +76,13 @@ namespace FarmGrid.Data
                     if (result.Succeeded)
                     {
                         await userManager.AddToRoleAsync(user, u.Role);
-                        if (u.Role == "Farmer")
+                        if (u.Role == Roles.Farmer)
                         {
                             farmerUserId = user.Id;
                         }
                     }
                 }
-                else if (u.Role == "Farmer")
+                else if (u.Role == Roles.Farmer)
                 {
                     farmerUserId = existingUser.Id;
                 }
@@ -100,7 +91,7 @@ namespace FarmGrid.Data
             // Fallback farmer ID if existing accounts are used
             if (string.IsNullOrEmpty(farmerUserId))
             {
-                var anyFarmer = await context.Users.FirstOrDefaultAsync(u => u.UserRole == "Farmer");
+                var anyFarmer = (await userManager.GetUsersInRoleAsync(Roles.Farmer)).FirstOrDefault();
                 farmerUserId = anyFarmer?.Id ?? "demo-farmer-id";
             }
 
@@ -222,7 +213,7 @@ namespace FarmGrid.Data
                         FarmerId = farmerUserId,
                         FarmerName = "Ramesh Patel",
                         Location = "Anand, Gujarat",
-                        CropTitle = "Bulk Fresh Tomatoes",
+                        CropTitle = "Fresh Tomatoes",
                         Category = "Vegetables",
                         UnitMeasure = "kg",
                         BulkQuantity = 500,
@@ -240,7 +231,7 @@ namespace FarmGrid.Data
                         FarmerId = farmerUserId,
                         FarmerName = "Ramesh Patel",
                         Location = "Kheda, Gujarat",
-                        CropTitle = "Bulk Orange Carrots",
+                        CropTitle = "Orange Carrots",
                         Category = "Vegetables",
                         UnitMeasure = "kg",
                         BulkQuantity = 800,
@@ -251,7 +242,7 @@ namespace FarmGrid.Data
                         CreatedAt = now.AddHours(-12),
                         ExpiresAt = now.AddHours(36),
                         IsActive = true,
-                        Description = "Fresh crunchy orange carrots directly sorted from field. Ideal for wholesale or processing."
+                        Description = "Fresh crunchy orange carrots directly sorted from field. Ideal for processing or home use."
                     },
                     new QuickSellListing
                     {

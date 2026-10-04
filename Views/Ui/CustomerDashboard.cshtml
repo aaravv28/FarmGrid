@@ -20,7 +20,7 @@
                 </span>
                 <h2 class="mb-1">Hello, @Model.CustomerName 👋</h2>
                 <p class="text-muted mb-0">
-                    Track your orders, bulk purchases, and delivery statuses.
+                    Track your orders, Quick Sell purchases, and delivery statuses.
                 </p>
             </div>
 
@@ -144,11 +144,11 @@
             }
         </div>
 
-        <!-- Quick Sell Wholesale Orders -->
+        <!-- Quick Sell Orders -->
         <div class="dashboard-card card border-0 shadow-sm rounded-4 p-4 bg-white">
             <div class="card-title-row d-flex justify-content-between align-items-center mb-3">
                 <h4 class="fw-bold mb-0">
-                    <i class="fa-solid fa-bolt text-danger me-2"></i> Quick Sell Bulk Purchases
+                    <i class="fa-solid fa-bolt text-danger me-2"></i> Quick Sell Purchases
                 </h4>
                 <a asp-controller="QuickSell" asp-action="Index" class="btn btn-sm btn-outline-danger">
                     Explore Quick Sell <i class="fa-solid fa-arrow-right ms-1"></i>
@@ -158,7 +158,7 @@
             @if (!Model.RecentQuickSellOrders.Any())
             {
                 <div class="text-center py-4 text-muted">
-                    <p class="mb-2">No bulk quick-sell orders yet.</p>
+                    <p class="mb-2">No Quick Sell orders yet.</p>
                     <a asp-controller="QuickSell" asp-action="Index" class="btn btn-sm btn-outline-danger">
                         <i class="fa-solid fa-bolt me-1"></i> View Urgent Harvest Deals
                     </a>

@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace FarmGrid.Controllers
 {
-    [Authorize(Roles = "Customer,B2B Buyer")]
+    [Authorize(Roles = Roles.Customer)]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;

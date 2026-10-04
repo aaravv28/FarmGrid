@@ -64,7 +64,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - GET (Strictly Farmer)
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpGet]
         public IActionResult Create()
         {
@@ -74,7 +74,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - POST (Strictly Farmer)
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -102,7 +102,7 @@ namespace FarmGrid.Controllers
         }
 
         // EDIT - GET (Strictly Farmer)
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -127,7 +127,7 @@ namespace FarmGrid.Controllers
         }
 
         // EDIT - POST (Strictly Farmer)
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -175,7 +175,7 @@ namespace FarmGrid.Controllers
         }
 
         // DELETE (Strictly Farmer)
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

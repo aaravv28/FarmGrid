@@ -15,10 +15,6 @@ namespace FarmGrid.Models
         [StringLength(100)]
         public string? District { get; set; }
 
-        [Required]
-        [StringLength(30)]
-        public string UserRole { get; set; } = "Customer"; // "Farmer", "Customer", "B2B Buyer"
-
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -21,7 +21,7 @@ namespace FarmGrid.ViewModels
 
         [Required(ErrorMessage = "Role selection is required.")]
         [Display(Name = "I am a")]
-        public string Role { get; set; } = "Farmer"; // Options: "Farmer", "Customer", "B2B Buyer"
+        public string Role { get; set; } = "Farmer"; // "Farmer" or "Customer"
 
         [Display(Name = "City")]
         public string? City { get; set; }

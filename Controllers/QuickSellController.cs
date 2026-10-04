@@ -86,7 +86,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - GET
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -103,7 +103,7 @@ namespace FarmGrid.Controllers
         }
 
         // CREATE - POST
-        [Authorize(Roles = "Farmer")]
+        [Authorize(Roles = Roles.Farmer)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuickSellCreateViewModel model)
@@ -149,7 +149,7 @@ namespace FarmGrid.Controllers
         }
 
         // PURCHASE - POST
-        [Authorize(Roles = "Customer,B2B Buyer")]
+        [Authorize(Roles = Roles.Customer)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Purchase(QuickSellPurchaseViewModel model)
@@ -268,7 +268,7 @@ namespace FarmGrid.Controllers
                     FarmerId = "seed-farmer-1",
                     FarmerName = "Ramesh Patel",
                     Location = "Anand, Gujarat",
-                    CropTitle = "Bulk Fresh Tomatoes",
+                    CropTitle = "Fresh Tomatoes",
                     Category = "Vegetables",
                     UnitMeasure = "kg",
                     BulkQuantity = 500,
@@ -286,7 +286,7 @@ namespace FarmGrid.Controllers
                     FarmerId = "seed-farmer-2",
                     FarmerName = "Kishore Bhai",
                     Location = "Kheda, Gujarat",
-                    CropTitle = "Bulk Carrots",
+                    CropTitle = "Fresh Carrots",
                     Category = "Vegetables",
                     UnitMeasure = "kg",
                     BulkQuantity = 800,
@@ -297,7 +297,7 @@ namespace FarmGrid.Controllers
                     CreatedAt = now.AddHours(-12),
                     ExpiresAt = now.AddHours(36),
                     IsActive = true,
-                    Description = "Fresh crunchy orange carrots directly sorted from field. Ideal for processing or wholesale."
+                    Description = "Fresh crunchy orange carrots directly sorted from field. Ideal for processing or home use."
                 },
                 new QuickSellListing
                 {

@@ -14,7 +14,7 @@ namespace FarmGrid.ViewModels
 
         [Required(ErrorMessage = "Quantity is required")]
         [Range(1, 1000000, ErrorMessage = "Quantity must be at least 1 kg")]
-        [Display(Name = "Bulk Quantity (kg)")]
+        [Display(Name = "Lot Quantity (kg)")]
         public decimal BulkQuantity { get; set; }
 
         [Required(ErrorMessage = "Starting price is required")]

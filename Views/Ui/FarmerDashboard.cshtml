@@ -235,13 +235,13 @@
                         <h4 class="fw-bold mb-0">
                             <i class="fa-solid fa-receipt text-primary me-2"></i> Recent Quick Sell Orders
                         </h4>
-                        <span class="badge bg-primary-subtle text-primary border px-2 py-1">Wholesale Sales</span>
+                        <span class="badge bg-primary-subtle text-primary border px-2 py-1">Quick Sell Sales</span>
                     </div>
 
                     @if (!Model.RecentQuickSellOrders.Any())
                     {
                         <div class="text-center py-4 text-muted">
-                            <p class="mb-0">No wholesale orders recorded yet.</p>
+                            <p class="mb-0">No Quick Sell orders recorded yet.</p>
                         </div>
                     }
                     else
@@ -250,7 +250,7 @@
                             <table class="table table-hover align-middle mb-0 small">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Buyer</th>
+                                        <th>Customer</th>
                                         <th>Produce</th>
                                         <th>Qty</th>
                                         <th>Total</th>

@@ -7,7 +7,6 @@
     var user = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
     var isFarmer = User.IsInRole("Farmer");
     var isCustomer = User.IsInRole("Customer");
-    var isB2B = User.IsInRole("B2B Buyer");
 }
 
 <div class="container py-5 text-center">
@@ -31,7 +30,7 @@
                     <i class="fa-solid fa-tractor me-1"></i> Farmer Account Detected
                 </h6>
                 <p class="small mb-0">
-                    You are signed in with a <strong>Farmer</strong> profile. Retail shopping cart, consumer orders, and the Customer Portal are restricted to buyers and consumers.
+                    You are signed in with a <strong>Farmer</strong> profile. Retail shopping cart, consumer orders, and the Customer Portal are restricted to customers.
                 </p>
             </div>
 
@@ -48,19 +47,19 @@
                 </a>
             </div>
         }
-        else if (isCustomer || isB2B)
+        else if (isCustomer)
         {
             <div class="alert alert-info text-start my-3" role="alert">
                 <h6 class="alert-heading fw-bold mb-1">
-                    <i class="fa-solid fa-basket-shopping me-1"></i> @(isB2B ? "B2B Buyer" : "Customer") Account Detected
+                    <i class="fa-solid fa-basket-shopping me-1"></i> Customer Account Detected
                 </h6>
                 <p class="small mb-0">
-                    You are signed in with a <strong>@(isB2B ? "B2B Bulk Buyer" : "Retail Customer")</strong> profile. The Farmer Portal, product listing tools, and group transport operations are restricted to verified farmers.
+                    You are signed in with a <strong>Customer</strong> profile. The Farmer Portal, product listing tools, and group transport operations are restricted to verified farmers.
                 </p>
             </div>
 
             <p class="text-muted small">
-                You can browse the fresh marketplace, participate in quick-sell bulk deals, and track your purchases from your dashboard.
+                You can browse the fresh marketplace, pick up surplus produce on Quick Sell, and track your purchases from your dashboard.
             </p>
 
             <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">

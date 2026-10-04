@@ -43,10 +43,9 @@ namespace FarmGrid.Controllers
             ViewData["ReturnUrl"] = returnUrl;
 
             // Ensure valid role
-            var validRoles = new[] { "Farmer", "Customer", "B2B Buyer" };
-            if (!validRoles.Contains(model.Role))
+            if (!Roles.All.Contains(model.Role))
             {
-                model.Role = "Customer";
+                model.Role = Roles.Customer;
             }
 
             if (!ModelState.IsValid)
@@ -69,7 +68,6 @@ namespace FarmGrid.Controllers
                 PhoneNumber = model.PhoneNumber,
                 City = model.City,
                 District = model.District,
-                UserRole = model.Role,
                 CreatedAt = DateTime.Now
             };
 
@@ -93,13 +91,9 @@ namespace FarmGrid.Controllers
                 }
 
                 // Redirect based on selected role
-                if (model.Role == "Farmer")
+                if (model.Role == Roles.Farmer)
                 {
                     return RedirectToAction("FarmerDashboard", "UI");
-                }
-                else if (model.Role == "B2B Buyer")
-                {
-                    return RedirectToAction("Index", "Products");
                 }
 
                 return RedirectToAction("Index", "Home");
@@ -145,16 +139,6 @@ namespace FarmGrid.Controllers
                 return View(model);
             }
 
-            // Ensure user has their role attached in Identity system
-            if (!string.IsNullOrEmpty(user.UserRole) && !await _userManager.IsInRoleAsync(user, user.UserRole))
-            {
-                if (!await _roleManager.RoleExistsAsync(user.UserRole))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(user.UserRole));
-                }
-                await _userManager.AddToRoleAsync(user, user.UserRole);
-            }
-
             var result = await _signInManager.PasswordSignInAsync(
                 user.UserName!,
                 model.Password,
@@ -170,17 +154,13 @@ namespace FarmGrid.Controllers
                     return Redirect(returnUrl);
                 }
 
-                if (user.UserRole == "Farmer")
+                if (await _userManager.IsInRoleAsync(user, Roles.Farmer))
                 {
                     return RedirectToAction("FarmerDashboard", "UI");
                 }
-                else if (user.UserRole == "Customer")
+                else if (await _userManager.IsInRoleAsync(user, Roles.Customer))
                 {
                     return RedirectToAction("CustomerDashboard", "UI");
-                }
-                else if (user.UserRole == "B2B Buyer")
-                {
-                    return RedirectToAction("Index", "QuickSell");
                 }
 
                 return RedirectToAction("Index", "Home");
@@ -218,7 +198,7 @@ namespace FarmGrid.Controllers
                 PhoneNumber = user.PhoneNumber,
                 City = user.City,
                 District = user.District,
-                UserRole = user.UserRole
+                Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty
             };
 
             return View(model);

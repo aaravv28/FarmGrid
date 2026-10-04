@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace FarmGrid.Controllers
 {
-    [Authorize(Roles = "Farmer")]
+    [Authorize(Roles = Roles.Farmer)]
     public class TransportController : Controller
     {
         private readonly ApplicationDbContext _context;
