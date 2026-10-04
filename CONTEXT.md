@@ -14,6 +14,10 @@ _Avoid_: Seller, vendor, host (except for a Trip's host)
 A user who buys produce, either from the catalog or from Quick Sell. The only buying role.
 _Avoid_: Buyer, B2B buyer, wholesale buyer, client
 
+**Location**:
+A user's Gujarat city and the district it belongs to, chosen from a fixed list; the district always follows from the city.
+_Avoid_: Address, region, state
+
 ### Selling
 
 **Product**:
@@ -45,6 +49,10 @@ _Avoid_: Minimum price, reserve
 **Market**:
 A real agricultural market (APMC yard) in Gujarat that a Trip can go to, chosen from a fixed list, with its city and district.
 _Avoid_: Destination, mandi (as a free-text name), hub
+
+**Origin**:
+Where a Trip starts: always the host Farmer's current Location.
+_Avoid_: Source, pickup point, starting point
 
 **Trip**:
 A farmer's vehicle journey to a market, with spare capacity that other farmers can book. A Trip is open through its dispatch date and closed once that date has passed; a closed Trip cannot be found or joined.
