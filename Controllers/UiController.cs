@@ -85,7 +85,7 @@ namespace FarmGrid.Controllers
             var totalRetailEarnings = retailOrders.Sum(o => o.TotalPrice);
             var totalCombinedEarnings = totalQuickEarnings + totalRetailEarnings;
             var activeProductCount = myProducts.Count(p => p.IsActive);
-            var activeQuickSellCount = myQuickSells.Count(q => q.IsActive && !q.IsExpired());
+            var activeQuickSellCount = myQuickSells.Count(q => q.IsBuyable());
 
             var viewModel = new FarmerDashboardViewModel
             {

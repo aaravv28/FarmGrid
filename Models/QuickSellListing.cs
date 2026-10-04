@@ -102,7 +102,18 @@ namespace FarmGrid.Models
         public bool IsExpired(DateTime? asOf = null)
         {
             var now = asOf ?? DateTime.Now;
-            return now >= ExpiresAt || AvailableQuantity <= 0;
+            return now >= ExpiresAt;
+        }
+
+        public bool IsSoldOut => AvailableQuantity <= 0;
+
+        /// <summary>
+        /// A lot can be bought while it is listed, has quantity left and has not expired.
+        /// Selling out never changes IsActive.
+        /// </summary>
+        public bool IsBuyable(DateTime? asOf = null)
+        {
+            return IsActive && !IsSoldOut && !IsExpired(asOf);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace FarmGrid.Controllers
             string? category)
         {
             var query = _context.Products
-                .Where(p => p.IsActive);
+                .Available();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -49,9 +49,8 @@ namespace FarmGrid.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var product = await _context.Products
-                .FirstOrDefaultAsync(p =>
-                    p.Id == id &&
-                    p.IsActive);
+                .Available()
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {

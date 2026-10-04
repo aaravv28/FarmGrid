@@ -123,7 +123,7 @@ namespace FarmGrid.Controllers
                 foreach (var cart in cartItems)
                 {
                     if (cart.Product == null ||
-                        !cart.Product.IsActive)
+                        !cart.Product.IsAvailable)
                     {
                         throw new Exception(
                             "A product is no longer available.");
@@ -185,12 +185,6 @@ namespace FarmGrid.Controllers
 
                     product.StockQuantity -=
                         cart.Quantity;
-
-                    if (product.StockQuantity <= 0)
-                    {
-                        product.StockQuantity = 0;
-                        product.IsActive = false;
-                    }
                 }
 
                 _context.CartItems.RemoveRange(

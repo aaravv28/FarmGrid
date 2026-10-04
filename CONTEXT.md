@@ -20,6 +20,10 @@ _Avoid_: Buyer, B2B buyer, wholesale buyer, client
 A farmer's standing catalog item, sold at a fixed unit price from a stock quantity.
 _Avoid_: Listing, item
 
+**Available**:
+A Product customers can see and buy: not deleted by its Farmer and with stock above zero. A Quick Sell lot is available when it also has not expired. Selling out makes it unavailable; restocking makes it available again.
+_Avoid_: Active, in catalog, live
+
 **Order**:
 A customer's purchase of catalog Products from a single Farmer. One checkout produces one Order per Farmer in the cart.
 _Avoid_: Purchase, transaction

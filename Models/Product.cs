@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.Models
@@ -32,7 +32,11 @@ namespace FarmGrid.Models
         [StringLength(500)]
         public string? Description { get; set; }
 
+        /// <summary>False only when the farmer has deleted the product. Selling out never changes it.</summary>
         public bool IsActive { get; set; } = true;
+
+        /// <summary>Customers can see and buy a product while it is listed and in stock.</summary>
+        public bool IsAvailable => IsActive && StockQuantity > 0;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

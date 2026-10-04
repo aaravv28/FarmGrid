@@ -203,8 +203,8 @@
                                     <div>
                                         <div class="d-flex align-items-center gap-2 mb-1">
                                             <strong class="fs-6">@qs.CropTitle</strong>
-                                            <span class="badge @(qs.IsExpired() ? "bg-secondary" : "bg-danger")" style="font-size: 0.7rem;">
-                                                @(qs.IsExpired() ? "EXPIRED" : "LIVE DECAY")
+                                            <span class="badge @(qs.IsBuyable() ? "bg-danger" : "bg-secondary")" style="font-size: 0.7rem;">
+                                                @(qs.IsExpired() ? "EXPIRED" : qs.IsSoldOut ? "SOLD OUT" : "LIVE DECAY")
                                             </span>
                                         </div>
                                         <div class="small text-muted">

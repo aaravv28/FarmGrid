@@ -5,6 +5,7 @@
     var remaining = Model.GetRemainingTime();
     var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, 50) });
     var isExpired = Model.IsExpired();
+    var isClosed = !Model.IsBuyable();
     var isFarmerOwner = User.Identity?.Name == Model.FarmerName || User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.FarmerId;
 }
 
@@ -130,8 +131,8 @@
                             <h2 class="fw-bold mb-0">@Model.CropTitle</h2>
                             <p class="text-muted small">Category: @Model.Category</p>
                         </div>
-                        <span class="badge @(isExpired ? "bg-secondary" : "bg-danger") px-3 py-2 fs-6">
-                            @(isExpired ? "EXPIRED" : "ACTIVE")
+                        <span class="badge @(isClosed ? "bg-secondary" : "bg-danger") px-3 py-2 fs-6">
+                            @(isExpired ? "EXPIRED" : Model.IsSoldOut ? "SOLD OUT" : "ACTIVE")
                         </span>
                     </div>
 
@@ -165,10 +166,10 @@
                         </div>
                     </div>
 
-                    @if (isExpired)
+                    @if (isClosed)
                     {
                         <div class="alert alert-secondary text-center my-3" role="alert">
-                            <i class="fa-solid fa-lock me-2"></i> This quick sell listing has closed.
+                            <i class="fa-solid fa-lock me-2"></i> This quick sell listing has @(isExpired ? "closed" : "sold out").
                         </div>
                     }
                     else

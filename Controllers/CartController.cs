@@ -60,9 +60,9 @@ namespace FarmGrid.Controllers
 
             var product =
                 await _context.Products
+                    .Available()
                     .FirstOrDefaultAsync(p =>
-                        p.Id == productId &&
-                        p.IsActive);
+                        p.Id == productId);
 
             if (product == null)
             {

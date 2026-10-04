@@ -30,7 +30,7 @@ namespace FarmGrid.Controllers
 
             var now = DateTime.Now;
             var query = _context.QuickSellListings
-                .Where(q => q.IsActive && q.AvailableQuantity > 0 && q.ExpiresAt > now);
+                .Buyable(now);
 
             if (!string.IsNullOrWhiteSpace(category) && category != "All")
             {
@@ -162,9 +162,9 @@ namespace FarmGrid.Controllers
                 return NotFound("Listing not found.");
             }
 
-            if (!listing.IsActive || listing.IsExpired())
+            if (!listing.IsBuyable())
             {
-                TempData["Error"] = "This quick sell listing has already expired or ended.";
+                TempData["Error"] = "This quick sell listing has sold out or ended.";
                 return RedirectToAction(nameof(Details), new { id = model.ListingId });
             }
 
@@ -209,11 +209,6 @@ namespace FarmGrid.Controllers
 
             // Atomically decrement available stock
             listing.AvailableQuantity -= model.Quantity;
-            if (listing.AvailableQuantity <= 0)
-            {
-                listing.AvailableQuantity = 0;
-                listing.IsActive = false;
-            }
 
             _context.QuickSellOrders.Add(order);
             await _context.SaveChangesAsync();
@@ -248,6 +243,7 @@ namespace FarmGrid.Controllers
                 availableQuantity = listing.AvailableQuantity,
                 remainingSeconds = Math.Max(0, (int)remaining.TotalSeconds),
                 isExpired = listing.IsExpired(),
+                isSoldOut = listing.IsSoldOut,
                 elapsedHours = (decimal)(DateTime.Now - listing.CreatedAt).TotalHours
             });
         }
