@@ -38,7 +38,7 @@ namespace FarmGrid.Controllers
                     .ToListAsync();
 
             return View(
-                "~/Views/UI/Cart.cshtml",
+                "~/Views/Ui/Cart.cshtml",
                 cartItems);
         }
 

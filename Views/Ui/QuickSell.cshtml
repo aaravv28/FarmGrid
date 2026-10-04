@@ -136,11 +136,7 @@
                                 </div>
 
                                 <div class="countdown-bar text-center p-2 rounded mb-3 bg-danger-subtle text-danger fw-bold small live-timer-box"
-                                     data-expires="@item.ExpiresAt.ToUtcIso()"
-                                     data-start-price="@item.StartingPrice"
-                                     data-floor-price="@item.FloorPrice"
-                                     data-duration="@item.DurationHours"
-                                     data-created="@item.CreatedAt.ToUtcIso()">
+                                     data-expires="@item.ExpiresAt.ToUtcIso()">
                                     <i class="fa-regular fa-clock me-1"></i>
                                     <span class="timer-display">
                                         @string.Format("{0:D2}:{1:D2}:{2:D2} remaining", (int)remaining.TotalHours, remaining.Minutes, remaining.Seconds)

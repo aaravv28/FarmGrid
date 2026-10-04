@@ -51,7 +51,7 @@ namespace FarmGrid.Controllers
             ViewBag.SelectedCategory = category ?? "All";
             ViewBag.Search = search ?? string.Empty;
 
-            return View("~/Views/UI/QuickSell.cshtml", listings);
+            return View("~/Views/Ui/QuickSell.cshtml", listings);
         }
 
         // DETAILS - GET
@@ -84,7 +84,7 @@ namespace FarmGrid.Controllers
             }
 
             ViewBag.PurchaseModel = purchaseModel;
-            return View("~/Views/UI/QuickSellDetails.cshtml", listing);
+            return View("~/Views/Ui/QuickSellDetails.cshtml", listing);
         }
 
         // CREATE - GET
@@ -101,7 +101,7 @@ namespace FarmGrid.Controllers
                     : "Anand, Gujarat";
             }
 
-            return View("~/Views/UI/QuickSellCreate.cshtml", model);
+            return View("~/Views/Ui/QuickSellCreate.cshtml", model);
         }
 
         // CREATE - POST
@@ -117,7 +117,7 @@ namespace FarmGrid.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View("~/Views/UI/QuickSellCreate.cshtml", model);
+                return View("~/Views/Ui/QuickSellCreate.cshtml", model);
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -194,7 +194,7 @@ namespace FarmGrid.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.PurchaseModel = model;
-                return View("~/Views/UI/QuickSellDetails.cshtml", listing);
+                return View("~/Views/Ui/QuickSellDetails.cshtml", listing);
             }
 
             // Calculate live decay price securely on the server

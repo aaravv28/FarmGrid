@@ -7,7 +7,6 @@
     var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, MarketRules.DefaultQuickSellQuantityKg) });
     var isExpired = Model.IsExpired();
     var isClosed = !Model.IsBuyable();
-    var isFarmerOwner = User.Identity?.Name == Model.FarmerName || User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.FarmerId;
 }
 
 <div class="detail-page py-4">

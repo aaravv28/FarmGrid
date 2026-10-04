@@ -46,7 +46,7 @@ namespace FarmGrid.Controllers
                 .ToListAsync();
 
             return View(
-                "~/Views/UI/ProductCatalog.cshtml",
+                "~/Views/Ui/ProductCatalog.cshtml",
                 products);
         }
 
@@ -63,7 +63,7 @@ namespace FarmGrid.Controllers
             }
 
             return View(
-                "~/Views/UI/ProductDetails.cshtml",
+                "~/Views/Ui/ProductDetails.cshtml",
                 product);
         }
 
@@ -73,7 +73,7 @@ namespace FarmGrid.Controllers
         public IActionResult Create()
         {
             return View(
-                "~/Views/UI/ProductForm.cshtml",
+                "~/Views/Ui/ProductForm.cshtml",
                 new ProductInputModel());
         }
 
@@ -87,7 +87,7 @@ namespace FarmGrid.Controllers
             if (!ModelState.IsValid)
             {
                 return View(
-                    "~/Views/UI/ProductForm.cshtml",
+                    "~/Views/Ui/ProductForm.cshtml",
                     model);
             }
 
@@ -139,7 +139,7 @@ namespace FarmGrid.Controllers
             }
 
             return View(
-                "~/Views/UI/ProductForm.cshtml",
+                "~/Views/Ui/ProductForm.cshtml",
                 ProductInputModel.From(product));
         }
 
@@ -180,7 +180,7 @@ namespace FarmGrid.Controllers
             if (!ModelState.IsValid)
             {
                 return View(
-                    "~/Views/UI/ProductForm.cshtml",
+                    "~/Views/Ui/ProductForm.cshtml",
                     model);
             }
 

@@ -40,7 +40,7 @@ namespace FarmGrid.Controllers
                 .ToListAsync();
 
             return View(
-                "~/Views/UI/Orders.cshtml",
+                "~/Views/Ui/Orders.cshtml",
                 orders);
         }
 
@@ -87,7 +87,7 @@ namespace FarmGrid.Controllers
             }
 
             return View(
-                "~/Views/UI/Checkout.cshtml",
+                "~/Views/Ui/Checkout.cshtml",
                 model);
         }
 
@@ -114,7 +114,7 @@ namespace FarmGrid.Controllers
             if (!ModelState.IsValid)
             {
                 return View(
-                    "~/Views/UI/Checkout.cshtml",
+                    "~/Views/Ui/Checkout.cshtml",
                     model);
             }
 
@@ -125,7 +125,7 @@ namespace FarmGrid.Controllers
                     "Your cart is empty.");
 
                 return View(
-                    "~/Views/UI/Checkout.cshtml",
+                    "~/Views/Ui/Checkout.cshtml",
                     model);
             }
 
@@ -207,7 +207,7 @@ namespace FarmGrid.Controllers
                 await LoadCheckoutSummaryAsync(cartItems);
 
                 return View(
-                    "~/Views/UI/Checkout.cshtml",
+                    "~/Views/Ui/Checkout.cshtml",
                     model);
             }
             catch (CheckoutProblemException ex)
@@ -221,7 +221,7 @@ namespace FarmGrid.Controllers
                 await LoadCheckoutSummaryAsync(cartItems);
 
                 return View(
-                    "~/Views/UI/Checkout.cshtml",
+                    "~/Views/Ui/Checkout.cshtml",
                     model);
             }
         }
@@ -243,7 +243,7 @@ namespace FarmGrid.Controllers
             }
 
             return View(
-                "~/Views/UI/OrderDetails.cshtml",
+                "~/Views/Ui/OrderDetails.cshtml",
                 order);
         }
 

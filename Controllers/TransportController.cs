@@ -36,14 +36,14 @@ namespace FarmGrid.Controllers
                 .Take(6)
                 .ToListAsync();
 
-            return View("~/Views/UI/Transport.cshtml", upcomingTrips);
+            return View("~/Views/Ui/Transport.cshtml", upcomingTrips);
         }
 
         // Open Create Transport page
         [HttpGet]
         public IActionResult Create()
         {
-            return View("~/Views/UI/TransportCreate.cshtml", new TripInputModel());
+            return View("~/Views/Ui/TransportCreate.cshtml", new TripInputModel());
         }
 
         // Create new transport trip
@@ -69,7 +69,7 @@ namespace FarmGrid.Controllers
             if (!ModelState.IsValid)
             {
                 return View(
-                    "~/Views/UI/TransportCreate.cshtml",
+                    "~/Views/Ui/TransportCreate.cshtml",
                     model);
             }
 
@@ -186,7 +186,7 @@ namespace FarmGrid.Controllers
                 dispatchDate;
 
             return View(
-                "~/Views/UI/TransportSuggestions.cshtml",
+                "~/Views/Ui/TransportSuggestions.cshtml",
                 matches);
         }
 
@@ -352,7 +352,7 @@ namespace FarmGrid.Controllers
                     .ToListAsync();
 
             return View(
-                "~/Views/UI/MyTransportTrips.cshtml",
+                "~/Views/Ui/MyTransportTrips.cshtml",
                 trips);
         }
 
