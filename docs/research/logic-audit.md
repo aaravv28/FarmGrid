@@ -88,7 +88,7 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 - **Proposed fix:** Seed relative to app start in a demo-only mode. For example, in Development, refresh `ExpiresAt`/`CreatedAt`/`DispatchDate` of seed rows when they have lapsed, or always seed with `AvailableQuantity == BulkQuantity`. Document the behaviour.
 
 ### M7. Transport suggestions: the nearby-date fallback is silent and trip dates are never shown
-- **Where:** `Controllers/TransportController.cs:136-153` replaces the exact-date result with any future-dated trip and sets `ViewBag.IsNearbyDateMatch`, which no view reads (grep finds no hit in `Views/`). `Views/Ui/TransportSuggestions.cshtml:55-147` never displays `DispatchDate`. Neither query excludes trips the farmer has already joined. The exact-match query (`:126-131`) does not exclude past dates.
+- **Where:** `Controllers/TransportController.cs:136-153` replaces the exact-date result with any future-dated trip and sets `ViewBag.IsNearbyDateMatch`, which no view reads (grep finds no hit in `Views/`). `Views/Ui/TransportSuggestions.cshtml:56-148` never displays `DispatchDate`. Neither query excludes trips the farmer has already joined. The exact-match query (`:126-131`) does not exclude past dates.
 - **Failure scenario:** A farmer searches for City Hub on 10 Oct. No exact match exists, so a 15 Oct trip is shown with no date and no "nearby" notice. The farmer joins believing it leaves on the 10th. The list can also contain a trip they already joined, which then fails with "already joined". Searching a past date returns past trips, which can be joined until #10 lands.
 - **Proposed fix:** Show `DispatchDate` on each suggestion and a banner when `IsNearbyDateMatch` is set. Exclude trips where the farmer is already a participant. Restrict both queries to `DispatchDate >= today` (this complements #10, which closes trips server-side).
 
@@ -103,8 +103,8 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 - **Proposed fix:** Use one shared category list for both features, for example a `Categories` constant, and render the filter from it.
 
 ### M10. `DateTime.Now` and `DateTime.Today` are used everywhere instead of UTC (confirmed)
-- **Where:** All timestamps: `Models/*.cs` defaults (`ApplicationUser.cs:22`, `CartItem.cs:21`, `Order.cs:41`, `Product.cs:37`, `QuickSellListing.cs:54,56,71,97,104`, `QuickSellOrder.cs:55`, `TransportParticipant.cs:27`, `TransportTrip.cs:39`). Controllers: `ProductsController.cs:94`, `CartController.cs:126`, `OrdersController.cs:160`, `QuickSellController.cs:31,138-139,207,251,263`, `TransportController.cs:25,67,83,145,264`, `AccountController.cs:73`. Seeds: `DbInitializer.cs` throughout. Views: `Transport.cshtml:121` (`DateTime.Today`).
-- **Failure scenario:** On a UTC host, between 00:00 and 05:30 IST `DateTime.Today` is still yesterday. Yesterday's trips stay listed and joinable on Transport Index (`TransportController.cs:29`), and the date picker defaults to yesterday. Every displayed timestamp ("Placed on …", `OrderDetails.cshtml:22`) is 5.5 h off for Indian users. Moving the server between machines in different zones shifts all Quick Sell decay. This also causes H6.
+- **Where:** All timestamps: `Models/*.cs` defaults (`ApplicationUser.cs:22`, `CartItem.cs:21`, `Order.cs:41`, `Product.cs:37`, `QuickSellListing.cs:54,56,71,97,104`, `QuickSellOrder.cs:55`, `TransportParticipant.cs:27`, `TransportTrip.cs:39`). Controllers: `ProductsController.cs:94`, `CartController.cs:125`, `OrdersController.cs:160`, `QuickSellController.cs:31,138-139,207,251,263`, `TransportController.cs:25,67,83,145,264`, `AccountController.cs:73`. Seeds: `DbInitializer.cs` throughout. Views: `Transport.cshtml:121` (`DateTime.Today`).
+- **Failure scenario:** On a UTC host, between 00:00 and 05:30 IST `DateTime.Today` is still yesterday. Yesterday's trips stay listed and joinable on Transport Index (`TransportController.cs:29`), and the date picker defaults to yesterday. Every displayed timestamp ("Placed on …", `OrderDetails.cshtml:23`) is 5.5 h off for Indian users. Moving the server between machines in different zones shifts all Quick Sell decay. This also causes H6.
 - **Proposed fix:** Store `DateTime.UtcNow`, or `DateTimeOffset`. Inject `TimeProvider` so decay and expiry are testable (see #3). Convert to IST (`Asia/Kolkata`) only for display. Use an IST "today" for date-only comparisons such as dispatch dates.
 
 ### M11. Dashboard aggregates ignore order status
@@ -127,7 +127,7 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 ## Low
 
 ### L1. Decimal formatting and parsing depend on the server culture
-- **Where:** Numbers rendered straight into JS: `Views/Ui/QuickSellDetails.cshtml:301-303,306,316`. Number inputs given culture-formatted values: `Cart.cshtml:96`, `TransportSuggestions.cshtml:142`. Form model binding parses decimals with `CurrentCulture`. No `UseRequestLocalization` in `Program.cs`.
+- **Where:** Numbers rendered straight into JS: `Views/Ui/QuickSellDetails.cshtml:301-303,306,316`. Number inputs given culture-formatted values: `Cart.cshtml:96`, `TransportSuggestions.cshtml:143`. Form model binding parses decimals with `CurrentCulture`. No `UseRequestLocalization` in `Program.cs`.
 - **Failure scenario:** On a host with a comma-decimal culture (for example `de-DE`), `const startPrice = 30,00;` is a JS syntax error and the whole ticker script dies. The browser posts `12.5` from `<input type=number>`, which binds as `125`.
 - **Proposed fix:** Pin the culture (`UseRequestLocalization` with `en-IN` and invariant number parsing), and emit JS numbers with `ToString(CultureInfo.InvariantCulture)` or `@Json.Serialize(...)`.
 
@@ -147,7 +147,7 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 - **Proposed fix:** Use a domain exception type (for example `CheckoutException`) for the expected stock and availability errors. Log anything else and show a generic message.
 
 ### L5. Business constants are hard-coded and duplicated (confirmed)
-- **Where:** 48 h: `QuickSellController.cs:137-139`, `Models/QuickSellListing.cs:52,56`, `QuickSellDetails.cshtml:112`, `QuickSellCreate.cshtml:128,136`, plus the TempData text at `QuickSellController.cs:147`. ₹30: `OrdersController.cs:144,252`, `Cart.cshtml:166,178`, `checkout.cshtml:9`. Low-stock threshold 20 (unit-agnostic): `FarmerDashboard.cshtml:147`. Preset 50 kg: `QuickSellController.cs:69`, `QuickSellDetails.cshtml:6`.
+- **Where:** 48 h: `QuickSellController.cs:137-139`, `Models/QuickSellListing.cs:52,56`, `QuickSellDetails.cshtml:112`, `QuickSellCreate.cshtml:128,136`, plus the TempData text at `QuickSellController.cs:147`. ₹30: `OrdersController.cs:144,252`, `Cart.cshtml:166,178`, `checkout.cshtml:10`. Low-stock threshold 20 (unit-agnostic): `FarmerDashboard.cshtml:147`. Preset 50 kg: `QuickSellController.cs:69`, `QuickSellDetails.cshtml:6`.
 - **Failure scenario:** Changing the delivery charge in the controller leaves the cart page showing ₹30, so the cart and checkout totals disagree. #8 will hit exactly this.
 - **Proposed fix:** Centralize these in an options class (`FarmGridOptions { QuickSellDurationHours, DeliveryChargePerOrder }`) bound from `appsettings.json` and pass the values to the views. Coordinate with #8.
 
@@ -187,12 +187,12 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 - **Proposed fix:** Return one generic "Invalid email or password" message and enable `lockoutOnFailure: true`.
 
 ### L13. Order numbers are formatted inconsistently
-- **Where:** `Orders.cshtml:91` and `OrderDetails.cshtml:2,11,20` show `#FG0001`. `CustomerDashboard.cshtml:115` shows `#1`. Quick Sell orders show `#QS-1` (`CustomerDashboard.cshtml:186`).
+- **Where:** `Orders.cshtml:92` and `OrderDetails.cshtml:3,12,21` show `#FG0001`. `CustomerDashboard.cshtml:115` shows `#1`. Quick Sell orders show `#QS-1` (`CustomerDashboard.cshtml:186`).
 - **Failure scenario:** A customer quoting "#12" from the dashboard cannot find it on the invoice page, which says "#FG0012".
 - **Proposed fix:** Add one `OrderNumber` display helper and use it everywhere.
 
 ### L14. Catalog UX inconsistencies: anonymous Add to Cart, category not kept, placeholder farmer names
-- **Where:** `ProductCatalog.cshtml:223-237` shows Add to Cart to anonymous users. The POST triggers a login challenge, and the return URL is a GET to `/Cart/Add`, which `CartController.cs:40-44` redirects to the catalog, so the item is dropped. The category `<select>` does not keep the selected value (`ProductCatalog.cshtml:63-86`). "FarmGrid Farmer" appears instead of the real farmer name (`ProductCatalog.cshtml:160`, `ProductDetails.cshtml:36`, `TransportSuggestions.cshtml:72`). Farmers see Edit/Delete on every product, including other farmers' (`ProductCatalog.cshtml:200-221`, `ProductDetails.cshtml:67-85`). The server rejects those actions, but the UI offers them.
+- **Where:** `ProductCatalog.cshtml:223-237` shows Add to Cart to anonymous users. The POST triggers a login challenge, and the return URL is a GET to `/Cart/Add`, which `CartController.cs:41-44` redirects to the catalog, so the item is dropped. The category `<select>` does not keep the selected value (`ProductCatalog.cshtml:63-86`). "FarmGrid Farmer" appears instead of the real farmer name (`ProductCatalog.cshtml:160`, `ProductDetails.cshtml:37`, `TransportSuggestions.cshtml:73`). Farmers see Edit/Delete on every product, including other farmers' (`ProductCatalog.cshtml:200-221`, `ProductDetails.cshtml:68-86`). The server rejects those actions, but the UI offers them.
 - **Proposed fix:** For anonymous users, link to login with `returnUrl` set to the product page. Keep the filter value selected. Show the farmer's `FullName`. Show Edit/Delete only when `product.FarmerId == currentUserId`.
 
 ### L15. README drift (excluding B2B, Online payment and statuses, which are covered by #4, #7 and #9)
@@ -226,7 +226,7 @@ Severity guide. **High:** money, stock or data integrity can be wrong, or one us
 | Decimal and validation gaps | **Confirmed** → M13, L1, L6 |
 | Host cargo vs capacity | **Rejected.** `AvailableCapacityKg` is *spare* capacity, separate from host cargo, which matches README:131 and the form labels. Nothing compares them, and nothing needs to. There is no total vehicle capacity field, which is a possible feature, not a bug. The real capacity bug is the race in H4 and the over-posting in H1 |
 | Trip suggestions date logic | **Confirmed** → M7 |
-| Cart quantity vs units | **Confirmed in part.** Cart and Details allow 0.01 steps for `dozen`/`unit` products (`ProductDetails.cshtml:104-110`, `Cart.cshtml:94-101`, `CartController` accepts any decimal). Folded into M8: once the unit list exists, attach a step to each unit |
+| Cart quantity vs units | **Confirmed in part.** Cart and Details allow 0.01 steps for `dozen`/`unit` products (`ProductDetails.cshtml:105-111`, `Cart.cshtml:94-101`, `CartController` accepts any decimal). Folded into M8: once the unit list exists, attach a step to each unit |
 | Missing anti-forgery or authorization | **Rejected.** Every `[HttpPost]` has `[ValidateAntiForgeryToken]`, and every mutating action has `[Authorize(Roles=…)]`. Optional hardening: a global `AutoValidateAntiforgeryTokenAttribute` filter. The actual authorization-adjacent holes are H1 (over-posting) and M4 |
 | Wrong view paths and Linux case sensitivity | **Downgraded** → L11. Verified that build-time compiled views are looked up case-insensitively |
 | Dashboard metric errors | **Confirmed** → H5 (fake and foreign data), M11 (status ignored) |
