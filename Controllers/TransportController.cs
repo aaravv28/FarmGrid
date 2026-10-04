@@ -133,6 +133,14 @@ namespace FarmGrid.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (Markets.Find(destinationMarket) == null)
+            {
+                TempData["Error"] =
+                    "Please choose one of the listed markets.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             var today = IndiaTime.Today(_time);
 
             if (dispatchDate.Date < today)

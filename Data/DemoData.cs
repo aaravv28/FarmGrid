@@ -98,9 +98,9 @@ namespace FarmGrid.Data
                 }
             };
 
-            yield return Trip("Central Mandi", 1, "Tata Ace 1.5 Ton", 2800.00m, 600.00m, 900.00m);
-            yield return Trip("City Hub", 2, "Mahindra Bolero Maxi", 4200.00m, 1200.00m, 1300.00m);
-            yield return Trip("Wholesale Market", 3, "Eicher Pro 2049", 6500.00m, 2500.00m, 2000.00m);
+            yield return Trip(Markets.Anand.Name, 1, "Tata Ace 1.5 Ton", 2800.00m, 600.00m, 900.00m);
+            yield return Trip(Markets.Vadodara.Name, 2, "Mahindra Bolero Maxi", 4200.00m, 1200.00m, 1300.00m);
+            yield return Trip(Markets.Ahmedabad.Name, 3, "Eicher Pro 2049", 6500.00m, 2500.00m, 2000.00m);
         }
     }
 }

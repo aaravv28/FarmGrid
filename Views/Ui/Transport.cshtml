@@ -78,20 +78,19 @@
                                 required>
 
                             <option value="">
-                                Select Destination
+                                Select Market
                             </option>
 
-                            <option value="Central Mandi">
-                                Central Mandi
-                            </option>
+                            @foreach (var district in Markets.All.GroupBy(m => m.District))
+                            {
+                                <optgroup label="@district.Key district">
+                                    @foreach (var market in district)
+                                    {
+                                        <option value="@market.Name">@market.Name</option>
+                                    }
+                                </optgroup>
+                            }
 
-                            <option value="City Hub">
-                                City Hub
-                            </option>
-
-                            <option value="Wholesale Market">
-                                Wholesale Market
-                            </option>
 
                         </select>
 

@@ -34,7 +34,7 @@ namespace FarmGrid.Tests
 
         private static TransportTrip Trip(DateTime dispatchDate) => new()
         {
-            FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = dispatchDate,
+            FarmerId = "host", DestinationMarket = "Anand APMC", DispatchDate = dispatchDate,
             VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m,
             Participants = { new TransportParticipant { FarmerId = "host", CargoWeightKg = 200m, FareShare = 3000m, IsHost = true } }
         };
@@ -68,7 +68,7 @@ namespace FarmGrid.Tests
             {
                 var result = await ControllerFor(context, "host").Create(new TripInputModel
                 {
-                    DestinationMarket = "Central Mandi", DispatchDate = Today.AddDays(-1), VehicleType = "Tata Ace",
+                    DestinationMarket = "Anand APMC", DispatchDate = Today.AddDays(-1), VehicleType = "Tata Ace",
                     TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m
                 });
                 Assert.IsType<ViewResult>(result);
@@ -92,7 +92,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                var result = await ControllerFor(context, "joiner").Suggestions("Central Mandi", Today.AddDays(1), 50m);
+                var result = await ControllerFor(context, "joiner").Suggestions("Anand APMC", Today.AddDays(1), 50m);
                 var trips = Assert.IsAssignableFrom<IEnumerable<TransportTrip>>(Assert.IsType<ViewResult>(result).Model);
                 var trip = Assert.Single(trips);
                 Assert.DoesNotContain(trip.Participants, p => p.FarmerId == "joiner");
@@ -106,7 +106,7 @@ namespace FarmGrid.Tests
             await using var context = db.CreateContext();
             var controller = ControllerFor(context, "joiner");
 
-            var result = await controller.Suggestions("Central Mandi", Today.AddDays(-2), 50m);
+            var result = await controller.Suggestions("Anand APMC", Today.AddDays(-2), 50m);
 
             Assert.IsType<RedirectToActionResult>(result);
             Assert.NotNull(controller.TempData["Error"]);
@@ -124,7 +124,7 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                var result = Assert.IsType<ViewResult>(await ControllerFor(context, "joiner").Suggestions("Central Mandi", Today.AddDays(1), 50m));
+                var result = Assert.IsType<ViewResult>(await ControllerFor(context, "joiner").Suggestions("Anand APMC", Today.AddDays(1), 50m));
                 Assert.Single(Assert.IsAssignableFrom<IEnumerable<TransportTrip>>(result.Model));
                 Assert.True((bool?)result.ViewData["IsNearbyDateMatch"]);
             }

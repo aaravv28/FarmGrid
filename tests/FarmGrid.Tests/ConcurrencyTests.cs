@@ -127,7 +127,7 @@ namespace FarmGrid.Tests
             {
                 var trip = new TransportTrip
                 {
-                    FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
+                    FarmerId = "host", DestinationMarket = "Anand APMC", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                     VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m,
                     Participants = { new TransportParticipant { FarmerId = "host", CargoWeightKg = 200m, FareShare = 3000m, IsHost = true } }
                 };
@@ -162,7 +162,7 @@ namespace FarmGrid.Tests
             await using var context = db.CreateContext();
             var trip = new TransportTrip
             {
-                FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
+                FarmerId = "host", DestinationMarket = "Anand APMC", DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                 VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m
             };
             context.TransportTrips.Add(trip);

@@ -1,12 +1,13 @@
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace FarmGrid.Tests
 {
     public class ViewPathTests
     {
-        private static string RepoRoot()
+        private static string RepoRoot([CallerFilePath] string thisFile = "")
         {
-            var dir = new DirectoryInfo(AppContext.BaseDirectory);
+            var dir = new DirectoryInfo(Path.GetDirectoryName(thisFile)!);
             while (dir != null && !File.Exists(Path.Combine(dir.FullName, "FarmGrid.csproj")))
             {
                 dir = dir.Parent;

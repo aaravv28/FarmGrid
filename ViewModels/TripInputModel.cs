@@ -1,3 +1,4 @@
+using FarmGrid.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.ViewModels
@@ -9,6 +10,7 @@ namespace FarmGrid.ViewModels
     public class TripInputModel
     {
         [Required]
+        [MarketName]
         public string DestinationMarket { get; set; } = string.Empty;
 
         [Required]

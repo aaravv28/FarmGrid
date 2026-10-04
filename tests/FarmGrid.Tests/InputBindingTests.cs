@@ -104,7 +104,7 @@ namespace FarmGrid.Tests
             {
                 var result = await SignedIn(new TransportController(context, TimeProvider.System), "host").Create(new TripInputModel
                 {
-                    DestinationMarket = "Central Mandi",
+                    DestinationMarket = "Anand APMC",
                     DispatchDate = IndiaTime.Today(TimeProvider.System).AddDays(2),
                     VehicleType = "Tata Ace",
                     TotalVehicleCost = 3000m,

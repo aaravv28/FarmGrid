@@ -42,6 +42,10 @@ _Avoid_: Minimum price, reserve
 
 ### Transport
 
+**Market**:
+A real agricultural market (APMC yard) in Gujarat that a Trip can go to, chosen from a fixed list, with its city and district.
+_Avoid_: Destination, mandi (as a free-text name), hub
+
 **Trip**:
 A farmer's vehicle journey to a market, with spare capacity that other farmers can book. A Trip is open through its dispatch date and closed once that date has passed; a closed Trip cannot be found or joined.
 _Avoid_: Ride, booking, pool

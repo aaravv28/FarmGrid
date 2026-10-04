@@ -67,7 +67,7 @@ namespace FarmGrid.Tests
             {
                 var trip = new TransportTrip
                 {
-                    FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = new DateTime(2026, 10, 4),
+                    FarmerId = "host", DestinationMarket = "Anand APMC", DispatchDate = new DateTime(2026, 10, 4),
                     VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m,
                     Participants = { new TransportParticipant { FarmerId = "host", CargoWeightKg = 200m, FareShare = 3000m, IsHost = true } }
                 };

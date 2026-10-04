@@ -60,7 +60,7 @@ namespace FarmGrid.Tests
                 (await context.Users.SingleAsync(u => u.Id == "host")).FullName = "Kishore Bhai";
                 context.TransportTrips.Add(new TransportTrip
                 {
-                    FarmerId = "host", DestinationMarket = "Central Mandi", DispatchDate = today.AddDays(1),
+                    FarmerId = "host", DestinationMarket = "Anand APMC", DispatchDate = today.AddDays(1),
                     VehicleType = "Tata Ace", TotalVehicleCost = 3000m, HostCargoWeightKg = 200m, AvailableCapacityKg = 800m,
                     Participants = { new TransportParticipant { FarmerId = "host", CargoWeightKg = 200m, FareShare = 3000m, IsHost = true } }
                 });
@@ -79,7 +79,7 @@ namespace FarmGrid.Tests
                     TempData = new TempDataDictionary(httpContext, new NullTempDataProvider())
                 };
 
-                var result = Assert.IsType<ViewResult>(await controller.Suggestions("Central Mandi", today.AddDays(1), 50m));
+                var result = Assert.IsType<ViewResult>(await controller.Suggestions("Anand APMC", today.AddDays(1), 50m));
                 var trip = Assert.Single(Assert.IsAssignableFrom<IEnumerable<TransportTrip>>(result.Model));
                 Assert.Equal("Kishore Bhai", trip.Farmer?.FullName);
             }

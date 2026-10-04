@@ -31,7 +31,7 @@ namespace FarmGrid.Tests
             };
         }
 
-        private static TransportTrip Trip(DateTime dispatchDate, string market = "Central Mandi") => new()
+        private static TransportTrip Trip(DateTime dispatchDate, string market = "Anand APMC") => new()
         {
             FarmerId = "host",
             DestinationMarket = market,
@@ -93,7 +93,7 @@ namespace FarmGrid.Tests
             await using (var context = db.CreateContext())
             {
                 // A past date is refused before searching, so the closed trip is never listed
-                var result = await ControllerFor(context, "joiner").Suggestions("Central Mandi", yesterday, 100m);
+                var result = await ControllerFor(context, "joiner").Suggestions("Anand APMC", yesterday, 100m);
                 Assert.IsType<RedirectToActionResult>(result);
             }
         }
