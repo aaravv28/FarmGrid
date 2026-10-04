@@ -13,13 +13,13 @@ namespace FarmGrid.ViewModels
         public decimal Quantity { get; set; }
 
         [Required(ErrorMessage = "Full Name is required")]
-        [Display(Name = "Your Name / Business Name")]
-        public string BuyerName { get; set; } = string.Empty;
+        [Display(Name = "Your Name")]
+        public string CustomerName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Phone number is required")]
         [Phone]
         [Display(Name = "Contact Phone Number")]
-        public string BuyerPhone { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Delivery address is required")]
         [Display(Name = "Delivery Address / Warehouse Address")]

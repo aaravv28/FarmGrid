@@ -28,7 +28,7 @@ namespace FarmGrid.Data
 
             await using var transaction = await context.Database.BeginTransactionAsync();
 
-            await context.QuickSellOrders.Where(o => userIds.Contains(o.BuyerId)).ExecuteDeleteAsync();
+            await context.QuickSellOrders.Where(o => userIds.Contains(o.CustomerId)).ExecuteDeleteAsync();
             await context.CartItems.Where(c => userIds.Contains(c.CustomerId)).ExecuteDeleteAsync();
             await context.OrderItems.Where(oi => userIds.Contains(oi.Order!.CustomerId)).ExecuteDeleteAsync();
             await context.Orders.Where(o => userIds.Contains(o.CustomerId)).ExecuteDeleteAsync();

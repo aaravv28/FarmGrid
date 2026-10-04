@@ -12,18 +12,18 @@ namespace FarmGrid.Models
         public QuickSellListing? QuickSellListing { get; set; }
 
         [Required]
-        public string BuyerId { get; set; } = string.Empty;
+        public string CustomerId { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
-        public string BuyerName { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
 
         [StringLength(100)]
-        public string? BuyerEmail { get; set; }
+        public string? CustomerEmail { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string BuyerPhone { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
         [StringLength(200)]

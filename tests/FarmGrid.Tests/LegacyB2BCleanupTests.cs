@@ -48,9 +48,9 @@ namespace FarmGrid.Tests
                     context.QuickSellOrders.Add(new QuickSellOrder
                     {
                         QuickSellListingId = listing.Id,
-                        BuyerId = userId,
-                        BuyerName = userId,
-                        BuyerPhone = "1",
+                        CustomerId = userId,
+                        CustomerName = userId,
+                        PhoneNumber = "1",
                         DeliveryAddress = "a",
                         City = "c",
                         QuantityPurchased = 10m,
@@ -74,7 +74,7 @@ namespace FarmGrid.Tests
                 Assert.All(await context.CartItems.ToListAsync(), c => Assert.Equal("cust", c.CustomerId));
                 Assert.All(await context.Orders.ToListAsync(), o => Assert.Equal("cust", o.CustomerId));
                 Assert.Equal(1, await context.OrderItems.CountAsync());
-                Assert.All(await context.QuickSellOrders.ToListAsync(), o => Assert.Equal("cust", o.BuyerId));
+                Assert.All(await context.QuickSellOrders.ToListAsync(), o => Assert.Equal("cust", o.CustomerId));
                 Assert.Equal(1, await context.Orders.CountAsync());
                 Assert.Equal(1, await context.QuickSellOrders.CountAsync());
             }

@@ -74,8 +74,8 @@ namespace FarmGrid.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user != null)
                 {
-                    purchaseModel.BuyerName = user.FullName;
-                    purchaseModel.BuyerPhone = user.PhoneNumber ?? string.Empty;
+                    purchaseModel.CustomerName = user.FullName;
+                    purchaseModel.PhoneNumber = user.PhoneNumber ?? string.Empty;
                     purchaseModel.City = user.City ?? string.Empty;
                     purchaseModel.DeliveryAddress = user.District != null ? $"{user.City}, {user.District}" : (user.City ?? string.Empty);
                 }
@@ -188,15 +188,15 @@ namespace FarmGrid.Controllers
             var totalAmount = Math.Round(model.Quantity * currentPrice, 2);
 
             var user = await _userManager.GetUserAsync(User);
-            var buyerId = user?.Id ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "guest-buyer";
+            var customerId = user?.Id ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "guest-customer";
 
             var order = new QuickSellOrder
             {
                 QuickSellListingId = listing.Id,
-                BuyerId = buyerId,
-                BuyerName = model.BuyerName,
-                BuyerEmail = user?.Email,
-                BuyerPhone = model.BuyerPhone,
+                CustomerId = customerId,
+                CustomerName = model.CustomerName,
+                CustomerEmail = user?.Email,
+                PhoneNumber = model.PhoneNumber,
                 DeliveryAddress = model.DeliveryAddress,
                 City = model.City,
                 QuantityPurchased = model.Quantity,

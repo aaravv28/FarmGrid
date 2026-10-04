@@ -121,7 +121,7 @@ namespace FarmGrid.Controllers
 
             var quickOrders = await _context.QuickSellOrders
                 .Include(o => o.QuickSellListing)
-                .Where(o => o.BuyerId == userId)
+                .Where(o => o.CustomerId == userId)
                 .OrderByDescending(o => o.PurchasedAt)
                 .ToListAsync();
 
