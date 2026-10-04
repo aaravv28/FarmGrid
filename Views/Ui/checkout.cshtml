@@ -11,6 +11,14 @@
 
     decimal total =
         ViewBag.Total ?? subtotal + deliveryCharge;
+
+    var plan =
+        (IReadOnlyList<FarmGrid.Models.FarmerOrderPlan>?)ViewBag.Plan
+        ?? Array.Empty<FarmGrid.Models.FarmerOrderPlan>();
+
+    var farmerNames =
+        (IDictionary<string, string>?)ViewBag.FarmerNames
+        ?? new Dictionary<string, string>();
 }
 
 <div class="form-page">
@@ -164,6 +172,41 @@
                             Order Summary
                         </h4>
 
+                        @if (plan.Count > 1)
+                        {
+                            <p class="small text-muted">
+                                Your cart has produce from @plan.Count farmers. Each farmer delivers separately, so you'll get @plan.Count orders, each with its own delivery charge.
+                            </p>
+                        }
+
+                        @foreach (var farmerPlan in plan)
+                        {
+                            var farmerName = farmerPlan.FarmerId != null && farmerNames.TryGetValue(farmerPlan.FarmerId, out var name)
+                                ? name
+                                : "FarmGrid Farmer";
+
+                            <div class="d-block mb-3 pb-2 border-bottom">
+
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fa-solid fa-tractor text-success me-1"></i> @farmerName
+                                </h6>
+
+                                @foreach (var item in farmerPlan.Items)
+                                {
+                                    <div class="small">
+                                        <span>@item.Product!.Title × @item.Quantity @item.Product.UnitMeasure</span>
+                                        <span>₹@((item.Product.UnitPrice * item.Quantity).ToString("0.00"))</span>
+                                    </div>
+                                }
+
+                                <div class="small">
+                                    <span>Delivery</span>
+                                    <span>₹@farmerPlan.DeliveryCharge.ToString("0.00")</span>
+                                </div>
+
+                            </div>
+                        }
+
                         <div>
 
                             <span>Products</span>
@@ -176,7 +219,7 @@
 
                         <div>
 
-                            <span>Delivery</span>
+                            <span>Delivery (@plan.Count × ₹@FarmGrid.Models.CheckoutPlan.DeliveryChargePerOrder.ToString("0"))</span>
 
                             <strong>
                                 ₹@deliveryCharge.ToString("0.00")
@@ -199,7 +242,7 @@
                         <button type="submit"
                                 class="btn farm-btn-primary w-100 mt-4">
 
-                            Place Order
+                            Place @(plan.Count > 1 ? $"{plan.Count} Orders" : "Order")
 
                         </button>
 

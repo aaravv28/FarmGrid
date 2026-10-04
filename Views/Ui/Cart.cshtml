@@ -1,6 +1,9 @@
-﻿@model IEnumerable<FarmGrid.Models.CartItem>
+@model IEnumerable<FarmGrid.Models.CartItem>
 
 @{
+    var deliveryPlan = FarmGrid.Models.CheckoutPlan.Build(Model);
+    decimal deliveryCharge = deliveryPlan.Sum(p => p.DeliveryCharge);
+
     ViewData["Title"] = "Shopping Cart";
 
     decimal subtotal = Model
@@ -160,10 +163,10 @@
 
                         <div>
 
-                            <span>Delivery</span>
+                            <span>Delivery@(deliveryPlan.Count > 1 ? $" ({deliveryPlan.Count} farmers)" : "")</span>
 
                             <strong>
-                                ₹30.00
+                                ₹@deliveryCharge.ToString("0.00")
                             </strong>
 
                         </div>
@@ -175,7 +178,7 @@
                             <span>Total</span>
 
                             <strong>
-                                ₹@((subtotal + 30).ToString("0.00"))
+                                ₹@((subtotal + deliveryCharge).ToString("0.00"))
                             </strong>
 
                         </div>

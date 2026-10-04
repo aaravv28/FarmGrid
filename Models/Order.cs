@@ -10,6 +10,9 @@ namespace FarmGrid.Models
         [Required]
         public string CustomerId { get; set; } = string.Empty;
 
+        /// <summary>The Farmer whose products this Order contains, and who fulfils it.</summary>
+        public string? FarmerId { get; set; }
+
         [Required]
         public string CustomerName { get; set; } = string.Empty;
 

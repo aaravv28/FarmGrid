@@ -57,7 +57,7 @@ namespace FarmGrid.Controllers
                     "Cart");
             }
 
-            LoadCheckoutSummary(cartItems);
+            await LoadCheckoutSummaryAsync(cartItems);
 
             var user = await _userManager.GetUserAsync(User);
             var model = new CheckoutViewModel();
@@ -92,7 +92,7 @@ namespace FarmGrid.Controllers
                 .Where(c => c.CustomerId == customerId)
                 .ToListAsync();
 
-            LoadCheckoutSummary(cartItems);
+            await LoadCheckoutSummaryAsync(cartItems);
 
             if (!ModelState.IsValid)
             {
@@ -118,8 +118,6 @@ namespace FarmGrid.Controllers
 
             try
             {
-                decimal subtotal = 0;
-
                 foreach (var cart in cartItems)
                 {
                     if (cart.Product == null ||
@@ -135,56 +133,49 @@ namespace FarmGrid.Controllers
                         throw new Exception(
                             $"Insufficient stock for {cart.Product.Title}.");
                     }
-
-                    subtotal +=
-                        cart.Product.UnitPrice *
-                        cart.Quantity;
                 }
 
-                const decimal deliveryCharge = 30;
-
-                var order = new Order
+                // One Order per Farmer: each delivers, and charges delivery, separately
+                foreach (var farmerPlan in CheckoutPlan.Build(cartItems))
                 {
-                    CustomerId = customerId,
-                    CustomerName = model.CustomerName,
-                    PhoneNumber = model.PhoneNumber,
-                    DeliveryAddress = model.DeliveryAddress,
-                    City = model.City,
-                    DeliverySlot = model.DeliverySlot,
-                    PaymentMethod = PaymentMethods.CashOnDelivery,
-                    Status = "Placed",
-                    Subtotal = subtotal,
-                    DeliveryCharge = deliveryCharge,
-                    TotalAmount =
-                        subtotal + deliveryCharge,
-                    CreatedAt = DateTime.Now
-                };
-
-                _context.Orders.Add(order);
-
-                await _context.SaveChangesAsync();
-
-                foreach (var cart in cartItems)
-                {
-                    var product = cart.Product!;
-
-                    var orderItem = new OrderItem
+                    var order = new Order
                     {
-                        OrderId = order.Id,
-                        ProductId = product.Id,
-                        ProductTitle = product.Title,
-                        UnitMeasure = product.UnitMeasure,
-                        Quantity = cart.Quantity,
-                        UnitPrice = product.UnitPrice,
-                        TotalPrice =
-                            product.UnitPrice *
-                            cart.Quantity
+                        CustomerId = customerId,
+                        FarmerId = farmerPlan.FarmerId,
+                        CustomerName = model.CustomerName,
+                        PhoneNumber = model.PhoneNumber,
+                        DeliveryAddress = model.DeliveryAddress,
+                        City = model.City,
+                        DeliverySlot = model.DeliverySlot,
+                        PaymentMethod = PaymentMethods.CashOnDelivery,
+                        Status = "Placed",
+                        Subtotal = farmerPlan.Subtotal,
+                        DeliveryCharge = farmerPlan.DeliveryCharge,
+                        TotalAmount = farmerPlan.Total,
+                        CreatedAt = DateTime.Now
                     };
 
-                    _context.OrderItems.Add(orderItem);
+                    foreach (var cart in farmerPlan.Items)
+                    {
+                        var product = cart.Product!;
 
-                    product.StockQuantity -=
-                        cart.Quantity;
+                        order.OrderItems.Add(new OrderItem
+                        {
+                            ProductId = product.Id,
+                            ProductTitle = product.Title,
+                            UnitMeasure = product.UnitMeasure,
+                            Quantity = cart.Quantity,
+                            UnitPrice = product.UnitPrice,
+                            TotalPrice =
+                                product.UnitPrice *
+                                cart.Quantity
+                        });
+
+                        product.StockQuantity -=
+                            cart.Quantity;
+                    }
+
+                    _context.Orders.Add(order);
                 }
 
                 _context.CartItems.RemoveRange(
@@ -205,7 +196,7 @@ namespace FarmGrid.Controllers
                     "",
                     ex.Message);
 
-                LoadCheckoutSummary(cartItems);
+                await LoadCheckoutSummaryAsync(cartItems);
 
                 return View(
                     "~/Views/UI/Checkout.cshtml",
@@ -234,21 +225,23 @@ namespace FarmGrid.Controllers
                 order);
         }
 
-        private void LoadCheckoutSummary(
+        private async Task LoadCheckoutSummaryAsync(
             IEnumerable<CartItem> cartItems)
         {
-            decimal subtotal = cartItems
-                .Where(c => c.Product != null)
-                .Sum(c =>
-                    c.Product!.UnitPrice *
-                    c.Quantity);
+            var plan = CheckoutPlan.Build(cartItems);
 
-            const decimal deliveryCharge = 30;
+            var farmerIds = plan
+                .Where(p => p.FarmerId != null)
+                .Select(p => p.FarmerId!)
+                .ToList();
 
-            ViewBag.Subtotal = subtotal;
-            ViewBag.DeliveryCharge = deliveryCharge;
-            ViewBag.Total =
-                subtotal + deliveryCharge;
+            ViewBag.Plan = plan;
+            ViewBag.FarmerNames = await _context.Users
+                .Where(u => farmerIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.FullName);
+            ViewBag.Subtotal = plan.Sum(p => p.Subtotal);
+            ViewBag.DeliveryCharge = plan.Sum(p => p.DeliveryCharge);
+            ViewBag.Total = plan.Sum(p => p.Total);
         }
     }
 }
