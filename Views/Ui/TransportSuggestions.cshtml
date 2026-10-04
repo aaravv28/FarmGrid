@@ -1,10 +1,16 @@
-﻿@model IEnumerable<FarmGrid.Models.TransportTrip>
+@model IEnumerable<FarmGrid.Models.TransportTrip>
 
 @{
     ViewData["Title"] = "Transport Suggestions";
 
     decimal requiredWeight =
         ViewBag.RequiredWeight ?? 0;
+
+    bool isNearbyDateMatch =
+        ViewBag.IsNearbyDateMatch ?? false;
+
+    DateTime? requestedDate =
+        ViewBag.DispatchDate;
 }
 
 <div class="transport-page">
@@ -34,6 +40,14 @@
             </a>
 
         </div>
+
+        @if (isNearbyDateMatch)
+        {
+            <div class="alert alert-info">
+                <i class="fa-regular fa-calendar me-1"></i>
+                No trips leave on @(requestedDate?.ToString("dd MMM yyyy")), so these are the nearest open dates. Check each trip's date before joining.
+            </div>
+        }
 
         @if (!Model.Any())
         {
@@ -91,6 +105,18 @@
 
                                     <strong>
                                         @trip.DestinationMarket
+                                    </strong>
+
+                                </div>
+
+                                <div>
+
+                                    <small>
+                                        Dispatch Date
+                                    </small>
+
+                                    <strong>
+                                        @trip.DispatchDate.ToString("dd MMM yyyy")
                                     </strong>
 
                                 </div>

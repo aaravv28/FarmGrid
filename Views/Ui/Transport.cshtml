@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Shared Transport";
+    var currentFarmerId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="transport-page py-4">
@@ -190,14 +191,29 @@
                                 </div>
 
                                 <div class="mt-3">
-                                    <a asp-controller="Transport"
-                                       asp-action="Suggestions"
-                                       asp-route-destinationMarket="@trip.DestinationMarket"
-                                       asp-route-dispatchDate="@trip.DispatchDate.ToString("yyyy-MM-dd")"
-                                       asp-route-requiredWeight="@Math.Min(trip.AvailableCapacityKg, 100)"
-                                       class="btn btn-sm btn-outline-success w-100">
-                                        <i class="fa-solid fa-handshake me-1"></i> Request to Join
-                                    </a>
+                                    @if (trip.FarmerId == currentFarmerId)
+                                    {
+                                        <span class="btn btn-sm btn-light border w-100 disabled">
+                                            <i class="fa-solid fa-truck me-1"></i> Your trip
+                                        </span>
+                                    }
+                                    else if (trip.Participants.Any(p => p.FarmerId == currentFarmerId))
+                                    {
+                                        <a asp-controller="Transport" asp-action="MyTrips" class="btn btn-sm btn-light border w-100">
+                                            <i class="fa-solid fa-circle-check text-success me-1"></i> Joined
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Transport"
+                                           asp-action="Suggestions"
+                                           asp-route-destinationMarket="@trip.DestinationMarket"
+                                           asp-route-dispatchDate="@trip.DispatchDate.ToString("yyyy-MM-dd")"
+                                           asp-route-requiredWeight="@Math.Min(trip.AvailableCapacityKg, 100).ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                           class="btn btn-sm btn-outline-success w-100">
+                                            <i class="fa-solid fa-handshake me-1"></i> Request to Join
+                                        </a>
+                                    }
                                 </div>
                             </div>
                         </div>

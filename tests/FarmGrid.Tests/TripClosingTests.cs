@@ -92,9 +92,9 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
+                // A past date is refused before searching, so the closed trip is never listed
                 var result = await ControllerFor(context, "joiner").Suggestions("Central Mandi", yesterday, 100m);
-                var trips = Assert.IsAssignableFrom<IEnumerable<TransportTrip>>(Assert.IsType<ViewResult>(result).Model);
-                Assert.Empty(trips);
+                Assert.IsType<RedirectToActionResult>(result);
             }
         }
 

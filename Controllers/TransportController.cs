@@ -59,6 +59,13 @@ namespace FarmGrid.Controllers
                 return Challenge();
             }
 
+            if (model.DispatchDate.Date < IndiaTime.Today(_time))
+            {
+                ModelState.AddModelError(
+                    nameof(model.DispatchDate),
+                    "The dispatch date cannot be in the past.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(
@@ -70,37 +77,30 @@ namespace FarmGrid.Controllers
             {
                 FarmerId = farmerId,
                 DestinationMarket = model.DestinationMarket,
-                DispatchDate = model.DispatchDate,
+                DispatchDate = model.DispatchDate.Date,
                 VehicleType = model.VehicleType,
                 TotalVehicleCost = model.TotalVehicleCost,
                 HostCargoWeightKg = model.HostCargoWeightKg,
                 AvailableCapacityKg = model.AvailableCapacityKg,
                 CreatedAt = UtcNow,
-                IsActive = true
+                IsActive = true,
+                Participants =
+                {
+                    new TransportParticipant
+                    {
+                        FarmerId = farmerId,
+                        CargoWeightKg = model.HostCargoWeightKg,
+                        IsHost = true,
+                        JoinedAt = UtcNow
+                    }
+                }
             };
 
+            trip.RecalculateFareShares();
+
+            // Trip and host participant are saved together
             _context.TransportTrips.Add(trip);
-
             await _context.SaveChangesAsync();
-
-            var hostParticipant =
-                new TransportParticipant
-                {
-                    TransportTripId = trip.Id,
-                    FarmerId = farmerId,
-                    CargoWeightKg =
-                        trip.HostCargoWeightKg,
-                    FareShare = 0,
-                    IsHost = true,
-                    JoinedAt = UtcNow
-                };
-
-            _context.TransportParticipants.Add(
-                hostParticipant);
-
-            await _context.SaveChangesAsync();
-
-            await RecalculateFareShares(trip.Id);
 
             TempData["Success"] =
                 "Transport trip created successfully.";
@@ -132,15 +132,26 @@ namespace FarmGrid.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var today = IndiaTime.Today(_time);
+
+            if (dispatchDate.Date < today)
+            {
+                TempData["Error"] =
+                    "Please search for today or a later date; past trips have already left.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             var matches =
                 await _context.TransportTrips
                     .Include(t => t.Participants)
-                    .Open(IndiaTime.Today(_time))
+                    .Open(today)
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&
                         t.DispatchDate.Date == dispatchDate.Date &&
                         t.AvailableCapacityKg >= requiredWeight &&
-                        t.FarmerId != farmerId)
+                        t.FarmerId != farmerId &&
+                        !t.Participants.Any(p => p.FarmerId == farmerId))
                     .OrderBy(t =>
                         t.TotalVehicleCost)
                     .ToListAsync();
@@ -149,11 +160,12 @@ namespace FarmGrid.Controllers
             {
                 var nearbyMatches = await _context.TransportTrips
                     .Include(t => t.Participants)
-                    .Open(IndiaTime.Today(_time))
+                    .Open(today)
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&
                         t.AvailableCapacityKg >= requiredWeight &&
-                        t.FarmerId != farmerId)
+                        t.FarmerId != farmerId &&
+                        !t.Participants.Any(p => p.FarmerId == farmerId))
                     .OrderBy(t => t.DispatchDate)
                     .ToListAsync();
 
@@ -353,25 +365,7 @@ namespace FarmGrid.Controllers
                     .FirstAsync(t =>
                         t.Id == tripId);
 
-            var combinedWeight =
-                trip.Participants.Sum(p =>
-                    p.CargoWeightKg);
-
-            if (combinedWeight <= 0)
-            {
-                return;
-            }
-
-            foreach (var participant
-                     in trip.Participants)
-            {
-                participant.FareShare =
-                    trip.TotalVehicleCost *
-                    (
-                        participant.CargoWeightKg /
-                        combinedWeight
-                    );
-            }
+            trip.RecalculateFareShares();
 
             await _context.SaveChangesAsync();
         }
