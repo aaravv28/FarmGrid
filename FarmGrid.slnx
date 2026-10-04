@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="FarmGrid.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/FarmGrid.Tests/FarmGrid.Tests.csproj" />
+  </Folder>
 </Solution>

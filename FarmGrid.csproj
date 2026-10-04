@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-FarmGrid-f7517bf2-33d0-4a24-b3fd-472a409ba555</UserSecretsId>
+    <!-- Keep the test project's sources out of the web project, which sits at the repo root -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
