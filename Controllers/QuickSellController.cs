@@ -202,7 +202,7 @@ namespace FarmGrid.Controllers
                 QuantityPurchased = model.Quantity,
                 PricePerKg = currentPrice,
                 TotalAmount = totalAmount,
-                PaymentMethod = model.PaymentMethod,
+                PaymentMethod = PaymentMethods.CashOnDelivery,
                 Status = "Confirmed",
                 PurchasedAt = DateTime.Now
             };

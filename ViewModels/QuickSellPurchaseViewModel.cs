@@ -28,8 +28,5 @@ namespace FarmGrid.ViewModels
         [Required(ErrorMessage = "City is required")]
         [Display(Name = "City / District")]
         public string City { get; set; } = string.Empty;
-
-        [Display(Name = "Payment Method")]
-        public string PaymentMethod { get; set; } = "Cash on Delivery / Direct Settlement";
     }
 }

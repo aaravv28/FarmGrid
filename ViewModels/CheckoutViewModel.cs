@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.ViewModels
 {
@@ -17,8 +17,5 @@ namespace FarmGrid.ViewModels
         public string City { get; set; } = string.Empty;
 
         public string? DeliverySlot { get; set; }
-
-        public string PaymentMethod { get; set; }
-            = "Cash on Delivery";
     }
 }

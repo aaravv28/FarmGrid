@@ -1,4 +1,4 @@
-﻿@model FarmGrid.ViewModels.CheckoutViewModel
+@model FarmGrid.ViewModels.CheckoutViewModel
 
 @{
     ViewData["Title"] = "Checkout";
@@ -144,25 +144,10 @@
 
                         <div class="payment-option">
 
-                            <input asp-for="PaymentMethod"
-                                   type="radio"
-                                   value="Cash on Delivery"
-                                   checked />
+                            <i class="fa-solid fa-money-bill-wave text-success me-2"></i>
 
                             <span>
                                 Cash on Delivery
-                            </span>
-
-                        </div>
-
-                        <div class="payment-option">
-
-                            <input asp-for="PaymentMethod"
-                                   type="radio"
-                                   value="Online Payment" />
-
-                            <span>
-                                Online Payment
                             </span>
 
                         </div>

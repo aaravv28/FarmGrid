@@ -47,7 +47,7 @@ namespace FarmGrid.Models
         public decimal TotalAmount { get; set; }
 
         [StringLength(50)]
-        public string PaymentMethod { get; set; } = "Cash on Delivery";
+        public string PaymentMethod { get; set; } = PaymentMethods.CashOnDelivery;
 
         [StringLength(50)]
         public string Status { get; set; } = "Confirmed";

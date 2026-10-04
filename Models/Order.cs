@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.Models
@@ -25,7 +25,7 @@ namespace FarmGrid.Models
         public string? DeliverySlot { get; set; }
 
         public string PaymentMethod { get; set; }
-            = "Cash on Delivery";
+            = PaymentMethods.CashOnDelivery;
 
         public string Status { get; set; } = "Placed";
 
