@@ -27,6 +27,10 @@ namespace FarmGrid.Controllers
 
         private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
+        /// <summary>A lot's location defaults to the farmer's own Location.</summary>
+        private static string DefaultLocation(ApplicationUser user) =>
+            string.IsNullOrWhiteSpace(user.City) ? string.Empty : $"{user.City}, {user.District} district";
+
         // MARKETPLACE - GET
         public async Task<IActionResult> Index(string? category, string? search)
         {
@@ -96,9 +100,7 @@ namespace FarmGrid.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                model.Location = !string.IsNullOrWhiteSpace(user.City)
-                    ? $"{user.City}{(string.IsNullOrWhiteSpace(user.District) ? "" : $", {user.District}")}"
-                    : "Anand, Gujarat";
+                model.Location = DefaultLocation(user);
             }
 
             return View("~/Views/Ui/QuickSellCreate.cshtml", model);
@@ -133,7 +135,7 @@ namespace FarmGrid.Controllers
             {
                 FarmerId = farmerId,
                 FarmerName = farmerName,
-                Location = model.Location ?? (!string.IsNullOrWhiteSpace(user?.City) ? $"{user.City}, {user.District}" : "Anand, Gujarat"),
+                Location = string.IsNullOrWhiteSpace(model.Location) ? DefaultLocation(user) : model.Location,
                 CropTitle = model.CropTitle,
                 Category = model.Category,
                 UnitMeasure = "kg",

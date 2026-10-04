@@ -45,7 +45,8 @@ There are two roles: **Farmer** and **Customer**. The domain vocabulary is defin
 - Quick quantity presets (25 / 50 / 100 kg or everything left). The minimum order is 1 kg, except when buying the last of a lot.
 
 ### 🚛 Shared Transport
-- A farmer heading to a market posts a **Trip** with spare capacity. Other farmers join with their cargo.
+- A farmer heading to a **Market** (one of 13 Gujarat APMC yards) posts a **Trip** with spare capacity. Other farmers join with their cargo.
+- A Trip's **Origin** is always the host farmer's current location (city and district), and search lists trips from your own district first.
 - The vehicle cost is split by cargo weight, rounded to the paisa, and always adds up to exactly the total (the host absorbs any rounding):
 
   $$\text{FareShare} = \text{TotalVehicleCost} \times \frac{\text{ParticipantCargoKg}}{\text{CombinedCargoKg}}$$
@@ -100,8 +101,9 @@ flowchart TD
 
 ### 1. Registration and Roles
 1. Register at `/Account/Register` as a **Farmer** or a **Customer**.
-2. After registering, farmers land on their dashboard and customers on the home page.
-3. Logging in sends each role to its dashboard. Five wrong passwords lock an account for 15 minutes, and the login form never reveals whether an email has an account.
+2. Everyone picks their **Location** from Gujarat's 34 districts and 96 main cities and towns. Choosing a city fills in its district automatically; choosing a district first narrows the city list. The server always takes the district from the city, so the two can never disagree. The location can be changed later in Profile with the same dropdowns.
+3. After registering, farmers land on their dashboard and customers on the home page.
+4. Logging in sends each role to its dashboard. Five wrong passwords lock an account for 15 minutes, and the login form never reveals whether an email has an account.
 
 ### 2. Catalog, Cart and Checkout
 1. Browse `/Products` by category or search. Product pages show the farmer's name.
@@ -122,8 +124,8 @@ flowchart TD
 4. Lot pages show **SOLD OUT** or **EXPIRED** when buying is closed. The live price API is `/api/quicksell/price/{id}`.
 
 ### 5. Shared Transport
-1. **Create** (`/Transport/Create`): destination market, dispatch date (today or later), vehicle, total cost, host cargo and spare capacity. The host is the first participant.
-2. **Find** (`/Transport/Suggestions`): search by market, date and cargo weight. Trips you host or have already joined are left out. If nothing leaves on that date, nearby dates are offered, clearly marked.
+1. **Create** (`/Transport/Create`): market (grouped by district), dispatch date (today or later), vehicle, total cost, host cargo and spare capacity. The host is the first participant.
+2. **Find** (`/Transport/Suggestions`): search by market, date and cargo weight. Each trip shows where it starts (its host's location), and trips from your own district come first. Trips you host or have already joined are left out. If nothing leaves on that date, nearby dates are offered, clearly marked.
 3. **Join** (`/Transport/Join`): capacity is checked and reserved, and every participant's fare share is recalculated. A farmer can join a trip once.
 4. **My Trips** (`/Transport/MyTrips`): trips you host or joined, labelled **Upcoming** or **Closed**, with your fare share.
 
@@ -232,8 +234,8 @@ On startup, `DbInitializer` applies migrations and creates these accounts with d
 
 | Role | Email | Password | Name | Location |
 | :--- | :--- | :--- | :--- | :--- |
-| **Farmer** | `farmer@farmgrid.com` | `Farmer@123` | Ramesh Patel (Demo Farmer) | Anand, Gujarat |
-| **Customer** | `customer@farmgrid.com` | `Customer@123` | Priya Sharma (Demo Customer) | Vadodara, Gujarat |
+| **Farmer** | `farmer@farmgrid.com` | `Farmer@123` | Ramesh Patel (Demo Farmer) | Anand, Anand district |
+| **Customer** | `customer@farmgrid.com` | `Customer@123` | Priya Sharma (Demo Customer) | Vadodara, Vadodara district |
 
 In Development, fresh demo Quick Sell lots and trips are added whenever none are live, so the demo never goes empty.
 

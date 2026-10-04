@@ -64,11 +64,11 @@ namespace FarmGrid.Data
                 Description = description
             };
 
-            yield return Lot("Anand, Gujarat", "Fresh Tomatoes", "Vegetables", 500, 350, 30.00m, 15.00m, 18,
+            yield return Lot("Anand, Anand district", "Fresh Tomatoes", "Vegetables", 500, 350, 30.00m, 15.00m, 18,
                 "High-grade organic ripe hybrid tomatoes, harvested this morning. Needs fast clearing.");
-            yield return Lot("Kheda, Gujarat", "Orange Carrots", "Vegetables", 800, 620, 45.00m, 25.00m, 12,
+            yield return Lot("Nadiad, Kheda district", "Orange Carrots", "Vegetables", 800, 620, 45.00m, 25.00m, 12,
                 "Fresh crunchy orange carrots directly sorted from field. Ideal for processing or home use.");
-            yield return Lot("Vadodara, Gujarat", "Alphonso & Kesar Mangoes", "Fruits", 400, 400, 120.00m, 75.00m, 6,
+            yield return Lot("Vadodara, Vadodara district", "Alphonso & Kesar Mangoes", "Fruits", 400, 400, 120.00m, 75.00m, 6,
                 "Naturally ripened sweet mango crates. Perfect commercial grade sweetness.");
         }
 

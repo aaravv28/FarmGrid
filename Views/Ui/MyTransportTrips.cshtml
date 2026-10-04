@@ -77,6 +77,11 @@
                                 <div>
                                     <h4>@trip.DestinationMarket</h4>
 
+                                    @if (trip.OriginDescription != null)
+                                    {
+                                        <small class="text-muted d-block">From @trip.OriginDescription</small>
+                                    }
+
                                     <p>
                                         @trip.DispatchDate.ToString("dd MMM yyyy")
                                         @if (trip.IsOpen(IndiaTime.Today(Time)))

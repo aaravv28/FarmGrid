@@ -1,0 +1,36 @@
+@* Links a page's [data-location-city] and [data-location-district] selects:
+   choosing a city sets its district; choosing a district narrows the cities to it.
+   The server always derives the district from the city, so this is only for the user. *@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const city = document.querySelector("[data-location-city]");
+        const district = document.querySelector("[data-location-district]");
+        if (!city || !district) return;
+
+        const cityOptions = Array.from(city.options).filter(o => o.value);
+
+        function narrowCities() {
+            cityOptions.forEach(o => {
+                const fits = !district.value || o.dataset.district === district.value;
+                o.hidden = !fits;
+                o.disabled = !fits;
+            });
+            if (city.selectedOptions[0] && city.selectedOptions[0].disabled) {
+                city.value = "";
+            }
+        }
+
+        function districtFromCity() {
+            const chosen = city.selectedOptions[0];
+            if (chosen && chosen.dataset.district) {
+                district.value = chosen.dataset.district;
+            }
+        }
+
+        city.addEventListener("change", function () { districtFromCity(); narrowCities(); });
+        district.addEventListener("change", narrowCities);
+
+        districtFromCity();
+        narrowCities();
+    });
+</script>

@@ -83,7 +83,7 @@ namespace FarmGrid.Controllers
                 FullName = model.FullName,
                 PhoneNumber = model.PhoneNumber,
                 City = model.City,
-                District = model.District,
+                District = GujaratLocations.DistrictOf(model.City),
                 CreatedAt = UtcNow
             };
 
@@ -250,7 +250,7 @@ namespace FarmGrid.Controllers
             user.FullName = model.FullName;
             user.PhoneNumber = model.PhoneNumber;
             user.City = model.City;
-            user.District = model.District;
+            user.District = GujaratLocations.DistrictOf(model.City);
 
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)

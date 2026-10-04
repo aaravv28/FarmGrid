@@ -173,6 +173,10 @@
                                     <h5 class="fw-bold mb-1 text-dark">
                                         <i class="fa-solid fa-location-dot text-danger me-1"></i> @trip.DestinationMarket
                                     </h5>
+                                    @if (trip.OriginDescription != null)
+                                    {
+                                        <small class="text-muted d-block mb-1"><i class="fa-solid fa-route me-1"></i> From @trip.OriginDescription</small>
+                                    }
 
                                     <p class="text-muted small mb-2">
                                         Host Cargo: <strong>@trip.HostCargoWeightKg kg</strong>

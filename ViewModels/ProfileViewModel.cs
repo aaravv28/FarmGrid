@@ -18,10 +18,13 @@ namespace FarmGrid.ViewModels
         [Phone]
         public string? PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Please choose your city.")]
         [Display(Name = "City")]
         [StringLength(100)]
+        [FarmGrid.Models.GujaratCity]
         public string? City { get; set; }
 
+        /// <summary>Shown for the chosen city; the server always sets it from the city.</summary>
         [Display(Name = "District")]
         [StringLength(100)]
         public string? District { get; set; }

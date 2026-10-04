@@ -143,6 +143,13 @@ namespace FarmGrid.Controllers
 
             var today = IndiaTime.Today(_time);
 
+            // Trips starting in the searcher's own district come first: they're the ones
+            // a farmer can practically bring cargo to
+            var myDistrict = await _context.Users
+                .Where(u => u.Id == farmerId)
+                .Select(u => u.District)
+                .FirstOrDefaultAsync();
+
             if (dispatchDate.Date < today)
             {
                 TempData["Error"] =
@@ -162,7 +169,8 @@ namespace FarmGrid.Controllers
                         t.AvailableCapacityKg >= requiredWeight &&
                         t.FarmerId != farmerId &&
                         !t.Participants.Any(p => p.FarmerId == farmerId))
-                    .OrderBy(t =>
+                    .OrderBy(t => t.Farmer!.District == myDistrict ? 0 : 1)
+                    .ThenBy(t =>
                         t.TotalVehicleCost)
                     .ToListAsync();
 
@@ -177,7 +185,8 @@ namespace FarmGrid.Controllers
                         t.AvailableCapacityKg >= requiredWeight &&
                         t.FarmerId != farmerId &&
                         !t.Participants.Any(p => p.FarmerId == farmerId))
-                    .OrderBy(t => t.DispatchDate)
+                    .OrderBy(t => t.Farmer!.District == myDistrict ? 0 : 1)
+                    .ThenBy(t => t.DispatchDate)
                     .ToListAsync();
 
                 if (nearbyMatches.Any())
@@ -353,6 +362,7 @@ namespace FarmGrid.Controllers
             var trips =
                 await _context.TransportTrips
                     .Include(t => t.Participants)
+                    .Include(t => t.Farmer)
                     .Where(t =>
                         t.FarmerId == farmerId ||
                         t.Participants.Any(p =>

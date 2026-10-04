@@ -37,7 +37,7 @@ namespace FarmGrid.Data
                     FullName = "Ramesh Patel (Demo Farmer)",
                     Phone = "+91 98765 43210",
                     City = "Anand",
-                    District = "Gujarat",
+                    District = "Anand",
                     Role = Roles.Farmer
                 },
                 new
@@ -47,7 +47,7 @@ namespace FarmGrid.Data
                     FullName = "Priya Sharma (Demo Customer)",
                     Phone = "+91 98123 45678",
                     City = "Vadodara",
-                    District = "Gujarat",
+                    District = "Vadodara",
                     Role = Roles.Customer
                 }
             };

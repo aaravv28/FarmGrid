@@ -48,14 +48,26 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="City" class="form-label"></label>
-                        <input asp-for="City" class="form-control" placeholder="e.g. Anand" />
+                        <select asp-for="City" class="form-select" data-location-city>
+                            <option value="">Select your city</option>
+                            @foreach (var city in GujaratLocations.Cities.OrderBy(c => c.Name))
+                            {
+                                <option value="@city.Name" data-district="@city.District">@city.Name</option>
+                            }
+                        </select>
                         <span asp-validation-for="City" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="District" class="form-label"></label>
-                        <input asp-for="District" class="form-control" placeholder="e.g. Kheda" />
-                        <span asp-validation-for="District" class="text-danger"></span>
+                        <select asp-for="District" class="form-select" data-location-district>
+                            <option value="">All districts</option>
+                            @foreach (var district in GujaratLocations.Districts)
+                            {
+                                <option value="@district">@district</option>
+                            }
+                        </select>
+                        <small class="text-muted">Filled in from your city. Choose a district first to narrow the city list.</small>
                     </div>
                 </div>
 
@@ -74,4 +86,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_GujaratLocationScript" />
 }

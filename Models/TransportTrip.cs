@@ -48,6 +48,10 @@ namespace FarmGrid.Models
         /// </summary>
         public bool IsOpen(DateTime today) => IsActive && DispatchDate.Date >= today.Date;
 
+        /// <summary>The Trip's Origin: always the host Farmer's current Location (needs Farmer loaded).</summary>
+        public string? OriginDescription =>
+            string.IsNullOrWhiteSpace(Farmer?.City) ? null : $"{Farmer.City}, {Farmer.District} district";
+
         /// <summary>
         /// Splits the vehicle cost by cargo weight, rounded to the paisa. The host takes
         /// the rounding remainder so the shares always add up to exactly the cost.
