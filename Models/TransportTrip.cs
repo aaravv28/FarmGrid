@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmGrid.Models
@@ -40,5 +40,10 @@ namespace FarmGrid.Models
 
         public ICollection<TransportParticipant> Participants { get; set; }
             = new List<TransportParticipant>();
+
+        /// <summary>
+        /// A Trip is open through its dispatch date and closes once that date has passed.
+        /// </summary>
+        public bool IsOpen(DateTime today) => IsActive && DispatchDate.Date >= today.Date;
     }
 }

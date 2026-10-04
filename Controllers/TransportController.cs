@@ -26,7 +26,8 @@ namespace FarmGrid.Controllers
 
             var upcomingTrips = await _context.TransportTrips
                 .Include(t => t.Participants)
-                .Where(t => t.IsActive && t.DispatchDate >= today && t.AvailableCapacityKg > 0)
+                .Open(today)
+                .Where(t => t.AvailableCapacityKg > 0)
                 .OrderBy(t => t.DispatchDate)
                 .Take(6)
                 .ToListAsync();
@@ -123,8 +124,8 @@ namespace FarmGrid.Controllers
             var matches =
                 await _context.TransportTrips
                     .Include(t => t.Participants)
+                    .Open(DateTime.Today)
                     .Where(t =>
-                        t.IsActive &&
                         t.DestinationMarket == destinationMarket &&
                         t.DispatchDate.Date == dispatchDate.Date &&
                         t.AvailableCapacityKg >= requiredWeight &&
@@ -137,12 +138,11 @@ namespace FarmGrid.Controllers
             {
                 var nearbyMatches = await _context.TransportTrips
                     .Include(t => t.Participants)
+                    .Open(DateTime.Today)
                     .Where(t =>
-                        t.IsActive &&
                         t.DestinationMarket == destinationMarket &&
                         t.AvailableCapacityKg >= requiredWeight &&
-                        t.FarmerId != farmerId &&
-                        t.DispatchDate >= DateTime.Today)
+                        t.FarmerId != farmerId)
                     .OrderBy(t => t.DispatchDate)
                     .ToListAsync();
 
@@ -200,6 +200,14 @@ namespace FarmGrid.Controllers
             if (trip == null)
             {
                 return NotFound();
+            }
+
+            if (!trip.IsOpen(DateTime.Today))
+            {
+                TempData["Error"] =
+                    "This trip has already been dispatched and is closed.";
+
+                return RedirectToAction(nameof(Index));
             }
 
             if (trip.FarmerId == farmerId)

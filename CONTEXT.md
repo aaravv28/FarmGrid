@@ -43,7 +43,7 @@ _Avoid_: Minimum price, reserve
 ### Transport
 
 **Trip**:
-A farmer's vehicle journey to a market, with spare capacity that other farmers can book. A Trip closes once its dispatch date has passed.
+A farmer's vehicle journey to a market, with spare capacity that other farmers can book. A Trip is open through its dispatch date and closed once that date has passed; a closed Trip cannot be found or joined.
 _Avoid_: Ride, booking, pool
 
 **Fare share**:

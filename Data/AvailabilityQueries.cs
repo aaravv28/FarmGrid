@@ -19,5 +19,12 @@ namespace FarmGrid.Data
         {
             return listings.Where(q => q.IsActive && q.AvailableQuantity > 0 && q.ExpiresAt > now);
         }
+
+        /// <summary>Trips that can still be joined: not closed by their dispatch date passing (mirrors <see cref="TransportTrip.IsOpen"/>).</summary>
+        public static IQueryable<TransportTrip> Open(this IQueryable<TransportTrip> trips, DateTime today)
+        {
+            var startOfToday = today.Date;
+            return trips.Where(t => t.IsActive && t.DispatchDate >= startOfToday);
+        }
     }
 }

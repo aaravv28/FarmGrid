@@ -90,6 +90,14 @@
 
                                     <p>
                                         @trip.DispatchDate.ToString("dd MMM yyyy")
+                                        @if (trip.IsOpen(DateTime.Today))
+                                        {
+                                            <span class="badge bg-success-subtle text-success border ms-1">Upcoming</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary ms-1">Closed</span>
+                                        }
                                     </p>
                                 </div>
 
