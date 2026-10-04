@@ -137,7 +137,11 @@
                                         @prod.StockQuantity @prod.UnitMeasure
                                     </td>
                                     <td>
-                                        @if (prod.StockQuantity <= 0)
+                                        @if (!prod.IsActive)
+                                        {
+                                            <span class="badge bg-secondary">Removed</span>
+                                        }
+                                        else if (prod.StockQuantity <= 0)
                                         {
                                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Out of Stock</span>
                                         }
@@ -151,12 +155,18 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <a asp-controller="Products" asp-action="Edit" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-secondary me-1">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-success">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
+                                        @if (prod.IsActive)
+                                        {
+                                            <a asp-controller="Products" asp-action="Edit" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-secondary me-1">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                        }
+                                        @if (prod.IsAvailable)
+                                        {
+                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-success">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                        }
                                     </td>
                                 </tr>
                             }

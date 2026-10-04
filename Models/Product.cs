@@ -7,7 +7,9 @@ namespace FarmGrid.Models
     {
         public int Id { get; set; }
 
-        public string? FarmerId { get; set; }
+        /// <summary>The Farmer who owns this Product; always an existing user.</summary>
+        [Required]
+        public string FarmerId { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]

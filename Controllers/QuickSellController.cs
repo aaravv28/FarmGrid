@@ -30,9 +30,6 @@ namespace FarmGrid.Controllers
         // MARKETPLACE - GET
         public async Task<IActionResult> Index(string? category, string? search)
         {
-            // Auto-seed initial demo quick-sells if none exist
-            await EnsureSeedDataAsync();
-
             var now = UtcNow;
             var query = _context.QuickSellListings
                 .Buyable(now);
@@ -124,8 +121,13 @@ namespace FarmGrid.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
-            var farmerId = user?.Id ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous-farmer";
-            var farmerName = user?.FullName ?? user?.UserName ?? "Farmer";
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var farmerId = user.Id;
+            var farmerName = user.FullName;
 
             var listing = new QuickSellListing
             {
@@ -203,7 +205,12 @@ namespace FarmGrid.Controllers
             var totalAmount = Math.Round(model.Quantity * currentPrice, 2, MidpointRounding.AwayFromZero);
 
             var user = await _userManager.GetUserAsync(User);
-            var customerId = user?.Id ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "guest-customer";
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var customerId = user.Id;
 
             var order = new QuickSellOrder
             {
@@ -272,77 +279,6 @@ namespace FarmGrid.Controllers
                 isSoldOut = listing.IsSoldOut,
                 elapsedHours = (decimal)(now - listing.CreatedAt).TotalHours
             });
-        }
-
-        // DEMO SEED HELPER
-        private async Task EnsureSeedDataAsync()
-        {
-            if (await _context.QuickSellListings.AnyAsync())
-            {
-                return;
-            }
-
-            var now = UtcNow;
-            var sampleListings = new List<QuickSellListing>
-            {
-                new QuickSellListing
-                {
-                    FarmerId = "seed-farmer-1",
-                    FarmerName = "Ramesh Patel",
-                    Location = "Anand, Gujarat",
-                    CropTitle = "Fresh Tomatoes",
-                    Category = "Vegetables",
-                    UnitMeasure = "kg",
-                    BulkQuantity = 500,
-                    AvailableQuantity = 350,
-                    StartingPrice = 30.00m,
-                    FloorPrice = 15.00m,
-                    DurationHours = 48,
-                    CreatedAt = now.AddHours(-18),
-                    ExpiresAt = now.AddHours(30),
-                    IsActive = true,
-                    Description = "High-grade organic ripe hybrid tomatoes, harvested this morning. Needs fast clearing."
-                },
-                new QuickSellListing
-                {
-                    FarmerId = "seed-farmer-2",
-                    FarmerName = "Kishore Bhai",
-                    Location = "Kheda, Gujarat",
-                    CropTitle = "Fresh Carrots",
-                    Category = "Vegetables",
-                    UnitMeasure = "kg",
-                    BulkQuantity = 800,
-                    AvailableQuantity = 620,
-                    StartingPrice = 45.00m,
-                    FloorPrice = 25.00m,
-                    DurationHours = 48,
-                    CreatedAt = now.AddHours(-12),
-                    ExpiresAt = now.AddHours(36),
-                    IsActive = true,
-                    Description = "Fresh crunchy orange carrots directly sorted from field. Ideal for processing or home use."
-                },
-                new QuickSellListing
-                {
-                    FarmerId = "seed-farmer-3",
-                    FarmerName = "Dinesh Somani",
-                    Location = "Vadodara, Gujarat",
-                    CropTitle = "Alphonso & Kesar Mangoes",
-                    Category = "Fruits",
-                    UnitMeasure = "kg",
-                    BulkQuantity = 400,
-                    AvailableQuantity = 400,
-                    StartingPrice = 120.00m,
-                    FloorPrice = 75.00m,
-                    DurationHours = 48,
-                    CreatedAt = now.AddHours(-6),
-                    ExpiresAt = now.AddHours(42),
-                    IsActive = true,
-                    Description = "Naturally ripened sweet mango crates. Perfect commercial grade sweetness."
-                }
-            };
-
-            _context.QuickSellListings.AddRange(sampleListings);
-            await _context.SaveChangesAsync();
         }
     }
 }

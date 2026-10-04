@@ -78,6 +78,38 @@ namespace FarmGrid.Data
                 })
                 .IsUnique();
 
+            // Owners are always real users (no placeholder ids). Restrict: a user
+            // who owns products, lots or trips cannot be deleted out from under them.
+            builder.Entity<Product>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(p => p.FarmerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<QuickSellListing>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(q => q.FarmerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TransportTrip>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(t => t.FarmerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TransportParticipant>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(tp => tp.FarmerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Order>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(o => o.FarmerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Optimistic concurrency: a save only succeeds if these values are still
             // what the request read, so two requests racing for the same stock,
             // capacity or order cannot both win. The losing save throws

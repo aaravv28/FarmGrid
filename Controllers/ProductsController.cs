@@ -91,9 +91,15 @@ namespace FarmGrid.Controllers
                     model);
             }
 
+            var farmerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (farmerId == null)
+            {
+                return Challenge();
+            }
+
             var product = new Product
             {
-                FarmerId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                FarmerId = farmerId,
                 CreatedAt = UtcNow,
                 IsActive = true
             };
@@ -120,10 +126,16 @@ namespace FarmGrid.Controllers
             }
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            if (product.FarmerId != currentUserId)
             {
                 TempData["Error"] = "You can only edit your own listed products.";
                 return RedirectToAction(nameof(Index));
+            }
+
+            if (!product.IsActive)
+            {
+                TempData["Error"] = $"'{product.Title}' was removed from the catalog and can no longer be edited.";
+                return RedirectToAction("FarmerDashboard", "UI");
             }
 
             return View(
@@ -153,10 +165,16 @@ namespace FarmGrid.Controllers
             }
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            if (product.FarmerId != currentUserId)
             {
                 TempData["Error"] = "You can only modify your own products.";
                 return RedirectToAction(nameof(Index));
+            }
+
+            if (!product.IsActive)
+            {
+                TempData["Error"] = $"'{product.Title}' was removed from the catalog and can no longer be edited.";
+                return RedirectToAction("FarmerDashboard", "UI");
             }
 
             if (!ModelState.IsValid)
@@ -197,7 +215,7 @@ namespace FarmGrid.Controllers
             }
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(product.FarmerId) && product.FarmerId != currentUserId)
+            if (product.FarmerId != currentUserId)
             {
                 TempData["Error"] = "You can only remove your own products.";
                 return RedirectToAction(nameof(Index));

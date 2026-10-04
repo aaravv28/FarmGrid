@@ -27,7 +27,7 @@ namespace FarmGrid.Tests
                     new IdentityUserRole<string> { UserId = "b2b", RoleId = b2bRole.Id },
                     new IdentityUserRole<string> { UserId = "cust", RoleId = customerRole.Id });
 
-                var product = new Product { Title = "Milk", Category = "Dairy Products", UnitMeasure = "L", UnitPrice = 60m, StockQuantity = 50m };
+                var product = new Product { FarmerId = "farmer", Title = "Milk", Category = "Dairy Products", UnitMeasure = "L", UnitPrice = 60m, StockQuantity = 50m };
                 var listing = new QuickSellListing { FarmerId = "farmer", FarmerName = "Ramesh", CropTitle = "Tomatoes", BulkQuantity = 500m, AvailableQuantity = 500m, StartingPrice = 30m, FloorPrice = 15m };
                 context.Products.Add(product);
                 context.QuickSellListings.Add(listing);
@@ -68,7 +68,8 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
-                Assert.Equal(new[] { "cust" }, await context.Users.Select(u => u.Id).ToListAsync());
+                Assert.False(await context.Users.AnyAsync(u => u.Id == "b2b"));
+                Assert.True(await context.Users.AnyAsync(u => u.Id == "cust"));
                 Assert.False(await context.Roles.AnyAsync(r => r.Name == B2BRoleName));
                 Assert.True(await context.Roles.AnyAsync(r => r.Name == Roles.Customer));
                 Assert.All(await context.CartItems.ToListAsync(), c => Assert.Equal("cust", c.CustomerId));
@@ -93,8 +94,9 @@ namespace FarmGrid.Tests
 
             await using (var context = db.CreateContext())
             {
+                var usersBefore = await context.Users.CountAsync();
                 await LegacyB2BCleanup.RunAsync(context);
-                Assert.Equal(1, await context.Users.CountAsync());
+                Assert.Equal(usersBefore, await context.Users.CountAsync());
             }
         }
     }

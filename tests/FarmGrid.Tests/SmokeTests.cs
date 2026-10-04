@@ -14,6 +14,7 @@ namespace FarmGrid.Tests
             {
                 context.Products.Add(new Product
                 {
+                    FarmerId = "farmer",
                     Title = "Tomatoes",
                     Category = "Vegetables",
                     UnitMeasure = "kg",

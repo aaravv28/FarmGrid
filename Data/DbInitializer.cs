@@ -90,11 +90,16 @@ namespace FarmGrid.Data
                 }
             }
 
-            // Fallback farmer ID if existing accounts are used
+            // Demo catalog data belongs to a real farmer; without one there is nothing to seed
             if (string.IsNullOrEmpty(farmerUserId))
             {
                 var anyFarmer = (await userManager.GetUsersInRoleAsync(Roles.Farmer)).FirstOrDefault();
-                farmerUserId = anyFarmer?.Id ?? "demo-farmer-id";
+                if (anyFarmer == null)
+                {
+                    return;
+                }
+
+                farmerUserId = anyFarmer.Id;
             }
 
             // 4. Seed Regular Marketplace Products

@@ -141,8 +141,6 @@ namespace FarmGrid.Tests
                     Title = "Okra", Category = "Vegetables", UnitMeasure = "kg", UnitPrice = 40m, StockQuantity = 5m
                 });
 
-                context.Users.Add(new ApplicationUser { Id = "farmer", UserName = "f@x.com", FullName = "Ramesh" });
-                await context.SaveChangesAsync();
                 await SignedIn(new QuickSellController(context, UserManagerFor(context), clock), "farmer").Create(new QuickSellCreateViewModel
                 {
                     CropTitle = "Carrots", Category = "Vegetables", BulkQuantity = 100m, StartingPrice = 30m, FloorPrice = 15m, Location = "Anand"

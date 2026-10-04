@@ -1,4 +1,5 @@
 using FarmGrid.Data;
+using FarmGrid.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,12 @@ namespace FarmGrid.Tests
     /// </summary>
     public sealed class TestDb : IDisposable
     {
+        /// <summary>
+        /// Farmer users every test database starts with, so products, lots and trips
+        /// can reference a real owner (owner ids are foreign keys to users).
+        /// </summary>
+        public static readonly string[] SeededFarmerIds = ["farmer", "farmer-a", "farmer-b", "host", "joiner", "other"];
+
         private readonly SqliteConnection _connection;
 
         public TestDb()
@@ -20,6 +27,14 @@ namespace FarmGrid.Tests
 
             using var context = CreateContext();
             context.Database.EnsureCreated();
+
+            context.Users.AddRange(SeededFarmerIds.Select(id => new ApplicationUser
+            {
+                Id = id,
+                UserName = $"{id}@farmgrid.test",
+                FullName = id
+            }));
+            context.SaveChanges();
         }
 
         public ApplicationDbContext CreateContext()
