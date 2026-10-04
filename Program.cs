@@ -30,6 +30,8 @@ builder.Services
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequiredLength = 6;
+
+        FarmGrid.Controllers.AccountController.ConfigureLockout(options.Lockout);
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();

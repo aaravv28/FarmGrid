@@ -27,6 +27,17 @@ namespace FarmGrid.Controllers
 
         private DateTime UtcNow => _time.GetUtcNow().UtcDateTime;
 
+        /// <summary>
+        /// Lockout policy: five wrong passwords lock an account for 15 minutes.
+        /// Applied in Program.cs; kept here beside the login it protects.
+        /// </summary>
+        public static void ConfigureLockout(LockoutOptions lockout)
+        {
+            lockout.AllowedForNewUsers = true;
+            lockout.MaxFailedAccessAttempts = 5;
+            lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        }
+
         // REGISTER - GET
         [HttpGet]
         public IActionResult Register(string? returnUrl = null)
@@ -137,10 +148,14 @@ namespace FarmGrid.Controllers
                 return View(model);
             }
 
+            // The same message for an unknown email and a wrong password, so the
+            // login form cannot be used to discover which emails have accounts
+            const string invalidLogin = "Invalid email or password.";
+
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt. No user found with this email.");
+                ModelState.AddModelError(string.Empty, invalidLogin);
                 return View(model);
             }
 
@@ -148,7 +163,7 @@ namespace FarmGrid.Controllers
                 user.UserName!,
                 model.Password,
                 model.RememberMe,
-                lockoutOnFailure: false);
+                lockoutOnFailure: true);
 
             if (result.Succeeded)
             {
@@ -171,7 +186,13 @@ namespace FarmGrid.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid email or password.");
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "This account is locked after too many failed attempts. Please try again in 15 minutes.");
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, invalidLogin);
             return View(model);
         }
 
