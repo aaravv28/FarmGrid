@@ -145,7 +145,7 @@
                                         {
                                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Out of Stock</span>
                                         }
-                                        else if (prod.StockQuantity < 20)
+                                        else if (prod.StockQuantity < MarketRules.LowStockThreshold)
                                         {
                                             <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Low Stock</span>
                                         }

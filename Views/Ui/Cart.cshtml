@@ -91,9 +91,9 @@
                                 <input type="number"
                                        name="quantity"
                                        value="@item.Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                       min="0.01"
+                                       min="@(ProduceUnits.Find(item.Product.UnitMeasure)?.Step ?? "0.01")"
                                        max="@item.Product.StockQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                       step="0.01"
+                                       step="@(ProduceUnits.Find(item.Product.UnitMeasure)?.Step ?? "0.01")"
                                        class="form-control"
                                        style="width:100px;" />
 

@@ -105,9 +105,9 @@
                             <input type="number"
                                    name="quantity"
                                    value="1"
-                                   min="0.01"
-                                   max="@Model.StockQuantity"
-                                   step="0.01"
+                                   min="@(ProduceUnits.Find(Model.UnitMeasure)?.Step ?? "0.01")"
+                                   max="@Model.StockQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                   step="@(ProduceUnits.Find(Model.UnitMeasure)?.Step ?? "0.01")"
                                    class="form-control quantity-input" />
 
                         </div>

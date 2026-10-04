@@ -8,7 +8,7 @@ namespace FarmGrid.ViewModels
         public int ListingId { get; set; }
 
         [Required(ErrorMessage = "Quantity is required")]
-        [Range(1, 1000000, ErrorMessage = "Quantity must be at least 1 kg")]
+        [Range(0.01, 1000000, ErrorMessage = "Please enter a quantity to buy")]
         [Display(Name = "Purchase Quantity (kg)")]
         public decimal Quantity { get; set; }
 

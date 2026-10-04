@@ -57,9 +57,9 @@ namespace FarmGrid.Data
                 AvailableQuantity = available,
                 StartingPrice = start,
                 FloorPrice = floor,
-                DurationHours = 48,
+                DurationHours = MarketRules.QuickSellDurationHours,
                 CreatedAt = now.AddHours(-hoursAgo),
-                ExpiresAt = now.AddHours(48 - hoursAgo),
+                ExpiresAt = now.AddHours(MarketRules.QuickSellDurationHours - hoursAgo),
                 IsActive = true,
                 Description = description
             };

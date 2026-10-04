@@ -61,21 +61,11 @@
                     All Categories
                 </option>
 
-                <option value="Fruits">
-                    Fruits
-                </option>
+                @foreach (var category in ProduceCategories.All)
+                {
+                    <option value="@category" selected="@(Context.Request.Query["category"] == category)">@category</option>
+                }
 
-                <option value="Vegetables">
-                    Vegetables
-                </option>
-
-                <option value="Groceries">
-                    Groceries
-                </option>
-
-                <option value="Dairy Products">
-                    Dairy Products
-                </option>
 
             </select>
 

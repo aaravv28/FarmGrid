@@ -10,8 +10,9 @@ namespace FarmGrid.ViewModels
         public string CropTitle { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category is required")]
+        [FarmGrid.Models.ProduceCategory]
         [StringLength(50)]
-        public string Category { get; set; } = "Vegetables";
+        public string Category { get; set; } = FarmGrid.Models.ProduceCategories.Vegetables;
 
         [Required(ErrorMessage = "Quantity is required")]
         [Range(1, 1000000, ErrorMessage = "Quantity must be at least 1 kg")]

@@ -68,7 +68,7 @@ namespace FarmGrid.Controllers
             var purchaseModel = new QuickSellPurchaseViewModel
             {
                 ListingId = listing.Id,
-                Quantity = Math.Min(listing.AvailableQuantity, 50)
+                Quantity = Math.Min(listing.AvailableQuantity, MarketRules.DefaultQuickSellQuantityKg)
             };
 
             if (User.Identity?.IsAuthenticated == true)
@@ -141,9 +141,9 @@ namespace FarmGrid.Controllers
                 AvailableQuantity = model.BulkQuantity,
                 StartingPrice = model.StartingPrice,
                 FloorPrice = model.FloorPrice,
-                DurationHours = 48,
+                DurationHours = MarketRules.QuickSellDurationHours,
                 CreatedAt = UtcNow,
-                ExpiresAt = UtcNow.AddHours(48),
+                ExpiresAt = UtcNow.AddHours(MarketRules.QuickSellDurationHours),
                 IsActive = true,
                 Description = model.Description
             };
@@ -179,7 +179,12 @@ namespace FarmGrid.Controllers
 
             if (model.Quantity <= 0)
             {
-                ModelState.AddModelError(nameof(model.Quantity), "Quantity must be at least 1 kg.");
+                ModelState.AddModelError(nameof(model.Quantity), "Please enter a quantity to buy.");
+            }
+            else if (model.Quantity < MarketRules.QuickSellMinimumKg && model.Quantity != listing.AvailableQuantity)
+            {
+                // Under the minimum is allowed only to clear the last of a lot
+                ModelState.AddModelError(nameof(model.Quantity), $"The minimum order is {MarketRules.QuickSellMinimumKg} kg, unless you are buying all that is left.");
             }
             else if (model.Quantity > listing.AvailableQuantity)
             {

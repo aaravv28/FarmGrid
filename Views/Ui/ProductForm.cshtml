@@ -82,21 +82,11 @@
                                 Select Category
                             </option>
 
-                            <option value="Fruits">
-                                Fruits
-                            </option>
+                            @foreach (var category in ProduceCategories.All)
+                            {
+                                <option value="@category">@category</option>
+                            }
 
-                            <option value="Vegetables">
-                                Vegetables
-                            </option>
-
-                            <option value="Groceries">
-                                Groceries
-                            </option>
-
-                            <option value="Dairy Products">
-                                Dairy Products
-                            </option>
 
                         </select>
 
@@ -122,21 +112,11 @@
                                 Select Unit
                             </option>
 
-                            <option value="kg">
-                                kg
-                            </option>
+                            @foreach (var unit in ProduceUnits.All)
+                            {
+                                <option value="@unit.Code">@unit.Label</option>
+                            }
 
-                            <option value="litre">
-                                litre
-                            </option>
-
-                            <option value="dozen">
-                                dozen
-                            </option>
-
-                            <option value="unit">
-                                unit
-                            </option>
 
                         </select>
 

@@ -19,7 +19,7 @@ namespace FarmGrid.Models
     /// </summary>
     public static class CheckoutPlan
     {
-        public const decimal DeliveryChargePerOrder = 30m;
+        public const decimal DeliveryChargePerOrder = MarketRules.DeliveryChargePerOrder;
 
         public static IReadOnlyList<FarmerOrderPlan> Build(IEnumerable<CartItem> cartItems)
         {

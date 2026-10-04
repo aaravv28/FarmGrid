@@ -23,7 +23,7 @@ namespace FarmGrid.Models
 
         [Required]
         [StringLength(50)]
-        public string Category { get; set; } = "Vegetables";
+        public string Category { get; set; } = ProduceCategories.Vegetables;
 
         [Required]
         [StringLength(20)]
@@ -49,11 +49,11 @@ namespace FarmGrid.Models
         [Precision(18, 2)]
         public decimal FloorPrice { get; set; }
 
-        public int DurationHours { get; set; } = 48;
+        public int DurationHours { get; set; } = MarketRules.QuickSellDurationHours;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddHours(48);
+        public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddHours(MarketRules.QuickSellDurationHours);
 
         public bool IsActive { get; set; } = true;
 

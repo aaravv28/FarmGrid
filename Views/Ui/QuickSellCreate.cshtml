@@ -31,10 +31,10 @@
                     <div class="col-md-6 mb-3">
                         <label asp-for="Category" class="form-label fw-semibold"></label>
                         <select asp-for="Category" class="form-select">
-                            <option value="Vegetables">Vegetables</option>
-                            <option value="Fruits">Fruits</option>
-                            <option value="Groceries">Groceries</option>
-                            <option value="Dairy">Dairy</option>
+                            @foreach (var category in ProduceCategories.All)
+                            {
+                                <option value="@category">@category</option>
+                            }
                         </select>
                         <span asp-validation-for="Category" class="text-danger small"></span>
                     </div>

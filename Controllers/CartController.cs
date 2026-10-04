@@ -74,6 +74,17 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
+            if (!ProduceUnits.AllowsQuantity(product.UnitMeasure, quantity))
+            {
+                TempData["Error"] =
+                    $"{product.Title} is sold by the {product.UnitMeasure}; please choose a whole number.";
+
+                return RedirectToAction(
+                    "Details",
+                    "Products",
+                    new { id = productId });
+            }
+
             if (quantity <= 0 ||
                 quantity > product.StockQuantity)
             {
@@ -166,6 +177,16 @@ namespace FarmGrid.Controllers
             }
             else
             {
+                if (item.Product != null &&
+                    !ProduceUnits.AllowsQuantity(item.Product.UnitMeasure, quantity))
+                {
+                    TempData["Error"] =
+                        $"{item.Product.Title} is sold by the {item.Product.UnitMeasure}; please choose a whole number.";
+
+                    return RedirectToAction(
+                        nameof(Index));
+                }
+
                 if (item.Product == null ||
                     quantity >
                     item.Product.StockQuantity)

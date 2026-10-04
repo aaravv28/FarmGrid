@@ -4,7 +4,7 @@
     var currentPrice = Model.CalculateCurrentPrice();
     var remaining = Model.GetRemainingTime();
     var invariant = System.Globalization.CultureInfo.InvariantCulture;
-    var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, 50) });
+    var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, MarketRules.DefaultQuickSellQuantityKg) });
     var isExpired = Model.IsExpired();
     var isClosed = !Model.IsBuyable();
     var isFarmerOwner = User.Identity?.Name == Model.FarmerName || User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.FarmerId;
@@ -218,15 +218,16 @@
                                         <div class="input-group">
                                             <input type="number" id="purchaseQuantity" name="Quantity"
                                                    class="form-control form-control-lg"
-                                                   min="1" max="@Model.AvailableQuantity.ToString(invariant)"
-                                                   value="@purchaseModel.Quantity.ToString(invariant)" step="1" required />
+                                                   min="0.01" max="@Model.AvailableQuantity.ToString(invariant)"
+                                                   value="@purchaseModel.Quantity.ToString(invariant)" step="0.01" required />
                                             <span class="input-group-text bg-light">kg</span>
                                         </div>
                                         <!-- Quick Presets -->
                                         <div class="d-flex gap-2 mt-2">
-                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="25">25 kg</button>
-                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="50">50 kg</button>
-                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="100">100 kg</button>
+                                            @foreach (var preset in MarketRules.QuickSellPresetsKg.Where(p => p < Model.AvailableQuantity))
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="@preset">@preset kg</button>
+                                            }
                                             <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="@Model.AvailableQuantity.ToString(invariant)">All (@Model.AvailableQuantity kg)</button>
                                         </div>
                                     </div>
