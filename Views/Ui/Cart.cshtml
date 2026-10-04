@@ -9,6 +9,8 @@
     decimal subtotal = Model
         .Where(x => x.Product != null)
         .Sum(x => x.Product!.UnitPrice * x.Quantity);
+
+    var problemCount = Model.Count(x => CartChecks.ProblemWith(x) != null);
 }
 
 <div class="cart-page">
@@ -74,6 +76,13 @@
                                     /
                                     @item.Product.UnitMeasure
                                 </p>
+
+                                @if (CartChecks.ProblemWith(item) is string problem)
+                                {
+                                    <p class="small text-danger fw-semibold mb-0">
+                                        <i class="fa-solid fa-triangle-exclamation me-1"></i> @problem
+                                    </p>
+                                }
 
                             </div>
 
@@ -177,13 +186,28 @@
 
                         </div>
 
-                        <a asp-controller="Orders"
-                           asp-action="Checkout"
-                           class="btn farm-btn-primary w-100 mt-4">
+                        @if (problemCount > 0)
+                        {
+                            <p class="small text-danger mt-3 mb-0">
+                                Fix the @(problemCount == 1 ? "item" : $"{problemCount} items") marked above before checking out.
+                            </p>
 
-                            Proceed to Checkout
+                            <span class="btn farm-btn-primary w-100 mt-2 disabled" aria-disabled="true">
 
-                        </a>
+                                Proceed to Checkout
+
+                            </span>
+                        }
+                        else
+                        {
+                            <a asp-controller="Orders"
+                               asp-action="Checkout"
+                               class="btn farm-btn-primary w-100 mt-4">
+
+                                Proceed to Checkout
+
+                            </a>
+                        }
 
                     </div>
 

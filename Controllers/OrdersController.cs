@@ -62,6 +62,18 @@ namespace FarmGrid.Controllers
                     "Cart");
             }
 
+            var problem = cartItems
+                .Select(CartChecks.ProblemWith)
+                .FirstOrDefault(p => p != null);
+
+            if (problem != null)
+            {
+                TempData["Error"] = problem;
+                return RedirectToAction(
+                    "Index",
+                    "Cart");
+            }
+
             await LoadCheckoutSummaryAsync(cartItems);
 
             var user = await _userManager.GetUserAsync(User);
@@ -125,18 +137,9 @@ namespace FarmGrid.Controllers
             {
                 foreach (var cart in cartItems)
                 {
-                    if (cart.Product == null ||
-                        !cart.Product.IsAvailable)
+                    if (CartChecks.ProblemWith(cart) is string problem)
                     {
-                        throw new CheckoutProblemException(
-                            $"{cart.Product?.Title ?? "An item in your cart"} is no longer available. Please remove it from your cart.");
-                    }
-
-                    if (cart.Quantity >
-                        cart.Product.StockQuantity)
-                    {
-                        throw new CheckoutProblemException(
-                            $"Only {cart.Product.StockQuantity} {cart.Product.UnitMeasure} of {cart.Product.Title} is left. Please reduce the quantity in your cart.");
+                        throw new CheckoutProblemException(problem);
                     }
                 }
 
