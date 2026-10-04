@@ -27,6 +27,7 @@ namespace FarmGrid.Controllers
             string? category)
         {
             var query = _context.Products
+                .Include(p => p.Farmer)
                 .Available();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -54,6 +55,7 @@ namespace FarmGrid.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var product = await _context.Products
+                .Include(p => p.Farmer)
                 .Available()
                 .FirstOrDefaultAsync(p => p.Id == id);
 

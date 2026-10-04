@@ -81,7 +81,7 @@ namespace FarmGrid.Data
             // Owners are always real users (no placeholder ids). Restrict: a user
             // who owns products, lots or trips cannot be deleted out from under them.
             builder.Entity<Product>()
-                .HasOne<ApplicationUser>()
+                .HasOne(p => p.Farmer)
                 .WithMany()
                 .HasForeignKey(p => p.FarmerId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -93,7 +93,7 @@ namespace FarmGrid.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TransportTrip>()
-                .HasOne<ApplicationUser>()
+                .HasOne(t => t.Farmer)
                 .WithMany()
                 .HasForeignKey(t => t.FarmerId)
                 .OnDelete(DeleteBehavior.Restrict);

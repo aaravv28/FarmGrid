@@ -30,6 +30,7 @@ namespace FarmGrid.Controllers
 
             var upcomingTrips = await _context.TransportTrips
                 .Include(t => t.Participants)
+                .Include(t => t.Farmer)
                 .Open(today)
                 .Where(t => t.AvailableCapacityKg > 0)
                 .OrderBy(t => t.DispatchDate)
@@ -145,6 +146,7 @@ namespace FarmGrid.Controllers
             var matches =
                 await _context.TransportTrips
                     .Include(t => t.Participants)
+                    .Include(t => t.Farmer)
                     .Open(today)
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&
@@ -160,6 +162,7 @@ namespace FarmGrid.Controllers
             {
                 var nearbyMatches = await _context.TransportTrips
                     .Include(t => t.Participants)
+                    .Include(t => t.Farmer)
                     .Open(today)
                     .Where(t =>
                         t.DestinationMarket == destinationMarket &&

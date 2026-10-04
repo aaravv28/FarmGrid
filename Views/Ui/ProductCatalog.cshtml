@@ -1,6 +1,7 @@
 @model IEnumerable<FarmGrid.Models.Product>
 
 @{
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     ViewData["Title"] = "Marketplace";
 }
 
@@ -141,7 +142,7 @@
                             <div class="product-body">
 
                                 <small>
-                                    FarmGrid Farmer
+                                    @(product.Farmer?.FullName ?? "FarmGrid Farmer")
                                 </small>
 
                                 <h5>
@@ -181,7 +182,7 @@
                                     </a>
                                 </div>
 
-                                @if (User.IsInRole("Farmer"))
+                                @if (product.FarmerId == currentUserId)
                                 {
                                     <div class="product-actions mt-2 d-flex gap-2">
                                         <a asp-controller="Products"
@@ -204,7 +205,7 @@
                                         </form>
                                     </div>
                                 }
-                                else
+                                else if (User.IsInRole("Customer"))
                                 {
                                     <div class="product-actions mt-2">
                                         <form asp-controller="Cart"
@@ -218,6 +219,17 @@
                                                 <i class="fa-solid fa-cart-plus me-1"></i> Add to Cart
                                             </button>
                                         </form>
+                                    </div>
+                                }
+                                else if (User.Identity?.IsAuthenticated != true)
+                                {
+                                    <div class="product-actions mt-2">
+                                        <a asp-controller="Account"
+                                           asp-action="Login"
+                                           asp-route-returnUrl="@Url.Action("Details", "Products", new { id = product.Id })"
+                                           class="btn farm-btn-primary w-100">
+                                            <i class="fa-solid fa-right-to-bracket me-1"></i> Sign in to buy
+                                        </a>
                                     </div>
                                 }
 

@@ -331,7 +331,7 @@
                             @foreach (var rOrder in Model.RecentRetailOrders)
                             {
                                 <tr>
-                                    <td><strong>#FG@(rOrder.Id.ToString("D4"))</strong></td>
+                                    <td><strong>@OrderNumbers.For(rOrder)</strong></td>
                                     <td>
                                         <strong>@rOrder.CustomerName</strong>
                                         <div class="text-muted" style="font-size:0.75rem;">@rOrder.City</div>

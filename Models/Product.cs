@@ -11,6 +11,8 @@ namespace FarmGrid.Models
         [Required]
         public string FarmerId { get; set; } = string.Empty;
 
+        public ApplicationUser? Farmer { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;

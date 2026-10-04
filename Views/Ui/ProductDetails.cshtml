@@ -34,7 +34,7 @@
 
                     <i class="fa-solid fa-location-dot"></i>
 
-                    FarmGrid Farmer
+                    @(Model.Farmer?.FullName ?? "FarmGrid Farmer")
 
                 </p>
 
@@ -65,7 +65,7 @@
 
                 </p>
 
-                @if (User.IsInRole("Farmer"))
+                @if (Model.FarmerId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
                 {
                     <div class="card p-3 bg-light-subtle border rounded-3 mb-3">
                         <div class="d-flex align-items-center gap-2 mb-2">
@@ -84,7 +84,19 @@
                         </div>
                     </div>
                 }
-                else
+                else if (User.Identity?.IsAuthenticated != true)
+                {
+                    <div class="d-flex gap-3 mt-4">
+                        <a asp-controller="Account"
+                           asp-action="Login"
+                           asp-route-returnUrl="@Url.Action("Details", "Products", new { id = Model.Id })"
+                           class="btn farm-btn-primary btn-lg">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i> Sign in to buy
+                        </a>
+                        <a asp-controller="Products" asp-action="Index" class="btn farm-btn-outline btn-lg">Back</a>
+                    </div>
+                }
+                else if (User.IsInRole("Customer"))
                 {
                     <form asp-controller="Cart"
                           asp-action="Add"

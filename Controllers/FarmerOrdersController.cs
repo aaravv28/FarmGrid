@@ -55,7 +55,7 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
-            return await Apply(() => change(order), $"Order #FG{order.Id:D4} {outcome}.");
+            return await Apply(() => change(order), $"Order {OrderNumbers.For(order)} {outcome}.");
         }
 
         private async Task<IActionResult> ChangeQuickSellOrder(int id, Action<QuickSellOrder> change, string outcome)
@@ -74,7 +74,7 @@ namespace FarmGrid.Controllers
                 return NotFound();
             }
 
-            return await Apply(() => change(order), $"Quick Sell order #QS-{order.Id} {outcome}.");
+            return await Apply(() => change(order), $"Quick Sell order {OrderNumbers.For(order)} {outcome}.");
         }
 
         private async Task<IActionResult> Apply(Action change, string successMessage)

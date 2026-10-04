@@ -105,7 +105,7 @@
                             @foreach (var ord in Model.RecentOrders)
                             {
                                 <tr>
-                                    <td><strong class="text-dark">#@ord.Id</strong></td>
+                                    <td><strong class="text-dark">@OrderNumbers.For(ord)</strong></td>
                                     <td>@ord.CreatedAt.ToIndiaTime().ToString("dd MMM yyyy, hh:mm tt")</td>
                                     <td>
                                         @foreach (var item in ord.OrderItems.Take(2))
@@ -176,7 +176,7 @@
                             @foreach (var qord in Model.RecentQuickSellOrders)
                             {
                                 <tr>
-                                    <td><strong>#QS-@qord.Id</strong></td>
+                                    <td><strong>@OrderNumbers.For(qord)</strong></td>
                                     <td>@(qord.QuickSellListing?.CropTitle ?? "Produce")</td>
                                     <td>@qord.QuantityPurchased kg</td>
                                     <td>₹@qord.PricePerKg.ToString("F2")</td>
