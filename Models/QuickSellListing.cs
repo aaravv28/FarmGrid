@@ -89,7 +89,7 @@ namespace FarmGrid.Models
                 return FloorPrice;
             }
 
-            return Math.Round(current, 2);
+            return Math.Round(current, 2, MidpointRounding.AwayFromZero);
         }
 
         public TimeSpan GetRemainingTime(DateTime? asOf = null)

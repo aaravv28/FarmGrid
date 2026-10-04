@@ -96,9 +96,9 @@
 
                                 <input type="number"
                                        name="quantity"
-                                       value="@item.Quantity"
+                                       value="@item.Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                        min="0.01"
-                                       max="@item.Product.StockQuantity"
+                                       max="@item.Product.StockQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                        step="0.01"
                                        class="form-control"
                                        style="width:100px;" />

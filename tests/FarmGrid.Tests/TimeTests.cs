@@ -114,7 +114,7 @@ namespace FarmGrid.Tests
                 var controller = SignedIn(new QuickSellController(context, UserManagerFor(context), clock), "cust");
                 await controller.Purchase(new QuickSellPurchaseViewModel
                 {
-                    ListingId = listingId, Quantity = 10m, CustomerName = "Priya",
+                    ListingId = listingId, Quantity = 10m, ShownPricePerKg = 22.5m, CustomerName = "Priya",
                     PhoneNumber = "9999999999", DeliveryAddress = "12 Main Rd", City = "Vadodara"
                 });
             }

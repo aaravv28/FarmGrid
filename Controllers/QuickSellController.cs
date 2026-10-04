@@ -192,7 +192,15 @@ namespace FarmGrid.Controllers
 
             // Calculate live decay price securely on the server
             var currentPrice = listing.CalculateCurrentPrice(now);
-            var totalAmount = Math.Round(model.Quantity * currentPrice, 2);
+
+            // The price only falls, so it should never exceed what the customer was shown
+            if (currentPrice > model.ShownPricePerKg)
+            {
+                TempData["Error"] = $"The price is now ₹{currentPrice:F2}/kg, higher than the ₹{model.ShownPricePerKg:F2}/kg you were shown. Please review and confirm again.";
+                return RedirectToAction(nameof(Details), new { id = listing.Id });
+            }
+
+            var totalAmount = Math.Round(model.Quantity * currentPrice, 2, MidpointRounding.AwayFromZero);
 
             var user = await _userManager.GetUserAsync(User);
             var customerId = user?.Id ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "guest-customer";
@@ -260,6 +268,7 @@ namespace FarmGrid.Controllers
                 availableQuantity = listing.AvailableQuantity,
                 remainingSeconds = Math.Max(0, (int)remaining.TotalSeconds),
                 isExpired = listing.IsExpired(now),
+                isBuyable = listing.IsBuyable(now),
                 isSoldOut = listing.IsSoldOut,
                 elapsedHours = (decimal)(now - listing.CreatedAt).TotalHours
             });

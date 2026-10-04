@@ -2,6 +2,7 @@ using FarmGrid.Data;
 using FarmGrid.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,17 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// One culture everywhere (₹ amounts, "." decimals), whatever the server's locale
+var india = new CultureInfo("en-IN");
+CultureInfo.DefaultThreadCurrentCulture = india;
+CultureInfo.DefaultThreadCurrentUICulture = india;
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(india),
+    SupportedCultures = [india],
+    SupportedUICultures = [india]
+});
 
 // HTTP request pipeline
 if (app.Environment.IsDevelopment())

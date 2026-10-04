@@ -12,6 +12,10 @@ namespace FarmGrid.ViewModels
         [Display(Name = "Purchase Quantity (kg)")]
         public decimal Quantity { get; set; }
 
+        /// <summary>The price per kg the customer saw when they placed the order. They are never charged more.</summary>
+        [Range(0.01, 100000, ErrorMessage = "Please reload the page to see the current price.")]
+        public decimal ShownPricePerKg { get; set; }
+
         [Required(ErrorMessage = "Full Name is required")]
         [Display(Name = "Your Name")]
         public string CustomerName { get; set; } = string.Empty;

@@ -3,6 +3,7 @@
     ViewData["Title"] = $"{Model.CropTitle} - Quick Sell";
     var currentPrice = Model.CalculateCurrentPrice();
     var remaining = Model.GetRemainingTime();
+    var invariant = System.Globalization.CultureInfo.InvariantCulture;
     var purchaseModel = (FarmGrid.ViewModels.QuickSellPurchaseViewModel)(ViewBag.PurchaseModel ?? new FarmGrid.ViewModels.QuickSellPurchaseViewModel { ListingId = Model.Id, Quantity = Math.Min(Model.AvailableQuantity, 50) });
     var isExpired = Model.IsExpired();
     var isClosed = !Model.IsBuyable();
@@ -219,6 +220,7 @@
                                 <form asp-controller="QuickSell" asp-action="Purchase" method="post" id="purchaseForm">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="ListingId" value="@Model.Id" />
+                                    <input type="hidden" id="shownPricePerKg" name="ShownPricePerKg" value="@currentPrice.ToString("0.00", invariant)" />
 
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -228,8 +230,8 @@
                                         <div class="input-group">
                                             <input type="number" id="purchaseQuantity" name="Quantity"
                                                    class="form-control form-control-lg"
-                                                   min="1" max="@Model.AvailableQuantity"
-                                                   value="@purchaseModel.Quantity" step="1" required />
+                                                   min="1" max="@Model.AvailableQuantity.ToString(invariant)"
+                                                   value="@purchaseModel.Quantity.ToString(invariant)" step="1" required />
                                             <span class="input-group-text bg-light">kg</span>
                                         </div>
                                         <!-- Quick Presets -->
@@ -237,7 +239,7 @@
                                             <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="25">25 kg</button>
                                             <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="50">50 kg</button>
                                             <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="100">100 kg</button>
-                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="@Model.AvailableQuantity">All (@Model.AvailableQuantity kg)</button>
+                                            <button type="button" class="btn btn-sm btn-outline-success preset-btn" data-qty="@Model.AvailableQuantity.ToString(invariant)">All (@Model.AvailableQuantity kg)</button>
                                         </div>
                                     </div>
 
@@ -297,14 +299,15 @@
 
 @section Scripts {
     <script>
+        // The server is the only source of the price: this page shows the server's price
+        // and remaining time, refreshed every 15 seconds, and counts down locally between
+        // refreshes. The price shown is posted with the order; the server never charges more.
         document.addEventListener("DOMContentLoaded", function () {
             const listingId = @Model.Id;
-            const startPrice = @Model.StartingPrice;
-            const floorPrice = @Model.FloorPrice;
-            const durationHours = @Model.DurationHours;
-            const createdAt = new Date("@Model.CreatedAt.ToUtcIso()");
-            const expiresAt = new Date("@Model.ExpiresAt.ToUtcIso()");
-            const availableQuantity = @Model.AvailableQuantity;
+            const unit = "@Model.UnitMeasure";
+            let availableQuantity = @Model.AvailableQuantity.ToString(invariant);
+            let currentLivePrice = @currentPrice.ToString("0.00", invariant);
+            let deadline = Date.now() + @((int)remaining.TotalSeconds) * 1000;
 
             const livePriceEl = document.getElementById("liveQuickPrice");
             const timerEl = document.getElementById("quickTimer");
@@ -312,34 +315,19 @@
             const calcQtyEl = document.getElementById("calcQty");
             const calcTotalEl = document.getElementById("calcTotal");
             const qtyInput = document.getElementById("purchaseQuantity");
+            const shownPriceInput = document.getElementById("shownPricePerKg");
             const btnSubmit = document.getElementById("btnSubmitPurchase");
 
-            let currentLivePrice = @currentPrice;
-
-            function calculateCurrentDecayPrice() {
-                const now = new Date();
-                const elapsedMs = now - createdAt;
-                const elapsedHours = elapsedMs / (1000 * 60 * 60);
-
-                if (elapsedHours <= 0) return startPrice;
-                if (elapsedHours >= durationHours || now >= expiresAt) return floorPrice;
-
-                const hourlyDrop = (startPrice - floorPrice) / durationHours;
-                const calculated = startPrice - (hourlyDrop * elapsedHours);
-                return Math.max(floorPrice, Math.round(calculated * 100) / 100);
+            function showPrice() {
+                if (livePriceEl) {
+                    livePriceEl.innerHTML = `₹${currentLivePrice.toFixed(2)}<span class="fs-4 text-muted font-monospace">/${unit}</span>`;
+                }
+                if (shownPriceInput) shownPriceInput.value = currentLivePrice.toFixed(2);
+                recalculateOrderTotal();
             }
 
-            function updateTick() {
-                const now = new Date();
-                const diffMs = expiresAt - now;
-
-                if (diffMs <= 0) {
-                    if (timerEl) timerEl.innerText = "00:00:00";
-                    if (livePriceEl) livePriceEl.innerHTML = `₹${floorPrice.toFixed(2)}<span class="fs-4 text-muted font-monospace">/kg</span>`;
-                    return;
-                }
-
-                const totalSeconds = Math.floor(diffMs / 1000);
+            function tickCountdown() {
+                const totalSeconds = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
                 const seconds = totalSeconds % 60;
@@ -347,13 +335,7 @@
                 if (timerEl) {
                     timerEl.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
                 }
-
-                currentLivePrice = calculateCurrentDecayPrice();
-                if (livePriceEl) {
-                    livePriceEl.innerHTML = `₹${currentLivePrice.toFixed(2)}<span class="fs-4 text-muted font-monospace">/kg</span>`;
-                }
-
-                recalculateOrderTotal();
+                if (totalSeconds === 0 && btnSubmit) btnSubmit.disabled = true;
             }
 
             function recalculateOrderTotal() {
@@ -361,29 +343,31 @@
                 const qty = parseFloat(qtyInput.value) || 0;
                 const total = Math.round(qty * currentLivePrice * 100) / 100;
 
-                if (calcUnitPriceEl) calcUnitPriceEl.innerText = `₹${currentLivePrice.toFixed(2)}/kg`;
-                if (calcQtyEl) calcQtyEl.innerText = `${qty} kg`;
+                if (calcUnitPriceEl) calcUnitPriceEl.innerText = `₹${currentLivePrice.toFixed(2)}/${unit}`;
+                if (calcQtyEl) calcQtyEl.innerText = `${qty} ${unit}`;
                 if (calcTotalEl) calcTotalEl.innerText = `₹${total.toFixed(2)}`;
 
                 if (btnSubmit) {
-                    btnSubmit.innerHTML = `<i class="fa-solid fa-lock me-1"></i> Lock Price & Place Order (₹${total.toFixed(2)})`;
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-lock me-1"></i> Place Order at ₹${currentLivePrice.toFixed(2)}/${unit} (≈ ₹${total.toFixed(2)})`;
                 }
             }
 
-            // Sync with backend API every 30 seconds to stay aligned with server clock
             function syncWithServer() {
                 fetch(`/api/quicksell/price/${listingId}`)
-                    .then(res => res.json())
+                    .then(res => res.ok ? res.json() : null)
                     .then(data => {
-                        if (data && data.currentPrice) {
-                            currentLivePrice = data.currentPrice;
-                            recalculateOrderTotal();
-                        }
+                        if (!data) return;
+                        currentLivePrice = data.currentPrice;
+                        availableQuantity = data.availableQuantity;
+                        deadline = Date.now() + data.remainingSeconds * 1000;
+                        if (qtyInput) qtyInput.max = availableQuantity;
+                        if (!data.isBuyable && btnSubmit) btnSubmit.disabled = true;
+                        showPrice();
+                        tickCountdown();
                     })
                     .catch(() => {});
             }
 
-            // Presets buttons
             document.querySelectorAll(".preset-btn").forEach(btn => {
                 btn.addEventListener("click", function () {
                     const val = parseFloat(this.getAttribute("data-qty"));
@@ -398,9 +382,10 @@
                 qtyInput.addEventListener("input", recalculateOrderTotal);
             }
 
-            setInterval(updateTick, 1000);
-            setInterval(syncWithServer, 30000);
-            updateTick();
+            showPrice();
+            tickCountdown();
+            setInterval(tickCountdown, 1000);
+            setInterval(syncWithServer, 15000);
         });
     </script>
 }
