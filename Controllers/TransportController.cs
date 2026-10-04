@@ -298,10 +298,16 @@ namespace FarmGrid.Controllers
                 return RedirectToAction(
                     nameof(MyTrips));
             }
-            catch
+            catch (DbUpdateException)
             {
+                // Capacity changed since it was read (concurrency token), or this
+                // farmer joined in a parallel request (unique trip/farmer index)
                 await transaction.RollbackAsync();
-                throw;
+
+                TempData["Error"] =
+                    "This trip's capacity just changed or you have already joined it. Please check the trip and try again.";
+
+                return RedirectToAction(nameof(Index));
             }
         }
 

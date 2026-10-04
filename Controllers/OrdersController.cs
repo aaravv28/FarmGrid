@@ -188,6 +188,20 @@ namespace FarmGrid.Controllers
                 return RedirectToAction(
                     nameof(Index));
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                await transaction.RollbackAsync();
+
+                ModelState.AddModelError(
+                    "",
+                    "Stock for an item in your cart changed while you were checking out. Please review your cart and try again.");
+
+                await LoadCheckoutSummaryAsync(cartItems);
+
+                return View(
+                    "~/Views/UI/Checkout.cshtml",
+                    model);
+            }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();

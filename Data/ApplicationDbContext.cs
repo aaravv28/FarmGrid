@@ -69,6 +69,38 @@ namespace FarmGrid.Data
                     c.ProductId
                 })
                 .IsUnique();
+
+            builder.Entity<TransportParticipant>()
+                .HasIndex(tp => new
+                {
+                    tp.TransportTripId,
+                    tp.FarmerId
+                })
+                .IsUnique();
+
+            // Optimistic concurrency: a save only succeeds if these values are still
+            // what the request read, so two requests racing for the same stock,
+            // capacity or order cannot both win. The losing save throws
+            // DbUpdateConcurrencyException, which controllers report to the user.
+            builder.Entity<Product>()
+                .Property(p => p.StockQuantity)
+                .IsConcurrencyToken();
+
+            builder.Entity<QuickSellListing>()
+                .Property(q => q.AvailableQuantity)
+                .IsConcurrencyToken();
+
+            builder.Entity<TransportTrip>()
+                .Property(t => t.AvailableCapacityKg)
+                .IsConcurrencyToken();
+
+            builder.Entity<Order>()
+                .Property(o => o.Status)
+                .IsConcurrencyToken();
+
+            builder.Entity<QuickSellOrder>()
+                .Property(o => o.Status)
+                .IsConcurrencyToken();
         }
     }
 }

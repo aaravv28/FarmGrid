@@ -207,11 +207,20 @@ namespace FarmGrid.Controllers
                 PurchasedAt = DateTime.Now
             };
 
-            // Atomically decrement available stock
+            // Saved only if AvailableQuantity is unchanged since it was read (concurrency token)
             listing.AvailableQuantity -= model.Quantity;
 
             _context.QuickSellOrders.Add(order);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["Error"] = "Someone else just bought from this lot. Please check the quantity left and try again.";
+                return RedirectToAction(nameof(Details), new { id = listing.Id });
+            }
 
             TempData["Success"] = $"Order placed successfully! Purchased {model.Quantity} kg of {listing.CropTitle} at ₹{currentPrice:F2}/kg (Total: ₹{totalAmount:F2}).";
             return RedirectToAction(nameof(Details), new { id = listing.Id });

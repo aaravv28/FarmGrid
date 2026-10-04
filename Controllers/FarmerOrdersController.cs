@@ -89,6 +89,10 @@ namespace FarmGrid.Controllers
             {
                 TempData["Error"] = ex.Message;
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["Error"] = "This order or its stock changed at the same moment. Please refresh and try again.";
+            }
 
             return RedirectToAction("FarmerDashboard", "UI");
         }

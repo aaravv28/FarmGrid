@@ -164,7 +164,15 @@ namespace FarmGrid.Controllers
 
             model.ApplyTo(product);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["Error"] = "This product's stock changed while you were editing (an order was placed or cancelled). Please review it and save again.";
+                return RedirectToAction(nameof(Edit), new { id });
+            }
 
             TempData["Success"] = $"Product '{product.Title}' updated successfully!";
             return RedirectToAction(nameof(Index));
@@ -192,7 +200,16 @@ namespace FarmGrid.Controllers
             }
 
             product.IsActive = false;
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["Error"] = "This product's stock changed at the same moment. Please try removing it again.";
+                return RedirectToAction(nameof(Index));
+            }
 
             TempData["Success"] = $"Product '{product.Title}' removed from catalog.";
             return RedirectToAction(nameof(Index));
