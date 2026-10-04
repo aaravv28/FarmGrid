@@ -30,7 +30,7 @@ namespace FarmGrid.Models
         public string PaymentMethod { get; set; }
             = PaymentMethods.CashOnDelivery;
 
-        public string Status { get; set; } = "Placed";
+        public string Status { get; set; } = OrderStatuses.Placed;
 
         [Precision(18, 2)]
         public decimal Subtotal { get; set; }
@@ -45,5 +45,26 @@ namespace FarmGrid.Models
 
         public ICollection<OrderItem> OrderItems { get; set; }
             = new List<OrderItem>();
+
+        public void MarkDelivered()
+        {
+            OrderStatuses.EnsurePlaced(Status);
+            Status = OrderStatuses.Delivered;
+        }
+
+        /// <summary>Cancels the order and returns each item's quantity to its Product's stock. Requires OrderItems with Product loaded.</summary>
+        public void Cancel()
+        {
+            OrderStatuses.EnsurePlaced(Status);
+
+            foreach (var item in OrderItems)
+            {
+                var product = item.Product
+                    ?? throw new InvalidOperationException("Order items must be loaded with their Product to cancel.");
+                product.StockQuantity += item.Quantity;
+            }
+
+            Status = OrderStatuses.Cancelled;
+        }
     }
 }

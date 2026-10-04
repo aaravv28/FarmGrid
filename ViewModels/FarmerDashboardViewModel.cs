@@ -16,7 +16,7 @@ namespace FarmGrid.ViewModels
         public List<Product> MyProducts { get; set; } = new();
         public List<QuickSellListing> MyQuickSells { get; set; } = new();
         public List<QuickSellOrder> RecentQuickSellOrders { get; set; } = new();
-        public List<OrderItem> RecentRetailOrders { get; set; } = new();
+        public List<Order> RecentRetailOrders { get; set; } = new();
         public List<TransportTrip> MyTransportTrips { get; set; } = new();
     }
 }

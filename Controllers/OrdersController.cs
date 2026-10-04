@@ -148,7 +148,7 @@ namespace FarmGrid.Controllers
                         City = model.City,
                         DeliverySlot = model.DeliverySlot,
                         PaymentMethod = PaymentMethods.CashOnDelivery,
-                        Status = "Placed",
+                        Status = OrderStatuses.Placed,
                         Subtotal = farmerPlan.Subtotal,
                         DeliveryCharge = farmerPlan.DeliveryCharge,
                         TotalAmount = farmerPlan.Total,

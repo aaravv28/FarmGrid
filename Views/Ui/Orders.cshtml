@@ -124,7 +124,7 @@
 
                                     <td>
 
-                                        <span class="badge @(order.Status == "Delivered" ? "bg-success" : "bg-warning-subtle text-warning border")">
+                                        <span class="badge @OrderStatuses.BadgeClass(order.Status)">
                                             @order.Status
                                         </span>
 

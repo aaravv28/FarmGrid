@@ -50,8 +50,26 @@ namespace FarmGrid.Models
         public string PaymentMethod { get; set; } = PaymentMethods.CashOnDelivery;
 
         [StringLength(50)]
-        public string Status { get; set; } = "Confirmed";
+        public string Status { get; set; } = OrderStatuses.Placed;
 
         public DateTime PurchasedAt { get; set; } = DateTime.Now;
+
+        public void MarkDelivered()
+        {
+            OrderStatuses.EnsurePlaced(Status);
+            Status = OrderStatuses.Delivered;
+        }
+
+        /// <summary>Cancels the order and returns its quantity to the Quick Sell lot, even if the lot has expired. Requires QuickSellListing loaded.</summary>
+        public void Cancel()
+        {
+            OrderStatuses.EnsurePlaced(Status);
+
+            var listing = QuickSellListing
+                ?? throw new InvalidOperationException("The Quick Sell lot must be loaded to cancel.");
+            listing.AvailableQuantity += QuantityPurchased;
+
+            Status = OrderStatuses.Cancelled;
+        }
     }
 }

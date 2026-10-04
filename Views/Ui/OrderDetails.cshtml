@@ -42,7 +42,7 @@
                         <h4 class="fw-bold mb-0">
                             <i class="fa-solid fa-basket-shopping text-success me-2"></i> Ordered Items (@Model.OrderItems.Count)
                         </h4>
-                        <span class="badge @(Model.Status == "Delivered" ? "bg-success" : "bg-warning-subtle text-warning border") px-3 py-2 fs-6">
+                        <span class="badge @OrderStatuses.BadgeClass(Model.Status) px-3 py-2 fs-6">
                             @Model.Status
                         </span>
                     </div>

@@ -127,7 +127,7 @@
                                     <td>@ord.DeliveryAddress, @ord.City</td>
                                     <td><strong class="text-success">₹@ord.TotalAmount.ToString("F2")</strong></td>
                                     <td>
-                                        <span class="badge @(ord.Status == "Delivered" ? "bg-success" : "bg-warning-subtle text-warning border")">
+                                        <span class="badge @OrderStatuses.BadgeClass(ord.Status)">
                                             @ord.Status
                                         </span>
                                     </td>
@@ -189,7 +189,7 @@
                                     <td>₹@qord.PricePerKg.ToString("F2")</td>
                                     <td><strong class="text-success">₹@qord.TotalAmount.ToString("F2")</strong></td>
                                     <td>@qord.PurchasedAt.ToString("dd MMM yyyy")</td>
-                                    <td><span class="badge bg-success-subtle text-success border">@qord.Status</span></td>
+                                    <td><span class="badge @OrderStatuses.BadgeClass(qord.Status)">@qord.Status</span></td>
                                 </tr>
                             }
                         </tbody>

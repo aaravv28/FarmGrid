@@ -48,12 +48,11 @@ namespace FarmGrid.Controllers
                 .OrderByDescending(o => o.PurchasedAt)
                 .ToListAsync();
 
-            // Retrieve retail sales for this farmer's products
-            var retailOrders = await _context.OrderItems
-                .Include(oi => oi.Order)
-                .Include(oi => oi.Product)
-                .Where(oi => oi.Product != null && oi.Product.FarmerId == userId)
-                .OrderByDescending(oi => oi.Id)
+            // Retrieve retail orders this farmer fulfils
+            var retailOrders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .Where(o => o.FarmerId == userId)
+                .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
 
             // Retrieve transport trips hosted by this farmer
@@ -81,8 +80,12 @@ namespace FarmGrid.Controllers
                 myTrips = await _context.TransportTrips.Include(t => t.Participants).Take(3).ToListAsync();
             }
 
-            var totalQuickEarnings = quickSellOrders.Sum(o => o.TotalAmount);
-            var totalRetailEarnings = retailOrders.Sum(o => o.TotalPrice);
+            var totalQuickEarnings = quickSellOrders
+                .Where(o => OrderStatuses.CountsTowardsTotals(o.Status))
+                .Sum(o => o.TotalAmount);
+            var totalRetailEarnings = retailOrders
+                .Where(o => OrderStatuses.CountsTowardsTotals(o.Status))
+                .Sum(o => o.Subtotal);
             var totalCombinedEarnings = totalQuickEarnings + totalRetailEarnings;
             var activeProductCount = myProducts.Count(p => p.IsActive);
             var activeQuickSellCount = myQuickSells.Count(q => q.IsBuyable());
@@ -125,8 +128,12 @@ namespace FarmGrid.Controllers
                 .OrderByDescending(o => o.PurchasedAt)
                 .ToListAsync();
 
-            var totalSpent = orders.Sum(o => o.TotalAmount) + quickOrders.Sum(q => q.TotalAmount);
-            var activeOrdersCount = orders.Count(o => o.Status != "Delivered" && o.Status != "Cancelled") + quickOrders.Count(q => q.Status == "Confirmed");
+            var totalSpent =
+                orders.Where(o => OrderStatuses.CountsTowardsTotals(o.Status)).Sum(o => o.TotalAmount) +
+                quickOrders.Where(q => OrderStatuses.CountsTowardsTotals(q.Status)).Sum(q => q.TotalAmount);
+            var activeOrdersCount =
+                orders.Count(o => o.Status == OrderStatuses.Placed) +
+                quickOrders.Count(q => q.Status == OrderStatuses.Placed);
 
             var viewModel = new CustomerDashboardViewModel
             {
