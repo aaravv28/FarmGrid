@@ -18,19 +18,23 @@ namespace FarmGrid.ViewModels
 
         [Required(ErrorMessage = "Full Name is required")]
         [Display(Name = "Your Name")]
+        [StringLength(100)]
         public string CustomerName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Phone number is required")]
         [Phone]
         [Display(Name = "Contact Phone Number")]
+        [StringLength(20)]
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Delivery address is required")]
-        [Display(Name = "Delivery Address / Warehouse Address")]
+        [Display(Name = "Delivery Address")]
+        [StringLength(200)]
         public string DeliveryAddress { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "City is required")]
         [Display(Name = "City / District")]
+        [StringLength(100)]
         public string City { get; set; } = string.Empty;
     }
 }

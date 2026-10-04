@@ -1,0 +1,24 @@
+@* Success and error messages set by the previous request (TempData). Rendered once, by the layout, on every page. *@
+@{
+    var success = TempData["Success"] as string;
+    var error = TempData["Error"] as string;
+}
+@if (success != null || error != null)
+{
+    <div class="container pt-3">
+        @if (success != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mb-0 mt-1" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> @success
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (error != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mb-0 mt-1" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> @error
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+}

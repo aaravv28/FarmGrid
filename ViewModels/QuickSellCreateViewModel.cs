@@ -10,6 +10,7 @@ namespace FarmGrid.ViewModels
         public string CropTitle { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category is required")]
+        [StringLength(50)]
         public string Category { get; set; } = "Vegetables";
 
         [Required(ErrorMessage = "Quantity is required")]
@@ -28,6 +29,7 @@ namespace FarmGrid.ViewModels
         public decimal FloorPrice { get; set; }
 
         [Display(Name = "Location (City/District)")]
+        [StringLength(150)]
         public string? Location { get; set; }
 
         [StringLength(500)]

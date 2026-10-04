@@ -1015,3 +1015,8 @@ a {
         flex-wrap: wrap;
     }
 }
+
+/* Validation summaries styled as alerts stay hidden until there are errors */
+.validation-summary-valid {
+    display: none;
+}

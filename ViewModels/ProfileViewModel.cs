@@ -19,9 +19,11 @@ namespace FarmGrid.ViewModels
         public string? PhoneNumber { get; set; }
 
         [Display(Name = "City")]
+        [StringLength(100)]
         public string? City { get; set; }
 
         [Display(Name = "District")]
+        [StringLength(100)]
         public string? District { get; set; }
 
         [Display(Name = "Role")]

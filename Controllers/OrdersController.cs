@@ -128,15 +128,15 @@ namespace FarmGrid.Controllers
                     if (cart.Product == null ||
                         !cart.Product.IsAvailable)
                     {
-                        throw new Exception(
-                            "A product is no longer available.");
+                        throw new CheckoutProblemException(
+                            $"{cart.Product?.Title ?? "An item in your cart"} is no longer available. Please remove it from your cart.");
                     }
 
                     if (cart.Quantity >
                         cart.Product.StockQuantity)
                     {
-                        throw new Exception(
-                            $"Insufficient stock for {cart.Product.Title}.");
+                        throw new CheckoutProblemException(
+                            $"Only {cart.Product.StockQuantity} {cart.Product.UnitMeasure} of {cart.Product.Title} is left. Please reduce the quantity in your cart.");
                     }
                 }
 
@@ -207,7 +207,7 @@ namespace FarmGrid.Controllers
                     "~/Views/UI/Checkout.cshtml",
                     model);
             }
-            catch (Exception ex)
+            catch (CheckoutProblemException ex)
             {
                 await transaction.RollbackAsync();
 
