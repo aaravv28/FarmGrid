@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FarmGrid.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260927040802_AddQuickSell")]
-    partial class AddQuickSell
+    [Migration("20261004165618_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,11 +93,6 @@ namespace FarmGrid.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("UserRole")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -130,6 +125,7 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -159,7 +155,7 @@ namespace FarmGrid.Data.Migrations
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
@@ -176,6 +172,9 @@ namespace FarmGrid.Data.Migrations
                     b.Property<string>("DeliverySlot")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FarmerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -185,6 +184,7 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -197,6 +197,10 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("FarmerId");
 
                     b.ToTable("Orders");
                 });
@@ -264,12 +268,14 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FarmerId")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("StockQuantity")
+                        .IsConcurrencyToken()
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -288,6 +294,8 @@ namespace FarmGrid.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FarmerId");
+
                     b.ToTable("Products");
                 });
 
@@ -300,6 +308,7 @@ namespace FarmGrid.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AvailableQuantity")
+                        .IsConcurrencyToken()
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -332,7 +341,7 @@ namespace FarmGrid.Data.Migrations
 
                     b.Property<string>("FarmerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FarmerName")
                         .IsRequired()
@@ -362,6 +371,8 @@ namespace FarmGrid.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FarmerId");
+
                     b.ToTable("QuickSellListings");
                 });
 
@@ -373,25 +384,20 @@ namespace FarmGrid.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BuyerEmail")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("BuyerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuyerName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("BuyerPhone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -405,6 +411,11 @@ namespace FarmGrid.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("PricePerKg")
                         .HasPrecision(18, 2)
@@ -421,6 +432,7 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -430,6 +442,8 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("QuickSellListingId");
 
@@ -454,7 +468,7 @@ namespace FarmGrid.Data.Migrations
 
                     b.Property<string>("FarmerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsHost")
                         .HasColumnType("bit");
@@ -467,7 +481,10 @@ namespace FarmGrid.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransportTripId");
+                    b.HasIndex("FarmerId");
+
+                    b.HasIndex("TransportTripId", "FarmerId")
+                        .IsUnique();
 
                     b.ToTable("TransportParticipants");
                 });
@@ -481,6 +498,7 @@ namespace FarmGrid.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AvailableCapacityKg")
+                        .IsConcurrencyToken()
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -496,7 +514,7 @@ namespace FarmGrid.Data.Migrations
 
                     b.Property<string>("FarmerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("HostCargoWeightKg")
                         .HasPrecision(18, 2)
@@ -514,6 +532,8 @@ namespace FarmGrid.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FarmerId");
 
                     b.ToTable("TransportTrips");
                 });
@@ -653,6 +673,12 @@ namespace FarmGrid.Data.Migrations
 
             modelBuilder.Entity("FarmGrid.Models.CartItem", b =>
                 {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FarmGrid.Models.Product", "Product")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductId")
@@ -660,6 +686,20 @@ namespace FarmGrid.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("FarmGrid.Models.Order", b =>
+                {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("FarmerId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("FarmGrid.Models.OrderItem", b =>
@@ -681,8 +721,34 @@ namespace FarmGrid.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("FarmGrid.Models.Product", b =>
+                {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", "Farmer")
+                        .WithMany()
+                        .HasForeignKey("FarmerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farmer");
+                });
+
+            modelBuilder.Entity("FarmGrid.Models.QuickSellListing", b =>
+                {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("FarmerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FarmGrid.Models.QuickSellOrder", b =>
                 {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FarmGrid.Models.QuickSellListing", "QuickSellListing")
                         .WithMany("Orders")
                         .HasForeignKey("QuickSellListingId")
@@ -694,6 +760,12 @@ namespace FarmGrid.Data.Migrations
 
             modelBuilder.Entity("FarmGrid.Models.TransportParticipant", b =>
                 {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("FarmerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FarmGrid.Models.TransportTrip", "TransportTrip")
                         .WithMany("Participants")
                         .HasForeignKey("TransportTripId")
@@ -701,6 +773,17 @@ namespace FarmGrid.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("TransportTrip");
+                });
+
+            modelBuilder.Entity("FarmGrid.Models.TransportTrip", b =>
+                {
+                    b.HasOne("FarmGrid.Models.ApplicationUser", "Farmer")
+                        .WithMany()
+                        .HasForeignKey("FarmerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farmer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

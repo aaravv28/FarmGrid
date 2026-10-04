@@ -18,9 +18,6 @@ namespace FarmGrid.Data
             // 1. Ensure Database & Migrations are applied
             await context.Database.MigrateAsync();
 
-            // Remove leftover users and data from the retired B2B role
-            await LegacyB2BCleanup.RunAsync(context);
-
             // 2. Seed Identity Roles
             foreach (var role in Roles.All)
             {

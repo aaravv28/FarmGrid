@@ -267,7 +267,7 @@ Tests run against an in-memory SQLite database per test, with a fake clock where
 dotnet ef migrations add <Name> --project FarmGrid.csproj
 ```
 
-Some migrations convert existing data. Notably, `ConvertTimestampsToUtc` assumes existing timestamps were written on a machine running India Standard Time.
+The schema is a single `InitialCreate` migration. To start over with an empty database (demo data is re-seeded on the next run): `dotnet ef database drop --project FarmGrid.csproj`.
 
 ---
 
