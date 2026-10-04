@@ -27,7 +27,11 @@
                 </span>
                 <h2 class="mb-1">Welcome back, @Model.FarmerName 👋</h2>
                 <p class="text-muted mb-0">
-                    <i class="fa-solid fa-location-dot me-1 text-danger"></i> @Model.Location • Manage produce sales, quick-sell decay listings, and transport.
+                    @if (!string.IsNullOrWhiteSpace(Model.Location))
+                    {
+                        <i class="fa-solid fa-location-dot me-1 text-danger"></i> @Model.Location <text>•</text>
+                    }
+                    Manage produce sales, quick-sell decay listings, and transport.
                 </p>
             </div>
 

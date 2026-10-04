@@ -62,24 +62,6 @@ namespace FarmGrid.Controllers
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
 
-            // If a new farmer account has zero items, pull in recent active marketplace/quicksell items as demo context
-            if (!myProducts.Any())
-            {
-                myProducts = await _context.Products.Take(5).ToListAsync();
-            }
-            if (!myQuickSells.Any())
-            {
-                myQuickSells = await _context.QuickSellListings.Take(4).ToListAsync();
-            }
-            if (!quickSellOrders.Any())
-            {
-                quickSellOrders = await _context.QuickSellOrders.Include(o => o.QuickSellListing).Take(5).ToListAsync();
-            }
-            if (!myTrips.Any())
-            {
-                myTrips = await _context.TransportTrips.Include(t => t.Participants).Take(3).ToListAsync();
-            }
-
             var totalQuickEarnings = quickSellOrders
                 .Where(o => OrderStatuses.CountsTowardsTotals(o.Status))
                 .Sum(o => o.TotalAmount);
@@ -94,10 +76,10 @@ namespace FarmGrid.Controllers
             {
                 FarmerName = user?.FullName ?? User.Identity?.Name ?? "Farmer",
                 FarmerEmail = user?.Email ?? string.Empty,
-                Location = !string.IsNullOrWhiteSpace(user?.City) ? $"{user.City}, {user.District}" : "Anand, Gujarat",
+                Location = string.Join(", ", new[] { user?.City, user?.District }.Where(part => !string.IsNullOrWhiteSpace(part))),
                 ActiveProductsCount = activeProductCount,
                 ActiveQuickSellsCount = activeQuickSellCount,
-                TotalEarnings = totalCombinedEarnings > 0 ? totalCombinedEarnings : (totalQuickEarnings > 0 ? totalQuickEarnings : 18450.00m),
+                TotalEarnings = totalCombinedEarnings,
                 TransportTripsCount = myTrips.Count,
                 MyProducts = myProducts,
                 MyQuickSells = myQuickSells,
